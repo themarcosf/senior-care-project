@@ -1,32 +1,47 @@
 /**
+ * @fileoverview Service for the users module
+ *
+ * Services are responsible for:
+ * - data validation
+ * - data transformation
+ * - business logic
+ * - data persistence
+ * - logging and caching
+ *
  * IMPORTANT ODDITY ABOUT SQL QUERIES
  * find*(arg) methods : if arg = null | undefined returns first element in table
  */
 import { Injectable } from "@nestjs/common";
 
+import { User } from "./entities/user.entity";
 import { CreateUserDto } from "./dto/create-user.dto";
 import { UpdateUserDto } from "./dto/update-user.dto";
 ////////////////////////////////////////////////////////////////////////////////
 
 @Injectable()
 export class UsersService {
+  private readonly users: User[] = [];
+
   create(createUserDto: CreateUserDto) {
-    return "This action adds a new user";
+    const id = this.users.length + 1;
+    this.users.push(Object.assign(new User(), { ...createUserDto, id }));
+
+    return this.users[id - 1];
   }
 
   findAll() {
-    return `This action returns all users`;
+    return this.users;
   }
 
   findOne(id: number) {
-    return `This action returns a #${id} user`;
+    return this.users[id - 1];
   }
 
   update(id: number, updateUserDto: UpdateUserDto) {
-    return `This action updates a #${id} user`;
+    return "// TODO: implement update method";
   }
 
   remove(id: number) {
-    return `This action removes a #${id} user`;
+    return this.users.splice(id - 1, 1);
   }
 }

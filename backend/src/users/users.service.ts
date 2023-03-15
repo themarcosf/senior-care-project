@@ -1,11 +1,17 @@
-import { Injectable } from '@nestjs/common';
-import { CreateUserDto } from './dto/create-user.dto';
-import { UpdateUserDto } from './dto/update-user.dto';
+/**
+ * IMPORTANT ODDITY ABOUT SQL QUERIES
+ * find*(arg) methods : if arg = null | undefined returns first element in table
+ */
+import { Injectable } from "@nestjs/common";
+
+import { CreateUserDto } from "./dto/create-user.dto";
+import { UpdateUserDto } from "./dto/update-user.dto";
+////////////////////////////////////////////////////////////////////////////////
 
 @Injectable()
 export class UsersService {
   create(createUserDto: CreateUserDto) {
-    return 'This action adds a new user';
+    return "This action adds a new user";
   }
 
   findAll() {

@@ -27,6 +27,7 @@ export class User {
 
   @Column()
   function: string;
+
   @Column()
   department: string;
 
@@ -36,14 +37,16 @@ export class User {
   @Column({ unique: true })
   thumbprint: string;
 
-  @Column({ unique: true })
+  @Column()
   password: string;
 
-  @Column()
+  @Column({ default: true })
   active: boolean;
-  @Column()
+
+  @Column({ default: () => "CURRENT_TIMESTAMP" })
   createdAt: Date;
 
+  /** hooks */
   @AfterInsert()
   logInsert() {
     console.log("@HOOK = Inserted user with id", this.id);

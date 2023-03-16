@@ -1,11 +1,12 @@
+/** nestjs */
 import { Module } from "@nestjs/common";
 
+/** modules */
+import { AuthModule } from "./auth/auth.module";
 import { UsersModule } from "./users/users.module";
-import { IssuanceModule } from "./issuance/issuance.module";
-import { PsPtEquipModule } from "./ps-pt-equip/ps-pt-equip.module";
 ////////////////////////////////////////////////////////////////////////////////
 
 @Module({
-  imports: [UsersModule, PsPtEquipModule, IssuanceModule],
+  imports: [UsersModule, AuthModule],
 })
 export class AppModule {}

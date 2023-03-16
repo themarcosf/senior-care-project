@@ -2,14 +2,9 @@
  * @fileoverview Service for the users module
  *
  * Services are responsible for:
- * - data validation
- * - data transformation
  * - business logic
  * - data persistence
  * - logging and caching
- *
- * IMPORTANT ODDITY ABOUT SQL QUERIES
- * find*(arg) methods : if arg = null | undefined returns first element in table
  */
 import { Injectable } from "@nestjs/common";
 

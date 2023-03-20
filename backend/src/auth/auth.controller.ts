@@ -1,9 +1,18 @@
 /** nestjs */
-import { Controller, Get, Post, Body } from "@nestjs/common";
+import {
+  Get,
+  Post,
+  Body,
+  Param,
+  Controller,
+  HttpStatus,
+  ParseIntPipe,
+} from "@nestjs/common";
 
 /** providers */
 import { AuthService } from "./auth.service";
 import { SigninDto } from "./dto/signin.dto";
+import { AuthPipe } from "./pipes/auth.pipe";
 import { UsersService } from "src/users/users.service";
 import { CreateUserDto } from "src/users/dto/create-user.dto";
 ////////////////////////////////////////////////////////////////////////////////
@@ -16,7 +25,8 @@ export class AuthController {
   ) {}
 
   @Post("signup")
-  signup(@Body() createUserDto: CreateUserDto) {
+  // signup(@Body() createUserDto: CreateUserDto) {
+  signup(@Body(new AuthPipe()) createUserDto: CreateUserDto) {
     return this.usersService.create(createUserDto);
   }
 
@@ -28,5 +38,16 @@ export class AuthController {
   @Get("signout")
   signout() {
     return "signout method";
+  }
+
+  @Get(":id")
+  example(
+    @Param(
+      "id",
+      new ParseIntPipe({ errorHttpStatusCode: HttpStatus.NOT_ACCEPTABLE })
+    )
+    id: number
+  ) {
+    return `pipe example, id: ${id}`;
   }
 }

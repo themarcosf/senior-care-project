@@ -4,6 +4,7 @@ import {
   Post,
   Body,
   Param,
+  UseGuards,
   Controller,
   HttpStatus,
   ParseIntPipe,
@@ -13,6 +14,9 @@ import {
 import { AuthService } from "./auth.service";
 import { SigninDto } from "./dto/signin.dto";
 import { AuthPipe } from "./pipes/auth.pipe";
+import { AuthGuard } from "./guards/auth.guard";
+import { RolesGuard } from "./guards/roles.guard";
+import { Roles } from "./decorator/auth.decorator";
 import { UsersService } from "src/users/users.service";
 import { CreateUserDto } from "src/users/dto/create-user.dto";
 ////////////////////////////////////////////////////////////////////////////////
@@ -25,7 +29,6 @@ export class AuthController {
   ) {}
 
   @Post("signup")
-  // signup(@Body() createUserDto: CreateUserDto) {
   signup(@Body(new AuthPipe()) createUserDto: CreateUserDto) {
     return this.usersService.create(createUserDto);
   }
@@ -35,6 +38,7 @@ export class AuthController {
     return "signin method";
   }
 
+  @UseGuards(AuthGuard)
   @Get("signout")
   signout() {
     return "signout method";

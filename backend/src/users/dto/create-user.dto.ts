@@ -4,7 +4,7 @@
  * validation is done by class-validator package and pipes
  */
 
-import { IsString, IsEmail } from "class-validator";
+import { IsString, IsEmail, IsOptional } from "class-validator";
 //////////////////////////////////////////////////////////////////////////////////////
 
 export class CreateUserDto {
@@ -28,4 +28,8 @@ export class CreateUserDto {
 
   @IsString()
   password: string;
+
+  @IsOptional()
+  @IsString()
+  role: string;
 }

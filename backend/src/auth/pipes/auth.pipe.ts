@@ -29,6 +29,7 @@ import { plainToInstance } from "class-transformer";
 @Injectable()
 export class AuthPipe implements PipeTransform<CreateUserDto> {
   async transform(value: any, { metatype }: ArgumentMetadata) {
+    console.log("Request@AuthPipe");
     if (!metatype || !this.toValidate(metatype)) return value;
 
     const object = plainToInstance(metatype, value);

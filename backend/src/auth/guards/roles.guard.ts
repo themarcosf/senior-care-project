@@ -1,8 +1,8 @@
 /**
  * @fileoverview Roles Guard
  *
- * This guard is used to protect routes from unauthorized
- * access by users with insufficient permissions
+ * guards are executed after all middleware, but before any interceptor or pipe
+ * this guard is used to protect routes from unauthorized access by users with insufficient permissions
  */
 
 /** nestjs */

@@ -1,5 +1,7 @@
 /**
  * @fileoverview User Middleware
+ *
+ * middleware are NOT ExecutionContext specific
  * custom and built-in middleware can be chained in fluent style
  * wiki: https://en.wikipedia.org/wiki/Fluent_interface
  */

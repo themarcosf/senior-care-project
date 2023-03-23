@@ -12,19 +12,19 @@ import {
 } from "@nestjs/common";
 
 /** providers */
-import { AuthService } from "./auth.service";
+// import { AuthService } from "./auth.service";
 import { SigninDto } from "./dto/signin.dto";
 import { AuthPipe } from "./pipes/auth.pipe";
 import { AuthGuard } from "./guards/auth.guard";
-import { UsersService } from "src/users/users.service";
-import { CreateUserDto } from "src/users/dto/create-user.dto";
+import { UsersService } from "./../users/users.service";
+import { CreateUserDto } from "./../users/dto/create-user.dto";
 import { AuthInterceptor } from "./interceptors/auth.interceptor";
 ////////////////////////////////////////////////////////////////////////////////
 
-@Controller("api/v1/auth")
+@Controller("auth")
 export class AuthController {
   constructor(
-    private readonly authService: AuthService,
+    // private readonly authService: AuthService,
     private readonly usersService: UsersService
   ) {}
 

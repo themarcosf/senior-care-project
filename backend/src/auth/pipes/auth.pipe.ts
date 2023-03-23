@@ -19,7 +19,7 @@ import {
 } from "@nestjs/common";
 
 /** providers */
-import { CreateUserDto } from "src/users/dto/create-user.dto";
+import { CreateUserDto } from "./../../users/dto/create-user.dto";
 
 /** dependencies */
 import { validate } from "class-validator";

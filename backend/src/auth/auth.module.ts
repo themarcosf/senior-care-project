@@ -1,4 +1,4 @@
-/** @fileoverview Auth Global Module */
+/** @fileoverview Auth Module */
 
 /** nestjs */
 import {

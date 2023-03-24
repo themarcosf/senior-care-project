@@ -15,19 +15,10 @@ export class CreateUserDto {
   email: string;
 
   @IsString()
-  function: string;
-
-  @IsString()
-  department: string;
+  password: string;
 
   @IsString()
   photo: string;
-
-  @IsString()
-  thumbprint: string;
-
-  @IsString()
-  password: string;
 
   @IsOptional()
   @IsString()

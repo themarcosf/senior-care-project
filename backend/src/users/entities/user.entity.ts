@@ -1,6 +1,3 @@
-/**
- * @fileoverview User Entity
- */
 import {
   Entity,
   Column,
@@ -23,19 +20,10 @@ export class User {
   email: string;
 
   @Column()
-  function: string;
-
-  @Column()
-  department: string;
+  password: string;
 
   @Column({ unique: true })
   photo: string;
-
-  @Column({ unique: true })
-  thumbprint: string;
-
-  @Column()
-  password: string;
 
   @Column({ default: "user" })
   role: string;
@@ -61,24 +49,4 @@ export class User {
   logRemove() {
     console.log("@HOOK = Removed user with id", this.id);
   }
-
-  // "cpf": ,
-  // "rg": ,
-  // "birthDate": ,
-  // "sex": ,
-  // "phone": ,
-  // "cellphone": ,
-  // "address": ,
-  // "number": ,
-  // "complement": ,
-  // "neighborhood": ,
-  // "city": ,
-  // "state": ,
-  // "zipCode": ,
-  // "registration": ,
-  // "digitalSignature": ,
-  // "writtenSignature": ,
-  // "updatedAt": ,
-  // "deletedAt": ,
-  // "lastAccessAt": ,
 }

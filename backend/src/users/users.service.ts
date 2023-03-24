@@ -26,8 +26,8 @@ export class UsersService implements OnModuleInit {
     return this.users[id - 1];
   }
 
-  findAll() {
-    return this.users;
+  findAll(email?: string): User | User[] | undefined {
+    return email ? this.users.find((user) => user.email === email) : this.users;
   }
 
   findOne(id: number) {

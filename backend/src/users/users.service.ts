@@ -6,21 +6,23 @@
  * - data persistence
  * - logging and caching
  */
-import { Injectable } from "@nestjs/common";
 
+/** nestjs */
+import { Injectable, OnModuleInit } from "@nestjs/common";
+
+/** dependencies */
 import { User } from "./entities/user.entity";
 import { CreateUserDto } from "./dto/create-user.dto";
 import { UpdateUserDto } from "./dto/update-user.dto";
 ////////////////////////////////////////////////////////////////////////////////
 
 @Injectable()
-export class UsersService {
+export class UsersService implements OnModuleInit {
   private readonly users: User[] = [];
 
   create(createUserDto: CreateUserDto) {
     const id = this.users.length + 1;
-    this.users.push(Object.assign(new User(), { ...createUserDto, id }));
-
+    this.users.push({ ...createUserDto, id } as User);
     return this.users[id - 1];
   }
 
@@ -38,5 +40,9 @@ export class UsersService {
 
   remove(id: number) {
     return this.users.splice(id - 1, 1);
+  }
+
+  onModuleInit() {
+    console.log("UsersService initialized");
   }
 }

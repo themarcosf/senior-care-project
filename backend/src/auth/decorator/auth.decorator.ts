@@ -1,7 +1,4 @@
-/**
- * @fileoverview Auth decorator
- */
-
+/** nestjs */
 import { SetMetadata } from "@nestjs/common";
 ////////////////////////////////////////////////////////////////////////////////
 

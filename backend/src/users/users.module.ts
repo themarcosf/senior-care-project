@@ -1,7 +1,7 @@
 /** @fileoverview Users Global Module */
 
 /** nestjs */
-import { Module, Global } from "@nestjs/common";
+import { OnModuleInit, Module, Global } from "@nestjs/common";
 
 /** providers */
 import { UsersService } from "./users.service";
@@ -12,4 +12,8 @@ import { UsersService } from "./users.service";
   providers: [UsersService],
   exports: [UsersService],
 })
-export class UsersModule {}
+export class UsersModule implements OnModuleInit {
+  onModuleInit() {
+    console.log("UsersModule initialized");
+  }
+}

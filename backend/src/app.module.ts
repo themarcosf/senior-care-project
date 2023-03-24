@@ -1,5 +1,5 @@
 /** nestjs */
-import { Module } from "@nestjs/common";
+import { Module, OnModuleInit } from "@nestjs/common";
 
 /** modules */
 import { AuthModule } from "./auth/auth.module";
@@ -8,6 +8,14 @@ import { ConfigModule } from "./config/config.module";
 ////////////////////////////////////////////////////////////////////////////////
 
 @Module({
-  imports: [UsersModule, AuthModule, ConfigModule],
+  imports: [
+    UsersModule,
+    AuthModule,
+    ConfigModule.register({ folder: "./config" }),
+  ],
 })
-export class AppModule {}
+export class AppModule implements OnModuleInit {
+  onModuleInit() {
+    console.log("AppModule initialized");
+  }
+}

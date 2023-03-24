@@ -16,12 +16,15 @@ import {
 import { SigninDto } from "./dto/signin.dto";
 import { AuthPipe } from "./pipes/auth.pipe";
 import { AuthGuard } from "./guards/auth.guard";
+import { RolesGuard } from "./guards/roles.guard";
+import { Roles } from "./decorator/auth.decorator";
 import { UsersService } from "./../users/users.service";
 import { CreateUserDto } from "./../users/dto/create-user.dto";
 import { AuthInterceptor } from "./interceptors/auth.interceptor";
 ////////////////////////////////////////////////////////////////////////////////
 
-@Controller("auth")
+@Roles("user")
+@Controller("api/v1/auth")
 export class AuthController {
   constructor(
     // private readonly authService: AuthService,
@@ -39,7 +42,7 @@ export class AuthController {
     return "signin method";
   }
 
-  @UseGuards(AuthGuard)
+  @UseGuards(AuthGuard, RolesGuard)
   @Get("signout")
   signout() {
     return "signout method";

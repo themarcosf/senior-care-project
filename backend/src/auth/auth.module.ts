@@ -1,5 +1,3 @@
-/** @fileoverview Auth Module */
-
 /** nestjs */
 import {
   Module,

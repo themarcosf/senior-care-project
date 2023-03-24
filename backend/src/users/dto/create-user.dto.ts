@@ -1,5 +1,5 @@
 /**
- * @fileoverview Create user pipe DTO
+ * @fileoverview Create user DTO
  * data transfer object : describe and validate properties of request body
  * validation is done by class-validator package and pipes
  */

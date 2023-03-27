@@ -1,6 +1,12 @@
+/**
+ * Controllers are responsible for handling incoming requests and returning
+ * responses to the client. Think of them as entry points (routes)
+ */
+
 /** nestjs */
 import {
   Get,
+  Req,
   Post,
   Body,
   Param,
@@ -14,24 +20,34 @@ import {
 } from "@nestjs/common";
 
 /** providers */
-import { AuthService } from "./auth.service";
-import { AuthGuard } from "./guards/auth.guard";
-import { RolesGuard } from "./guards/roles.guard";
+import { LocalStrategy } from "./auth.strategy";
 import { UsersService } from "./../users/users.service";
 
 /** dependencies */
+import { Request } from "express";
+
+import { Roles } from "./decorator/auth.decorator";
+
 import { SigninDto } from "./dto/signin.dto";
 import { OutboundUserDto } from "./dto/outbound-user.dto";
 import { CreateUserDto } from "./../users/dto/create-user.dto";
-import { Roles } from "./decorator/auth.decorator";
-import { User } from "./../users/entities/user.entity";
+
+import { RolesGuard } from "./guards/roles.guard";
+import { LocalAuthGuard } from "./guards/local-auth.guard";
+import { ExampleAuthGuard } from "./guards/example-auth.guard";
 ////////////////////////////////////////////////////////////////////////////////
+
+/**
+ * GENERAL TODO :
+ *
+ * - implement crypto for password
+ */
 
 @Roles("user")
 @Controller("api/v1/auth")
 export class AuthController {
   constructor(
-    private readonly authService: AuthService,
+    private readonly localStrategy: LocalStrategy,
     private readonly usersService: UsersService
   ) {}
 
@@ -40,16 +56,16 @@ export class AuthController {
     return this.usersService.create(createUserDto);
   }
 
+  @UseGuards(LocalAuthGuard)
   @UseInterceptors(ClassSerializerInterceptor)
   @HttpCode(HttpStatus.OK)
   @Post("signin")
-  signin(@Body() signinDto: SigninDto): OutboundUserDto | null {
-    return new OutboundUserDto(
-      this.authService.validateUser(signinDto) as User
-    );
+  signin(@Req() req: Request, @Body() body: SigninDto): OutboundUserDto {
+    console.log("req.user: ", req.user);
+    return new OutboundUserDto(this.localStrategy.validate(body));
   }
 
-  @UseGuards(AuthGuard, RolesGuard)
+  @UseGuards(ExampleAuthGuard, RolesGuard)
   @Get("signout")
   signout() {
     return "signout method";

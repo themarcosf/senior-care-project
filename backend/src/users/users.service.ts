@@ -8,7 +8,7 @@
  */
 
 /** nestjs */
-import { Injectable, OnModuleInit } from "@nestjs/common";
+import { Injectable } from "@nestjs/common";
 
 /** dependencies */
 import { User } from "./entities/user.entity";
@@ -17,7 +17,7 @@ import { UpdateUserDto } from "./dto/update-user.dto";
 ////////////////////////////////////////////////////////////////////////////////
 
 @Injectable()
-export class UsersService implements OnModuleInit {
+export class UsersService {
   private readonly users: User[] = [];
 
   create(createUserDto: CreateUserDto) {
@@ -40,9 +40,5 @@ export class UsersService implements OnModuleInit {
 
   remove(id: number) {
     return this.users.splice(id - 1, 1);
-  }
-
-  onModuleInit() {
-    console.log("UsersService initialized");
   }
 }

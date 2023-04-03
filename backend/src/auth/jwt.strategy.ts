@@ -4,7 +4,7 @@ import { PassportStrategy } from "@nestjs/passport";
 
 /** dependencies */
 import { Strategy } from "passport-jwt";
-import { AuthConstants } from "./auth.constants";
+import { Constants } from "./enums/constants.enum";
 ////////////////////////////////////////////////////////////////////////////////
 
 @Injectable()
@@ -15,7 +15,7 @@ export class JwtStrategy extends PassportStrategy(Strategy) {
         return req.cookies.jwt;
       },
       ignoreExpiration: true, // TODO: change to false
-      secretOrKey: AuthConstants.JWT_SECRET,
+      secretOrKey: Constants.JWT_SECRET,
     });
   }
 

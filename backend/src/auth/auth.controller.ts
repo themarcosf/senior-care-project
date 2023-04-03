@@ -28,6 +28,9 @@ import { CreateUserDto } from "./../users/dto/create-user.dto";
 
 import { LocalAuthGuard } from "./guards/local-auth.guard";
 import { AllowAnonGuard } from "./guards/allow-anon.guard";
+import { RolesGuard } from "./guards/roles.guard";
+import { Roles } from "./decorators/roles.decorator";
+import { Role } from "./enums/role.enum";
 ////////////////////////////////////////////////////////////////////////////////
 
 @Controller("api/v1/auth")
@@ -64,12 +67,14 @@ export class AuthController {
     return new OutboundUserDto(user);
   }
 
+  @UseGuards(RolesGuard)
   @Get("signout")
   signout(@Req() req: any) {
     return req.user;
   }
 
   @Get(":id")
+  @Roles(Role.ADMIN)
   example(
     @Param(
       "id",

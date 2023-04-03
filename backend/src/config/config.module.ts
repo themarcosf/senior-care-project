@@ -1,5 +1,3 @@
-/** @fileoverview Dynamic Configuration Module */
-
 /** nestjs */
 import { DynamicModule, Module } from "@nestjs/common";
 

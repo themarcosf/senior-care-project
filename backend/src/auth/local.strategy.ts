@@ -11,7 +11,7 @@ import { Strategy } from "passport-local";
 
 import { SigninDto } from "./dto/signin.dto";
 import { User } from "../users/entities/user.entity";
-import { ExceptionMessages } from "../common/exceptions/exceptions.commom.enum";
+import { ExceptionMessages } from "../common/exceptions/exceptions.commom";
 ////////////////////////////////////////////////////////////////////////////////
 
 @Injectable()
@@ -32,8 +32,7 @@ export class LocalStrategy extends PassportStrategy(Strategy) {
     return [user, this.login(user)];
   }
 
-  login(user: User) {
-    const payload = { email: user.email, sub: user.id };
-    return this.jwtService.sign(payload);
+  login(user: User): string {
+    return this.jwtService.sign({ email: user.email, sub: user.id });
   }
 }

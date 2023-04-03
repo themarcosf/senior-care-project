@@ -18,11 +18,11 @@ import { UpdateUserDto } from "./dto/update-user.dto";
 
 @Injectable()
 export class UsersService {
-  private readonly users: User[] = [];
+  private readonly users: Array<User> = [];
 
   create(createUserDto: CreateUserDto) {
     const id = this.users.length + 1;
-    this.users.push({ ...createUserDto, id } as User);
+    this.users.push((<User>{ ...createUserDto, id }) as User);
     return this.users[id - 1];
   }
 

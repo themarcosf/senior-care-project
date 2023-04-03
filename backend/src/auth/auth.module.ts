@@ -5,6 +5,9 @@
  * https://docs.nestjs.com/techniques/authentication
  * https://github.com/auth0/node-jsonwebtoken#usage
  * https://github.com/nestjs/jwt/blob/master/README.md
+ *
+ * TODO : implement Passport strategies end-to-end (jwt & local)
+ * OPTION : use AWS Cognito
  */
 
 /** nestjs */
@@ -15,16 +18,21 @@ import {
   MiddlewareConsumer,
 } from "@nestjs/common";
 import { JwtModule } from "@nestjs/jwt";
+import { APP_GUARD } from "@nestjs/core";
 import { PassportModule } from "@nestjs/passport";
+
+/** controllers */
+import { AuthController } from "./auth.controller";
 
 /** providers */
 import { AuthService } from "./auth.service";
+import { JwtStrategy } from "./jwt.strategy";
 import { LocalStrategy } from "./local.strategy";
-import { AuthController } from "./auth.controller";
-import { AuthMiddleware } from "./middleware/auth.middleware";
+import { JwtAuthGuard } from "./guards/jwt-auth.guard";
 
 /** dependencies */
 import { AuthConstants } from "./auth.constants";
+import { AuthMiddleware } from "./middleware/auth.middleware";
 ////////////////////////////////////////////////////////////////////////////////
 
 @Module({
@@ -38,7 +46,12 @@ import { AuthConstants } from "./auth.constants";
     }),
   ],
   controllers: [AuthController],
-  providers: [LocalStrategy, AuthService],
+  providers: [
+    LocalStrategy,
+    JwtStrategy,
+    AuthService,
+    { provide: APP_GUARD, useClass: JwtAuthGuard },
+  ],
 })
 export class AuthModule implements NestModule {
   configure(consumer: MiddlewareConsumer) {

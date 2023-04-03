@@ -14,7 +14,7 @@ export class AuthService {
   constructor(private usersService: UsersService) {}
 
   validateUser(signinDto: SigninDto): User | null {
-    const user = this.usersService.findAll(signinDto.email) as User;
+    const user = <User>this.usersService.findAll(signinDto.email);
     return user?.password === signinDto.password ? user : null;
   }
 }

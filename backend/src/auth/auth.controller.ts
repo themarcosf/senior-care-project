@@ -25,28 +25,32 @@ import { Response } from "express";
 import { SigninDto } from "./dto/signin.dto";
 import { OutboundUserDto } from "./dto/outbound-user.dto";
 import { CreateUserDto } from "./../users/dto/create-user.dto";
-// import { RolesGuard } from "./guards/roles.guard";
-import { LocalAuthGuard } from "./guards/local-auth.guard";
-import { ExampleAuthGuard } from "./guards/example.guard";
-import { AllowAnon } from "./guards/allow-anon.guard";
-////////////////////////////////////////////////////////////////////////////////
 
-/** TODO : implement crypto for password */
+import { LocalAuthGuard } from "./guards/local-auth.guard";
+import { AllowAnonGuard } from "./guards/allow-anon.guard";
+////////////////////////////////////////////////////////////////////////////////
 
 @Controller("api/v1/auth")
 export class AuthController {
   constructor(
     private readonly localStrategy: LocalStrategy,
-    private readonly usersService: UsersService // TODO : move to local strategy
+    private readonly usersService: UsersService
   ) {}
 
-  @AllowAnon()
+  @AllowAnonGuard()
   @Post("signup")
-  signup(@Body() createUserDto: CreateUserDto) {
-    return this.usersService.create(createUserDto);
+  signup(
+    @Res({ passthrough: true }) res: Response,
+    @Body() createUserDto: CreateUserDto
+  ): OutboundUserDto {
+    const [user, jwt] = this.localStrategy.validate(
+      this.usersService.create(createUserDto)
+    );
+    res.cookie("jwt", jwt);
+    return new OutboundUserDto(user);
   }
 
-  @AllowAnon()
+  @AllowAnonGuard()
   @UseGuards(LocalAuthGuard)
   @UseInterceptors(ClassSerializerInterceptor)
   @HttpCode(HttpStatus.OK)
@@ -60,7 +64,6 @@ export class AuthController {
     return new OutboundUserDto(user);
   }
 
-  @UseGuards(ExampleAuthGuard)
   @Get("signout")
   signout(@Req() req: any) {
     return req.user;

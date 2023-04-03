@@ -2,6 +2,7 @@
  * @fileoverview Outbound User DTO
  * used to serialize the User entity
  */
+
 import { Expose, Exclude } from "class-transformer";
 import { User } from "./../../users/entities/user.entity";
 //////////////////////////////////////////////////////////////////////////////////////

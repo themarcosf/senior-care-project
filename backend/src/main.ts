@@ -14,10 +14,10 @@ import * as cookieParser from "cookie-parser";
   /** instantiate new project */
   const app = await NestFactory.create(AppModule, { abortOnError: false });
 
-  /** set cookie parser middleware */
+  /** generic middleware */
   app.use(cookieParser());
 
-  /** set empty global validation pipe; configured at handler level */
+  /** empty global validation pipe; configured at handler level */
   app.useGlobalPipes(new ValidationPipe({ whitelist: true }));
 
   /** start server listener */

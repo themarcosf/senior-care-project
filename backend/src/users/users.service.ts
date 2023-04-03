@@ -22,7 +22,7 @@ export class UsersService {
 
   create(createUserDto: CreateUserDto) {
     const id = this.users.length + 1;
-    this.users.push((<User>{ ...createUserDto, id }) as User);
+    this.users.push(<User>{ ...createUserDto, id });
     return this.users[id - 1];
   }
 
@@ -35,6 +35,7 @@ export class UsersService {
   }
 
   update(id: number, updateUserDto: UpdateUserDto) {
+    // TODO: password update should be handled differently
     return "// TODO: implement update method";
   }
 

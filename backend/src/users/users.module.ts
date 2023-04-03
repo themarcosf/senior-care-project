@@ -1,5 +1,3 @@
-/** @fileoverview Users Global Module */
-
 /** nestjs */
 import { Module, Global } from "@nestjs/common";
 

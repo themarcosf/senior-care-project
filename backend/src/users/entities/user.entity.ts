@@ -1,10 +1,10 @@
 import {
   Entity,
   Column,
-  PrimaryGeneratedColumn,
   AfterInsert,
   AfterUpdate,
   AfterRemove,
+  PrimaryGeneratedColumn,
 } from "typeorm";
 ////////////////////////////////////////////////////////////////////////////////
 

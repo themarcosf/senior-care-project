@@ -1,5 +1,5 @@
 import { SetMetadata } from "@nestjs/common";
+import { Constants } from "./../enums/constants.enum";
 ////////////////////////////////////////////////////////////////////////////////
 
-export const IS_PUBLIC_KEY = "isPublic";
-export const AllowAnonGuard = () => SetMetadata(IS_PUBLIC_KEY, true);
+export const AllowAnon = () => SetMetadata(Constants.IS_PUBLIC_KEY, true);

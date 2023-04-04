@@ -5,12 +5,11 @@ import {
   Res,
   Post,
   Body,
-  Param,
+  Logger,
   HttpCode,
   UseGuards,
   Controller,
   HttpStatus,
-  ParseIntPipe,
   UseInterceptors,
   ClassSerializerInterceptor,
 } from "@nestjs/common";
@@ -25,63 +24,54 @@ import { Response } from "express";
 import { SigninDto } from "./dto/signin.dto";
 import { OutboundUserDto } from "./dto/outbound-user.dto";
 import { CreateUserDto } from "./../users/dto/create-user.dto";
-
+import { AllowAnon } from "./guards/allow-anon.guard";
 import { LocalAuthGuard } from "./guards/local-auth.guard";
-import { AllowAnonGuard } from "./guards/allow-anon.guard";
-import { RolesGuard } from "./guards/roles.guard";
-import { Roles } from "./decorators/roles.decorator";
-import { Role } from "./enums/role.enum";
 ////////////////////////////////////////////////////////////////////////////////
 
 @Controller("api/v1/auth")
 export class AuthController {
+  private readonly logger = new Logger(AuthController.name);
+
   constructor(
     private readonly localStrategy: LocalStrategy,
     private readonly usersService: UsersService
   ) {}
 
-  @AllowAnonGuard()
+  @AllowAnon()
+  @UseInterceptors(ClassSerializerInterceptor)
   @Post("signup")
   signup(
     @Res({ passthrough: true }) res: Response,
     @Body() createUserDto: CreateUserDto
   ): OutboundUserDto {
+    this.logger.log(
+      `Transformed Create User DTO: ${JSON.stringify(createUserDto)}`
+    );
     const [user, jwt] = this.localStrategy.validate(
       this.usersService.create(createUserDto)
     );
     res.cookie("jwt", jwt);
+
     return new OutboundUserDto(user);
   }
 
-  @AllowAnonGuard()
+  @AllowAnon()
   @UseGuards(LocalAuthGuard)
   @UseInterceptors(ClassSerializerInterceptor)
   @HttpCode(HttpStatus.OK)
   @Post("signin")
   signin(
     @Res({ passthrough: true }) res: Response,
-    @Body() body: SigninDto
+    @Body() signinDto: SigninDto
   ): OutboundUserDto {
-    const [user, jwt] = this.localStrategy.validate(body);
+    this.logger.log(`Transformed Signin DTO: ${JSON.stringify(signinDto)}`);
+    const [user, jwt] = this.localStrategy.validate(signinDto);
     res.cookie("jwt", jwt);
     return new OutboundUserDto(user);
   }
 
-  @UseGuards(RolesGuard)
   @Get("signout")
   signout(@Req() req: any) {
     return req.user;
-  }
-
-  @Get(":id")
-  @Roles(Role.ADMIN)
-  example(
-    @Param(
-      "id",
-      new ParseIntPipe({ errorHttpStatusCode: HttpStatus.NOT_ACCEPTABLE })
-    )
-    id: number
-  ) {
-    return `built-in ParseIntPipe example, id: ${id}`;
   }
 }

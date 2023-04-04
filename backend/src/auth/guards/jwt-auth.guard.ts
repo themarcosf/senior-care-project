@@ -4,7 +4,7 @@ import { AuthGuard } from "@nestjs/passport";
 import { Reflector } from "@nestjs/core";
 
 /** dependencies */
-import { IS_PUBLIC_KEY } from "./allow-anon.guard";
+import { Constants } from "./../enums/constants.enum";
 ////////////////////////////////////////////////////////////////////////////////
 
 @Injectable()
@@ -14,10 +14,10 @@ export class JwtAuthGuard extends AuthGuard("jwt") {
   }
 
   canActivate(context: ExecutionContext) {
-    const isPublic = this.reflector.getAllAndOverride<boolean>(IS_PUBLIC_KEY, [
-      context.getHandler(),
-      context.getClass(),
-    ]);
+    const isPublic = this.reflector.getAllAndOverride<boolean>(
+      Constants.IS_PUBLIC_KEY,
+      [context.getHandler(), context.getClass()]
+    );
     if (isPublic) {
       return true;
     }

@@ -1,7 +1,6 @@
 /** nestjs */
 import {
   Get,
-  Req,
   Res,
   Post,
   Body,
@@ -13,6 +12,7 @@ import {
   UseInterceptors,
   ClassSerializerInterceptor,
 } from "@nestjs/common";
+import { AuthGuard } from "@nestjs/passport";
 
 /** providers */
 import { LocalStrategy } from "./local.strategy";
@@ -21,11 +21,11 @@ import { UsersService } from "./../users/users.service";
 /** dependencies */
 import { Response } from "express";
 
+import { Constants } from "./enums/constants.enum";
+import { AllowAnon } from "./guards/allow-anon.guard";
 import { SigninDto } from "./dto/signin.dto";
 import { OutboundUserDto } from "./dto/outbound-user.dto";
 import { CreateUserDto } from "./../users/dto/create-user.dto";
-import { AllowAnon } from "./guards/allow-anon.guard";
-import { LocalAuthGuard } from "./guards/local-auth.guard";
 ////////////////////////////////////////////////////////////////////////////////
 
 @Controller("api/v1/auth")
@@ -38,6 +38,7 @@ export class AuthController {
   ) {}
 
   @AllowAnon()
+  @UseGuards(AuthGuard(Constants.PASSPORT_STRATEGY))
   @UseInterceptors(ClassSerializerInterceptor)
   @Post("signup")
   signup(
@@ -51,12 +52,11 @@ export class AuthController {
       this.usersService.create(createUserDto)
     );
     res.cookie("jwt", jwt);
-
     return new OutboundUserDto(user);
   }
 
   @AllowAnon()
-  @UseGuards(LocalAuthGuard)
+  @UseGuards(AuthGuard(Constants.PASSPORT_STRATEGY))
   @UseInterceptors(ClassSerializerInterceptor)
   @HttpCode(HttpStatus.OK)
   @Post("signin")
@@ -71,7 +71,8 @@ export class AuthController {
   }
 
   @Get("signout")
-  signout(@Req() req: any) {
-    return req.user;
+  signout(@Res({ passthrough: true }) res: Response): void {
+    res.clearCookie("jwt");
+    return;
   }
 }

@@ -6,6 +6,7 @@
  */
 
 /** nestjs */
+import { JwtService } from "@nestjs/jwt";
 import { INestApplication } from "@nestjs/common";
 import { Test, TestingModule } from "@nestjs/testing";
 
@@ -17,6 +18,7 @@ import { UsersService } from "../users/users.service";
 
 /** dependencies */
 import * as request from "supertest";
+import { Constants } from "./enums/constants.enum";
 ////////////////////////////////////////////////////////////////////////////////
 
 /** providers instances */
@@ -38,10 +40,17 @@ const mockCreateUserDto = {
   role: "user",
 };
 
+const mockJwtService = new JwtService({
+  secret: Constants.JWT_SECRET,
+  signOptions: { expiresIn: Constants.JWT_EXPIRESIN },
+});
+
 beforeAll(async () => {
   localStrategy = <LocalStrategy>{
     validate: (body: any) => {
-      return [{ ...mockCreateUserDto, id: 1 }, "0x123"];
+      const jwt = mockJwtService.sign({ id: 1, email: "" });
+
+      return [{ ...mockCreateUserDto, id: 1 }, jwt];
     },
   };
 
@@ -99,7 +108,9 @@ describe("AuthController", () => {
     });
 
     it("should return error if user already exists", () => {
-      // TO BE IMPLEMENTED
+      console.log(
+        "TO BE IMPLEMENTED: should return error if user already exists"
+      );
     });
   });
 
@@ -120,26 +131,31 @@ describe("AuthController", () => {
 
     it("should return JSON web token as cookie", () => {
       expect(jwt).toBeDefined();
+    });
 
-      jwt = undefined;
+    it("should return error if user credentials are invalid", () => {
+      console.log(
+        "TO BE IMPLEMENTED: should return error if user credentials are invalid"
+      );
     });
   });
 
   describe("Signout method", () => {
     it("should return empty response", async () => {
       const response = await request(app.getHttpServer())
-        .post("/api/v1/auth/signout")
-        .set("Cookie", [`jwt=${jwt}`]);
+        .get("/api/v1/auth/signout")
+        .auth(`jwt=${jwt}`, {
+          type: "bearer",
+        });
 
       expect(response.status).toBe(200);
       expect(response.body).toEqual({});
+
+      jwt = response.headers["set-cookie"][0].split(";")[0].split("=")[1];
     });
 
     it("should clear JSON web token cookie", async () => {
-      // const response = await request(app.getHttpServer())
-      //   .post("/api/v1/auth/signout")
-      //   .set("Cookie", [`jwt=${jwt}`]);
-      // expect(response.header["set-cookie"][0]).toBe("jwt=; Path=/; HttpOnly");
+      expect(jwt).toBe("");
     });
   });
 });

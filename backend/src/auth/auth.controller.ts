@@ -54,12 +54,17 @@ export class AuthController {
   }
 
   @Get(Constants.API.SIGNOUT)
-  signout(@Req() req: any): User {
+  signout(@Req() req: any): void {
     /**
      * TODO :
      * - add jwt to blacklist
      * - persist user session
      */
+    return;
+  }
+
+  @Get(Constants.API.PROFILE)
+  profile(@Req() req: any): User {
     return req.user;
   }
 }

@@ -9,7 +9,6 @@ import { AuthService } from "./auth.service";
 /** dependencies */
 import { Strategy } from "passport-local";
 
-import { SigninDto } from "./dto/signin.dto";
 import { User } from "../users/entities/user.entity";
 import { ExceptionMessages } from "../common/commom.enum";
 ////////////////////////////////////////////////////////////////////////////////
@@ -20,8 +19,8 @@ export class LocalStrategy extends PassportStrategy(Strategy) {
     super({ usernameField: "email" });
   }
 
-  validate(body: SigninDto): User {
-    const user = this.authService.validateUser(body);
+  validate(email: string, pass: string): User {
+    const user = this.authService.validateUser(email, pass);
 
     if (!user)
       throw new UnauthorizedException(ExceptionMessages.USER_NOT_FOUND);

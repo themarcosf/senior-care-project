@@ -6,15 +6,17 @@ import { ValidationPipe } from "@nestjs/common";
 import { AppModule } from "./app.module";
 
 /** dependencies */
+import helmet from "helmet";
 import * as cookieParser from "cookie-parser";
 ////////////////////////////////////////////////////////////////////////////////
 
 /** bootstrap project */
 (async function () {
   /** instantiate new project */
-  const app = await NestFactory.create(AppModule, { abortOnError: false });
+  const app = await NestFactory.create(AppModule, { cors: true });
 
   /** generic middleware */
+  app.use(helmet());
   app.use(cookieParser());
 
   /** empty global validation pipe; configured at handler level */

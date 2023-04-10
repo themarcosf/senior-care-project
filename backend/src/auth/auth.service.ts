@@ -6,7 +6,6 @@ import { Injectable } from "@nestjs/common";
 import { UsersService } from "../users/users.service";
 
 /** dependencies */
-import { SigninDto } from "./dto/signin.dto";
 import { User } from "../users/entities/user.entity";
 ////////////////////////////////////////////////////////////////////////////////
 
@@ -17,9 +16,9 @@ export class AuthService {
     private readonly usersService: UsersService
   ) {}
 
-  validateUser(signinDto: SigninDto): User | null {
-    const user = <User>this.usersService.findAll(signinDto.email);
-    return user?.password === signinDto.password ? user : null;
+  validateUser(email: string, pass: string): User | null {
+    const user = <User>this.usersService.findAll(email);
+    return user?.password === pass ? user : null;
   }
 
   async login(user: any) {

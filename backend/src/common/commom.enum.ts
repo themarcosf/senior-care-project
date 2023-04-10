@@ -7,7 +7,7 @@ export class Constants {
   static Auth = {
     PASSPORT_STRATEGY: "local",
     JWT_SECRET: "secret",
-    JWT_EXPIRESIN: "1s",
+    JWT_EXPIRESIN: "60s",
     JWT_AUTHGUARD: "jwt",
     IS_PUBLIC_KEY: "isPublic",
   };
@@ -19,5 +19,6 @@ export class Constants {
     SIGNUP: "signup",
     SIGNIN: "signin",
     SIGNOUT: "signout",
+    PROFILE: "profile",
   };
 }

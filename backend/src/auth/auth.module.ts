@@ -27,17 +27,17 @@ import { LocalStrategy } from "./local.strategy";
 import { JwtAuthGuard } from "./guards/jwt-auth.guard";
 
 /** dependencies */
-import { Constants } from "./enums/constants.enum";
+import { Constants } from "../common/commom.enum";
 ////////////////////////////////////////////////////////////////////////////////
 
 @Module({
   imports: [
     PassportModule.register({
-      defaultStrategy: Constants.PASSPORT_STRATEGY,
+      defaultStrategy: Constants.Auth.PASSPORT_STRATEGY,
     }),
     JwtModule.register({
-      secret: Constants.JWT_SECRET,
-      signOptions: { expiresIn: Constants.JWT_EXPIRESIN },
+      secret: Constants.Auth.JWT_SECRET,
+      signOptions: { expiresIn: Constants.Auth.JWT_EXPIRESIN },
     }),
   ],
   controllers: [AuthController],

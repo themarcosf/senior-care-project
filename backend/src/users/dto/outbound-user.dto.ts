@@ -4,7 +4,7 @@
  */
 
 import { Expose, Exclude } from "class-transformer";
-import { User } from "./../../users/entities/user.entity";
+import { User } from "../entities/user.entity";
 //////////////////////////////////////////////////////////////////////////////////////
 
 export class OutboundUserDto {

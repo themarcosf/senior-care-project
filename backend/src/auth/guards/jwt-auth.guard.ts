@@ -8,30 +8,31 @@ import { AuthGuard } from "@nestjs/passport";
 import { Reflector } from "@nestjs/core";
 
 /** dependencies */
-import { Constants } from "./../enums/constants.enum";
+
+import { ExceptionMessages, Constants } from "../../common/commom.enum";
 ////////////////////////////////////////////////////////////////////////////////
 
 @Injectable()
-export class JwtAuthGuard extends AuthGuard("jwt") {
+export class JwtAuthGuard extends AuthGuard(Constants.Auth.JWT_AUTHGUARD) {
   constructor(private reflector: Reflector) {
     super();
   }
 
   canActivate(context: ExecutionContext) {
-    const isPublic = this.reflector.getAllAndOverride<boolean>(
-      Constants.IS_PUBLIC_KEY,
-      [context.getHandler(), context.getClass()]
-    );
-
-    if (isPublic) {
+    if (
+      this.reflector.getAllAndOverride<boolean>(Constants.Auth.IS_PUBLIC_KEY, [
+        context.getHandler(),
+        context.getClass(),
+      ])
+    )
       return true;
-    }
 
     return super.canActivate(context);
   }
 
   handleRequest(err: any, user: any) {
-    if (err || !user) throw new UnauthorizedException("User not authenticated");
+    if (err || !user)
+      throw new UnauthorizedException(ExceptionMessages.USER_NOT_FOUND);
 
     return user;
   }

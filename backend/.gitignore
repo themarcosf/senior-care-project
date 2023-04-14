@@ -11,6 +11,12 @@ npm-debug.log*
 # OS
 .DS_Store
 
+# Data files
+db.sqlite
+
+# local env files
+.env
+
 # tests
 /coverage
 /.nyc_output

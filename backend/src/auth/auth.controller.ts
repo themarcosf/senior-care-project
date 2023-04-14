@@ -30,7 +30,7 @@ interface PassportJwt {
   access_token: string;
 }
 
-@Controller(Constants.API.ADDR)
+@Controller(Constants.Auth.ADDR)
 export class AuthController {
   constructor(
     private readonly authService: AuthService,
@@ -38,7 +38,7 @@ export class AuthController {
   ) {}
 
   @AllowAnon()
-  @Post(Constants.API.SIGNUP)
+  @Post(Constants.Auth.SIGNUP)
   async signup(@Body() createUserDto: CreateUserDto): Promise<PassportJwt> {
     return this.authService.login(
       await this.usersService.create(createUserDto)
@@ -48,12 +48,12 @@ export class AuthController {
   @AllowAnon()
   @UseGuards(AuthGuard(Constants.Auth.PASSPORT_STRATEGY))
   @HttpCode(HttpStatus.OK)
-  @Post(Constants.API.SIGNIN)
+  @Post(Constants.Auth.SIGNIN)
   async signin(@Req() req: PassportRequest): Promise<PassportJwt> {
     return await this.authService.login(req.user);
   }
 
-  @Get(Constants.API.SIGNOUT)
+  @Get(Constants.Auth.SIGNOUT)
   signout(@Req() req: any): void {
     /**
      * TODO :
@@ -63,7 +63,7 @@ export class AuthController {
     return;
   }
 
-  @Get(Constants.API.PROFILE)
+  @Get(Constants.Auth.PROFILE)
   profile(@Req() req: any): User {
     return req.user;
   }

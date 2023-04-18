@@ -5,7 +5,7 @@ import { PassportStrategy } from "@nestjs/passport";
 /** dependencies */
 import { ExtractJwt, Strategy } from "passport-jwt";
 
-import { Constants } from "./../common/commom.enum";
+import { Auth } from "./common/common.enum";
 import { User } from "./../users/entities/user.entity";
 import { UsersService } from "./../users/users.service";
 ////////////////////////////////////////////////////////////////////////////////
@@ -23,7 +23,7 @@ export class JwtStrategy extends PassportStrategy(Strategy) {
     super({
       jwtFromRequest: ExtractJwt.fromAuthHeaderAsBearerToken(),
       ignoreExpiration: false,
-      secretOrKey: Constants.Auth.JWT_SECRET,
+      secretOrKey: Auth.JWT_SECRET,
     });
   }
 

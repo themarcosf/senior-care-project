@@ -1,6 +1,12 @@
-import { Entity, PrimaryGeneratedColumn, Column } from "typeorm";
-
-// import { CreateMedicalProgressionDto } from "../dto/create-medical-progression.dto";
+import {
+  Entity,
+  Column,
+  AfterInsert,
+  AfterUpdate,
+  AfterRemove,
+  PrimaryGeneratedColumn,
+} from "typeorm";
+////////////////////////////////////////////////////////////////////////////////
 
 @Entity()
 export class MedicalProgression {
@@ -25,10 +31,19 @@ export class MedicalProgression {
   @Column({ default: () => "CURRENT_TIMESTAMP" })
   date: Date;
 
-  // constructor(createMedicalProgressionDto: CreateMedicalProgressionDto) {
-  //   this.diagnosis = createMedicalProgressionDto.diagnosis;
-  //   this.physicians = createMedicalProgressionDto.physicians;
-  //   this.nurses = createMedicalProgressionDto.nurses;
-  //   this.medicalTests = createMedicalProgressionDto.medicalTests;
-  // }
+  /** hooks */
+  @AfterInsert()
+  logInsert() {
+    console.log("@HOOK = Inserted user with id", this.id);
+  }
+
+  @AfterUpdate()
+  logUpdate() {
+    console.log("@HOOK = Updated user with id", this.id);
+  }
+
+  @AfterRemove()
+  logRemove() {
+    console.log("@HOOK = Removed user with id", this.id);
+  }
 }

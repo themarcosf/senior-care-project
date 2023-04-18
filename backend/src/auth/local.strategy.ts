@@ -10,7 +10,7 @@ import { AuthService } from "./auth.service";
 import { Strategy } from "passport-local";
 
 import { User } from "../users/entities/user.entity";
-import { ExceptionMessages } from "../common/commom.enum";
+import { ExceptionMessages } from "../common/common.enum";
 ////////////////////////////////////////////////////////////////////////////////
 
 @Injectable()

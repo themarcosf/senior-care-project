@@ -16,10 +16,14 @@ export class MedicalProgressionService {
     private medicalProgressionRepository: Repository<MedicalProgression>
   ) {}
 
+  // TODO : implement QueryRunner
   async create(
     createMedicalProgressionDto: CreateMedicalProgressionDto
   ): Promise<MedicalProgression> {
-    const medicalProgression = new MedicalProgression();
+    const medicalProgression = this.medicalProgressionRepository.create(
+      createMedicalProgressionDto
+    );
+    await this.medicalProgressionRepository.save(medicalProgression);
     return medicalProgression;
   }
 

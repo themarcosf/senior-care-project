@@ -15,10 +15,10 @@ import { MedicalProgressionService } from "./medical-progression.service";
 /** dependencies */
 import { CreateMedicalProgressionDto } from "./dto/create-medical-progression.dto";
 import { UpdateMedicalProgressionDto } from "./dto/update-medical-progression.dto";
-import { Constants } from "../common/commom.enum";
+import { Api } from "./common/common.enum";
 ////////////////////////////////////////////////////////////////////////////////
 
-@Controller(Constants.MedicalProgression.ADDR)
+@Controller(Api.ADDR)
 export class MedicalProgressionController {
   constructor(
     private readonly medicalProgressionService: MedicalProgressionService
@@ -26,8 +26,7 @@ export class MedicalProgressionController {
 
   @Post()
   create(@Body() createMedicalProgressionDto: CreateMedicalProgressionDto) {
-    return createMedicalProgressionDto;
-    // return this.medicalProgressionService.create(createMedicalProgressionDto);
+    return this.medicalProgressionService.create(createMedicalProgressionDto);
   }
 
   @Get()

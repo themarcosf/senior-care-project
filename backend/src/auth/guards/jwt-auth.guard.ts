@@ -9,18 +9,19 @@ import { Reflector } from "@nestjs/core";
 
 /** dependencies */
 
-import { ExceptionMessages, Constants } from "../../common/commom.enum";
+import { ExceptionMessages } from "../../common/common.enum";
+import { Auth } from "../common/common.enum";
 ////////////////////////////////////////////////////////////////////////////////
 
 @Injectable()
-export class JwtAuthGuard extends AuthGuard(Constants.Auth.JWT_AUTHGUARD) {
+export class JwtAuthGuard extends AuthGuard(Auth.JWT_AUTHGUARD) {
   constructor(private reflector: Reflector) {
     super();
   }
 
   canActivate(context: ExecutionContext) {
     if (
-      this.reflector.getAllAndOverride<boolean>(Constants.Auth.IS_PUBLIC_KEY, [
+      this.reflector.getAllAndOverride<boolean>(Auth.IS_PUBLIC_KEY, [
         context.getHandler(),
         context.getClass(),
       ])

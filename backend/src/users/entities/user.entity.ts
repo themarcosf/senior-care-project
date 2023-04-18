@@ -1,5 +1,4 @@
 import {
-  Entity,
   Column,
   AfterInsert,
   AfterUpdate,
@@ -8,7 +7,6 @@ import {
 } from "typeorm";
 ////////////////////////////////////////////////////////////////////////////////
 
-@Entity()
 export class User {
   @PrimaryGeneratedColumn()
   id: number;
@@ -22,11 +20,8 @@ export class User {
   @Column()
   password: string;
 
-  @Column({ unique: true })
-  photo: string;
-
-  @Column({ default: "user" })
-  role: string;
+  @Column()
+  licenseNum: string;
 
   @Column({ default: true })
   active: boolean;

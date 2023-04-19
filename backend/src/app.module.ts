@@ -22,7 +22,7 @@ import { MedicalProgressionModule } from "./medical-progression/medical-progress
       isGlobal: true,
       ignoreEnvFile: process.env.NODE_ENV === "prod" ? true : false,
     }),
-    /** DataSource and EntityManager available using constructor injection */
+    /** see https://typeorm.io/data-source-options */
     TypeOrmModule.forRoot({
       type: "sqlite",
       database: "db.sqlite",

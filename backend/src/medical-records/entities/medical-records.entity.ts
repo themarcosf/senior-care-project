@@ -5,7 +5,9 @@ import {
   AfterUpdate,
   AfterRemove,
   PrimaryGeneratedColumn,
+  OneToMany,
 } from "typeorm";
+import { MedicalProgression } from "../../medical-progression/entities/medical-progression.entity";
 ////////////////////////////////////////////////////////////////////////////////
 
 @Entity()
@@ -16,8 +18,11 @@ export class MedicalRecord {
   @Column()
   patientId: number;
 
-  @Column({ type: "simple-array", default: "init" })
-  progressions: string[];
+  @OneToMany(
+    () => MedicalProgression,
+    (progression) => progression.medicalRecord
+  )
+  progressions: MedicalProgression[];
 
   @Column({ default: true })
   active: boolean;

@@ -7,13 +7,17 @@ import { MedicalProgressionController } from "./medical-progression.controller";
 
 /** providers */
 import { MedicalProgressionService } from "./medical-progression.service";
+import { MedicalRecordsModule } from "../medical-records/medical-records.module";
 
 /** dependencies */
 import { MedicalProgression } from "./entities/medical-progression.entity";
 ////////////////////////////////////////////////////////////////////////////////
 
 @Module({
-  imports: [TypeOrmModule.forFeature([MedicalProgression])],
+  imports: [
+    MedicalRecordsModule,
+    TypeOrmModule.forFeature([MedicalProgression]),
+  ],
   controllers: [MedicalProgressionController],
   providers: [MedicalProgressionService],
 })

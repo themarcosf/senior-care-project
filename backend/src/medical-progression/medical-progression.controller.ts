@@ -7,6 +7,7 @@ import {
   Patch,
   Param,
   Delete,
+  Query,
 } from "@nestjs/common";
 
 /** providers */
@@ -25,8 +26,14 @@ export class MedicalProgressionController {
   ) {}
 
   @Post()
-  create(@Body() createMedicalProgressionDto: CreateMedicalProgressionDto) {
-    return this.medicalProgressionService.create(createMedicalProgressionDto);
+  create(
+    @Query("record") record: string,
+    @Body() createMedicalProgressionDto: CreateMedicalProgressionDto
+  ) {
+    return this.medicalProgressionService.create(
+      createMedicalProgressionDto,
+      +record
+    );
   }
 
   @Get()

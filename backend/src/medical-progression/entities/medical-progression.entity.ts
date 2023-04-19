@@ -1,11 +1,13 @@
 import {
   Entity,
   Column,
+  ManyToOne,
   AfterInsert,
   AfterUpdate,
   AfterRemove,
   PrimaryGeneratedColumn,
 } from "typeorm";
+import { MedicalRecord } from "../../medical-records/entities/medical-records.entity";
 ////////////////////////////////////////////////////////////////////////////////
 
 @Entity()
@@ -27,6 +29,9 @@ export class MedicalProgression {
   // TODO : add ManyToOne relations with MedicalTests
   @Column()
   medicalTests: string;
+
+  @ManyToOne(() => MedicalRecord, (medicalRecord) => medicalRecord.progressions)
+  medicalRecord: MedicalRecord;
 
   @Column({ default: () => "CURRENT_TIMESTAMP" })
   date: Date;

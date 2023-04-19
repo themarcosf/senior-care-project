@@ -14,6 +14,6 @@ import { MedicalRecordsService } from "./medical-records.service";
   imports: [TypeOrmModule.forFeature([MedicalRecord])],
   controllers: [MedicalRecordsController],
   providers: [MedicalRecordsService],
-  exports: [MedicalRecordsService],
+  exports: [MedicalRecordsService, TypeOrmModule],
 })
 export class MedicalRecordsModule {}

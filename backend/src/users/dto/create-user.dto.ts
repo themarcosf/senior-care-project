@@ -13,4 +13,7 @@ export class CreateUserDto {
 
   @IsString()
   licenseNum: string;
+
+  @IsString()
+  role: string;
 }

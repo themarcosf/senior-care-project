@@ -5,12 +5,9 @@ import { InjectRepository } from "@nestjs/typeorm";
 /** dependencies */
 import { Repository } from "typeorm";
 
-import { Role } from "./common/common.enum";
 import { CreateUserDto } from "./dto/create-user.dto";
 import { UpdateUserDto } from "./dto/update-user.dto";
 import { User } from "./entities/user.entity";
-import { Physician } from "./entities/physician.entity";
-import { PracticalNurse } from "./entities/practicalNurse.entity";
 ////////////////////////////////////////////////////////////////////////////////
 
 @Injectable()
@@ -18,32 +15,28 @@ export class UsersService {
   private readonly users: Array<User> = [];
 
   constructor(
-    @InjectRepository(Physician)
-    private physicianRepository: Repository<Physician>,
-    @InjectRepository(PracticalNurse)
-    private practicalNurseRepository: Repository<PracticalNurse>
+    @InjectRepository(User)
+    private repository: Repository<User>
   ) {}
 
-  async create(createUserDto: CreateUserDto, role: string) {
-    switch (role) {
-      case Role.PHYSICIAN:
-        const physician = this.physicianRepository.create(createUserDto);
-        return await this.physicianRepository.save(physician);
-      case Role.PRACTICAL_NURSE:
-        const practicalNurse =
-          this.practicalNurseRepository.create(createUserDto);
-        return await this.practicalNurseRepository.save(practicalNurse);
-      default:
-        return Role.INVALID_ROLE;
-    }
+  async create(createUserDto: CreateUserDto, role: string): Promise<User> {
+    this.users.push(
+      Object.assign(createUserDto, { id: this.users.length + 1 }) as User
+    );
+
+    const user = this.repository.create(createUserDto);
+    return await this.repository.save(user);
   }
 
-  findAll(email?: string): User | User[] | undefined {
-    return email ? this.users.find((user) => user.email === email) : this.users;
+  async findAll(): Promise<User[]> {
+    return await this.repository.find();
   }
 
-  findOne(id: number) {
-    return this.users[id - 1];
+  async findOne(criteria: {
+    id?: number;
+    email?: string;
+  }): Promise<User | null> {
+    return this.repository.findOne({ where: criteria });
   }
 
   update(id: number, updateUserDto: UpdateUserDto) {
@@ -52,6 +45,6 @@ export class UsersService {
   }
 
   remove(id: number) {
-    return this.users.splice(id - 1, 1);
+    return "// TODO: implement remove method";
   }
 }

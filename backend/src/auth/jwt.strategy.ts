@@ -28,6 +28,8 @@ export class JwtStrategy extends PassportStrategy(Strategy) {
   }
 
   async validate(payload: Payload): Promise<User> {
-    return await (<User>this.usersService.findAll(payload.email));
+    return await (<Promise<User>>(
+      this.usersService.findOne({ email: payload.email })
+    ));
   }
 }

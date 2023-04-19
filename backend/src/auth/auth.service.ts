@@ -16,8 +16,8 @@ export class AuthService {
     private readonly usersService: UsersService
   ) {}
 
-  validateUser(email: string, pass: string): User | null {
-    const user = <User>this.usersService.findAll(email);
+  async validateUser(email: string, pass: string): Promise<User | null> {
+    const user = await (<Promise<User>>this.usersService.findOne({ email }));
     return user?.password === pass ? user : null;
   }
 

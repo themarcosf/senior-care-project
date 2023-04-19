@@ -1,5 +1,6 @@
 import {
   Column,
+  Entity,
   AfterInsert,
   AfterUpdate,
   AfterRemove,
@@ -7,6 +8,7 @@ import {
 } from "typeorm";
 ////////////////////////////////////////////////////////////////////////////////
 
+@Entity()
 export class User {
   @PrimaryGeneratedColumn()
   id: number;
@@ -22,6 +24,9 @@ export class User {
 
   @Column()
   licenseNum: string;
+
+  @Column({ enum: ["practicalNurse", "physician", "admin"] })
+  role: string;
 
   @Column({ default: true })
   active: boolean;

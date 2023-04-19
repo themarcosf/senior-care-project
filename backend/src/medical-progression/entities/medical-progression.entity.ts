@@ -34,16 +34,16 @@ export class MedicalProgression {
   /** hooks */
   @AfterInsert()
   logInsert() {
-    console.log("@HOOK = Inserted user with id", this.id);
+    console.log("@HOOK = Inserted medical progression with id", this.id);
   }
 
   @AfterUpdate()
   logUpdate() {
-    console.log("@HOOK = Updated user with id", this.id);
+    console.log("@HOOK = Updated medical progression with id", this.id);
   }
 
   @AfterRemove()
   logRemove() {
-    console.log("@HOOK = Removed user with id", this.id);
+    console.log("@HOOK = Removed medical progression with id", this.id);
   }
 }

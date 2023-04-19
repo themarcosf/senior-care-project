@@ -58,7 +58,7 @@ export class AuthController {
   }
 
   @Get(Api.SIGNOUT)
-  signout(@Req() req: any): void {
+  async signout(@Req() req: any): Promise<void> {
     /**
      * TODO :
      * - add jwt to blacklist

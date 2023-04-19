@@ -14,6 +14,9 @@ export class OutboundUserDto {
   }
 
   @Exclude()
+  id: number;
+
+  @Exclude()
   name: string;
 
   @Exclude()
@@ -23,10 +26,10 @@ export class OutboundUserDto {
   password: string;
 
   @Exclude()
-  role: string;
+  licenseNum: string;
 
   @Exclude()
-  id: number;
+  role: string;
 
   constructor(partial: Partial<User>) {
     Object.assign(this, partial);

@@ -4,7 +4,6 @@ import {
   Req,
   Post,
   Body,
-  Query,
   HttpCode,
   UseGuards,
   Controller,
@@ -40,12 +39,9 @@ export class AuthController {
 
   @AllowAnon()
   @Post(Api.SIGNUP)
-  async signup(
-    @Body() createUserDto: CreateUserDto,
-    @Query("role") role: string
-  ): Promise<PassportJwt> {
+  async signup(@Body() createUserDto: CreateUserDto): Promise<PassportJwt> {
     return this.authService.login(
-      await this.usersService.create(createUserDto, role)
+      await this.usersService.create(createUserDto)
     );
   }
 

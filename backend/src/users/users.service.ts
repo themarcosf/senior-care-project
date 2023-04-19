@@ -1,5 +1,5 @@
 /** nestjs */
-import { Injectable } from "@nestjs/common";
+import { Injectable, UnauthorizedException } from "@nestjs/common";
 import { InjectRepository } from "@nestjs/typeorm";
 
 /** dependencies */
@@ -12,17 +12,15 @@ import { User } from "./entities/user.entity";
 
 @Injectable()
 export class UsersService {
-  private readonly users: Array<User> = [];
-
   constructor(
     @InjectRepository(User)
     private repository: Repository<User>
   ) {}
 
-  async create(createUserDto: CreateUserDto, role: string): Promise<User> {
-    this.users.push(
-      Object.assign(createUserDto, { id: this.users.length + 1 }) as User
-    );
+  async create(createUserDto: CreateUserDto): Promise<User> {
+    if (await this.findOne({ email: createUserDto.email })) {
+      throw new UnauthorizedException("Email already exists");
+    }
 
     const user = this.repository.create(createUserDto);
     return await this.repository.save(user);

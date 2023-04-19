@@ -8,9 +8,7 @@ import { AuthService } from "./auth.service";
 
 /** dependencies */
 import { Strategy } from "passport-local";
-
 import { User } from "../users/entities/user.entity";
-import { ExceptionMessages } from "../common/common.enum";
 ////////////////////////////////////////////////////////////////////////////////
 
 @Injectable()
@@ -22,8 +20,7 @@ export class LocalStrategy extends PassportStrategy(Strategy) {
   async validate(email: string, pass: string): Promise<User> {
     const user = await this.authService.validateUser(email, pass);
 
-    if (!user)
-      throw new UnauthorizedException(ExceptionMessages.USER_NOT_FOUND);
+    if (!user) throw new UnauthorizedException("User not found");
 
     return user;
   }

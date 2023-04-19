@@ -1,13 +1,43 @@
-/** this entity describes a Medical Record, which is a document that contains the medical history of a patient */
+import {
+  Column,
+  Entity,
+  AfterInsert,
+  AfterUpdate,
+  AfterRemove,
+  PrimaryGeneratedColumn,
+} from "typeorm";
+////////////////////////////////////////////////////////////////////////////////
+
+@Entity()
 export class MedicalRecord {
-  /** the id of the medical record */
+  @PrimaryGeneratedColumn()
   id: number;
-  /** the id of the patient */
+
+  @Column()
   patientId: number;
-  /** the id of the doctor who created the medical record */
-  doctorId: number;
-  /** the date when the medical record was created */
-  date: Date;
-  /** the description of the medical record */
-  description: string;
+
+  @Column({ type: "simple-array", default: "init" })
+  progressions: string[];
+
+  @Column({ default: true })
+  active: boolean;
+
+  @Column({ default: () => "CURRENT_TIMESTAMP" })
+  createdAt: Date;
+
+  /** hooks */
+  @AfterInsert()
+  logInsert() {
+    console.log("@HOOK = Inserted medical record with id", this.id);
+  }
+
+  @AfterUpdate()
+  logUpdate() {
+    console.log("@HOOK = Updated medical record with id", this.id);
+  }
+
+  @AfterRemove()
+  logRemove() {
+    console.log("@HOOK = Removed medical record with id", this.id);
+  }
 }

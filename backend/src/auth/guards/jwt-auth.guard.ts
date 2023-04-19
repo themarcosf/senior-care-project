@@ -8,8 +8,6 @@ import { AuthGuard } from "@nestjs/passport";
 import { Reflector } from "@nestjs/core";
 
 /** dependencies */
-
-import { ExceptionMessages } from "../../common/common.enum";
 import { Auth } from "../common/common.enum";
 ////////////////////////////////////////////////////////////////////////////////
 
@@ -32,8 +30,7 @@ export class JwtAuthGuard extends AuthGuard(Auth.JWT_AUTHGUARD) {
   }
 
   handleRequest(err: any, user: any) {
-    if (err || !user)
-      throw new UnauthorizedException(ExceptionMessages.USER_NOT_FOUND);
+    if (err || !user) throw new UnauthorizedException("User not found");
 
     return user;
   }

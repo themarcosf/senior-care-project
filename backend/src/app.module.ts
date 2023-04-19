@@ -6,6 +6,7 @@ import { TypeOrmModule } from "@nestjs/typeorm";
 /** modules */
 import { AuthModule } from "./auth/auth.module";
 import { UsersModule } from "./users/users.module";
+import { MedicalRecordsModule } from "./medical-records/medical-records.module";
 import { MedicalProgressionModule } from "./medical-progression/medical-progression.module";
 ////////////////////////////////////////////////////////////////////////////////
 
@@ -13,6 +14,7 @@ import { MedicalProgressionModule } from "./medical-progression/medical-progress
   imports: [
     UsersModule,
     AuthModule,
+    MedicalRecordsModule,
     MedicalProgressionModule,
     /** runtime environment variables (e.g. OS shell exports) take precedence */
     ConfigModule.forRoot({

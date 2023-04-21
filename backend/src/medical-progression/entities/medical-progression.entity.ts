@@ -1,6 +1,7 @@
 import {
   Entity,
   Column,
+  Relation,
   ManyToOne,
   AfterInsert,
   AfterUpdate,
@@ -30,11 +31,12 @@ export class MedicalProgression {
   @Column()
   medicalTests: string;
 
-  @ManyToOne(() => MedicalRecord, (medicalRecord) => medicalRecord.progressions)
-  medicalRecord: MedicalRecord;
-
   @Column({ default: () => "CURRENT_TIMESTAMP" })
   date: Date;
+
+  /** relations */
+  @ManyToOne(() => MedicalRecord, (medicalRecord) => medicalRecord.progressions)
+  medicalRecord: Relation<MedicalRecord>;
 
   /** hooks */
   @AfterInsert()

@@ -1,11 +1,13 @@
 import {
   Column,
   Entity,
+  Relation,
+  OneToMany,
+  JoinColumn,
   AfterInsert,
   AfterUpdate,
   AfterRemove,
   PrimaryGeneratedColumn,
-  OneToMany,
 } from "typeorm";
 import { MedicalProgression } from "../../medical-progression/entities/medical-progression.entity";
 ////////////////////////////////////////////////////////////////////////////////
@@ -18,17 +20,19 @@ export class MedicalRecord {
   @Column()
   patientId: number;
 
-  @OneToMany(
-    () => MedicalProgression,
-    (progression) => progression.medicalRecord
-  )
-  progressions: MedicalProgression[];
-
   @Column({ default: true })
   active: boolean;
 
   @Column({ default: () => "CURRENT_TIMESTAMP" })
   createdAt: Date;
+
+  /** relations */
+  @OneToMany(
+    () => MedicalProgression,
+    (progression) => progression.medicalRecord
+  )
+  @JoinColumn()
+  progressions: Relation<MedicalProgression[]>;
 
   /** hooks */
   @AfterInsert()

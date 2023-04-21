@@ -16,7 +16,7 @@ import { MedicalProgressionService } from "./medical-progression.service";
 /** dependencies */
 import { CreateMedicalProgressionDto } from "./dto/create-medical-progression.dto";
 import { UpdateMedicalProgressionDto } from "./dto/update-medical-progression.dto";
-import { Api } from "./common/common.enum";
+import { Api, QueryField } from "./common/common.enum";
 ////////////////////////////////////////////////////////////////////////////////
 
 @Controller(Api.ADDR)
@@ -27,12 +27,12 @@ export class MedicalProgressionController {
 
   @Post()
   create(
-    @Query("record") record: string,
+    @Query(QueryField.MEDICAL_RECORD) medicalRecordId: string,
     @Body() createMedicalProgressionDto: CreateMedicalProgressionDto
   ) {
     return this.medicalProgressionService.create(
       createMedicalProgressionDto,
-      +record
+      +medicalRecordId
     );
   }
 

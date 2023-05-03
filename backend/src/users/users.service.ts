@@ -3,27 +3,46 @@ import { Injectable, UnauthorizedException } from "@nestjs/common";
 import { InjectRepository } from "@nestjs/typeorm";
 
 /** dependencies */
-import { Repository } from "typeorm";
+import { Repository, DataSource } from "typeorm";
 
+import { User } from "./entities/user.entity";
 import { CreateUserDto } from "./dto/create-user.dto";
 import { UpdateUserDto } from "./dto/update-user.dto";
-import { User } from "./entities/user.entity";
 ////////////////////////////////////////////////////////////////////////////////
 
 @Injectable()
 export class UsersService {
   constructor(
     @InjectRepository(User)
-    private repository: Repository<User>
+    private repository: Repository<User>,
+    private dataSource: DataSource
   ) {}
 
   async create(createUserDto: CreateUserDto): Promise<User> {
+    // check if email already exists
     if (await this.findOne({ email: createUserDto.email })) {
       throw new UnauthorizedException("Email already exists");
     }
 
-    const user = this.repository.create(createUserDto);
-    return await this.repository.save(user);
+    // create a query runner
+    const queryRunner = this.dataSource.createQueryRunner();
+    await queryRunner.connect();
+    await queryRunner.startTransaction();
+
+    // try to save user
+    try {
+      const user = this.repository.create(createUserDto);
+      await queryRunner.manager.save(user);
+      await queryRunner.commitTransaction();
+      return user;
+    } catch (err) {
+      // rollback changes made in case of error
+      await queryRunner.rollbackTransaction();
+      throw err;
+    } finally {
+      // release queryRunner after transaction
+      await queryRunner.release();
+    }
   }
 
   async findAll(): Promise<User[]> {

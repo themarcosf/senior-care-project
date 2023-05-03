@@ -25,7 +25,7 @@ export class MedicalRecordsService {
   }
 
   async findAll(): Promise<MedicalRecord[]> {
-    return await this.repository.find();
+    return await this.repository.find({ relations: { progressions: true } });
   }
 
   async findOne(criteria: {

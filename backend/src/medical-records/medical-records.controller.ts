@@ -1,5 +1,5 @@
 /** nestjs */
-import { Post, Body, Controller } from "@nestjs/common";
+import { Get, Post, Body, Controller } from "@nestjs/common";
 
 /** providers */
 import { Api } from "./common/common.enum";
@@ -14,5 +14,10 @@ export class MedicalRecordsController {
   @Post()
   async create(@Body() createMedicalRecordDto: CreateMedicalRecordDto) {
     return this.medicalRecordsService.create(createMedicalRecordDto);
+  }
+
+  @Get()
+  async findAll() {
+    return this.medicalRecordsService.findAll();
   }
 }

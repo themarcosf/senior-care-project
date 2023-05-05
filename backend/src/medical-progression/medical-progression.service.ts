@@ -3,7 +3,7 @@ import { Injectable, UnauthorizedException } from "@nestjs/common";
 import { InjectRepository } from "@nestjs/typeorm";
 
 /** dependencies */
-import { Repository } from "typeorm";
+import { DataSource, Repository } from "typeorm";
 import { MedicalProgression } from "./entities/medical-progression.entity";
 import { CreateMedicalProgressionDto } from "./dto/create-medical-progression.dto";
 import { UpdateMedicalProgressionDto } from "./dto/update-medical-progression.dto";
@@ -14,34 +14,48 @@ import { MedicalRecordsService } from "../medical-records/medical-records.servic
 export class MedicalProgressionService {
   constructor(
     @InjectRepository(MedicalProgression)
-    private medicalProgressionRepository: Repository<MedicalProgression>,
-    private medicalRecordService: MedicalRecordsService
+    private repository: Repository<MedicalProgression>,
+    private service: MedicalRecordsService,
+    private dataSource: DataSource
   ) {}
 
   async create(
     createMedicalProgressionDto: CreateMedicalProgressionDto,
     record: number
   ): Promise<MedicalProgression> {
-    const medicalRecord = await this.medicalRecordService.findOne({
-      id: record,
-    });
-
-    if (!medicalRecord || !medicalRecord.active)
+    // check if medical record exists and is active
+    const medRecord = await this.service.findOne(record);
+    if (!medRecord || !medRecord.isActive)
       throw new UnauthorizedException("Medical record not found or not active");
 
-    const medicalProgression = this.medicalProgressionRepository.create(
-      createMedicalProgressionDto
-    );
-    medicalProgression.medicalRecord = medicalRecord;
-    return await this.medicalProgressionRepository.save(medicalProgression);
+    // create a query runner
+    const queryRunner = this.dataSource.createQueryRunner();
+    await queryRunner.connect();
+    await queryRunner.startTransaction();
+
+    // try to save medical progression
+    try {
+      const medProg = this.repository.create(createMedicalProgressionDto);
+      medProg.medicalRecord = medRecord;
+      await queryRunner.manager.save(medProg);
+      await queryRunner.commitTransaction();
+      return medProg;
+    } catch (err) {
+      // rollback changes made in case of error
+      await queryRunner.rollbackTransaction();
+      throw err;
+    } finally {
+      // release queryRunner after transaction
+      await queryRunner.release();
+    }
   }
 
   findAll(): Promise<MedicalProgression[]> {
-    return this.medicalProgressionRepository.find();
+    return this.repository.find();
   }
 
   findOne(id: number): Promise<MedicalProgression | null> {
-    return this.medicalProgressionRepository.findOne({ where: { id } });
+    return this.repository.findOne({ where: { id } });
   }
 
   update(id: number, updateMedicalProgressionDto: UpdateMedicalProgressionDto) {
@@ -49,6 +63,6 @@ export class MedicalProgressionService {
   }
 
   async remove(id: number): Promise<void> {
-    await this.medicalProgressionRepository.delete(id);
+    await this.repository.delete(id);
   }
 }

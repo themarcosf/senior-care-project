@@ -8,6 +8,7 @@ import {
   UseGuards,
   Controller,
   HttpStatus,
+  UnauthorizedException,
 } from "@nestjs/common";
 import { AuthGuard } from "@nestjs/passport";
 
@@ -16,7 +17,6 @@ import { AuthService } from "./auth.service";
 import { UsersService } from "./../users/users.service";
 
 /** dependencies */
-import { DataSource, EntityManager } from "typeorm";
 import { Auth, Api } from "./common/common.enum";
 import { User } from "../users/entities/user.entity";
 import { AllowAnon } from "./guards/allow-anon.guard";
@@ -35,11 +35,10 @@ interface PassportJwt {
 export class AuthController {
   constructor(
     private readonly authService: AuthService,
-    private readonly usersService: UsersService,
-    private readonly dataSource: DataSource,
-    private readonly entityManager: EntityManager
+    private readonly usersService: UsersService
   ) {}
 
+  // TODO : change flux to admin create user
   @AllowAnon()
   @Post(Api.SIGNUP)
   async signup(@Body() createUserDto: CreateUserDto): Promise<PassportJwt> {
@@ -53,13 +52,13 @@ export class AuthController {
   @HttpCode(HttpStatus.OK)
   @Post(Api.SIGNIN)
   async signin(@Req() req: PassportRequest): Promise<PassportJwt> {
+    if (!req.user) throw new UnauthorizedException("User not found");
+
     return await this.authService.login(req.user);
   }
 
   @Get(Api.SIGNOUT)
-  async signout(@Req() req: any): Promise<void> {
-    console.log(this.dataSource);
-    console.log(this.entityManager);
+  async signout(@Req() req: PassportRequest): Promise<void> {
     /**
      * TODO :
      * - add jwt to blacklist
@@ -69,7 +68,8 @@ export class AuthController {
   }
 
   @Get(Api.PROFILE)
-  profile(@Req() req: any): User {
+  profile(@Req() req: PassportRequest): User {
+    if (!req.user) throw new UnauthorizedException("User not found");
     return req.user;
   }
 }

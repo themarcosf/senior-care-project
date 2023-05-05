@@ -1,17 +1,12 @@
-import {
-  Column,
-  Entity,
-  AfterInsert,
-  AfterUpdate,
-  AfterRemove,
-  PrimaryGeneratedColumn,
-} from "typeorm";
+import { Column, Entity } from "typeorm";
+import { BaseEntity } from "../../common/base.entity";
 ////////////////////////////////////////////////////////////////////////////////
 
 @Entity()
-export class User {
-  @PrimaryGeneratedColumn()
-  id: number;
+export class User extends BaseEntity {
+  constructor() {
+    super("user");
+  }
 
   @Column()
   name: string;
@@ -25,28 +20,11 @@ export class User {
   @Column()
   licenseNum: string;
 
-  @Column({ enum: ["practicalNurse", "physician", "admin"] })
+  @Column({
+    enum: ["practicalNurse", "physician", "admin"],
+  })
   role: string;
 
   @Column({ default: true })
-  active: boolean;
-
-  @Column({ default: () => "CURRENT_TIMESTAMP" })
-  createdAt: Date;
-
-  /** hooks */
-  @AfterInsert()
-  logInsert() {
-    console.log("@HOOK = Inserted user with id", this.id);
-  }
-
-  @AfterUpdate()
-  logUpdate() {
-    console.log("@HOOK = Updated user with id", this.id);
-  }
-
-  @AfterRemove()
-  logRemove() {
-    console.log("@HOOK = Removed user with id", this.id);
-  }
+  isActive: boolean;
 }

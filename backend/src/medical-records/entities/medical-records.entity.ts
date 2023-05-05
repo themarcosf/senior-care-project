@@ -1,30 +1,20 @@
-import {
-  Column,
-  Entity,
-  Relation,
-  OneToMany,
-  JoinColumn,
-  AfterInsert,
-  AfterUpdate,
-  AfterRemove,
-  PrimaryGeneratedColumn,
-} from "typeorm";
+import { Column, Entity, Relation, OneToMany, JoinColumn } from "typeorm";
+
+import { BaseEntity } from "../../common/base.entity";
 import { MedicalProgression } from "../../medical-progression/entities/medical-progression.entity";
 ////////////////////////////////////////////////////////////////////////////////
 
 @Entity()
-export class MedicalRecord {
-  @PrimaryGeneratedColumn()
-  id: number;
+export class MedicalRecord extends BaseEntity {
+  constructor() {
+    super("medical record");
+  }
 
   @Column()
   patientId: number;
 
   @Column({ default: true })
-  active: boolean;
-
-  @Column({ default: () => "CURRENT_TIMESTAMP" })
-  createdAt: Date;
+  isActive: boolean;
 
   /** relations */
   @OneToMany(
@@ -33,20 +23,4 @@ export class MedicalRecord {
   )
   @JoinColumn()
   progressions: Relation<MedicalProgression[]>;
-
-  /** hooks */
-  @AfterInsert()
-  logInsert() {
-    console.log("@HOOK = Inserted medical record with id", this.id);
-  }
-
-  @AfterUpdate()
-  logUpdate() {
-    console.log("@HOOK = Updated medical record with id", this.id);
-  }
-
-  @AfterRemove()
-  logRemove() {
-    console.log("@HOOK = Removed medical record with id", this.id);
-  }
 }

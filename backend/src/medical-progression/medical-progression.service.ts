@@ -36,7 +36,7 @@ export class MedicalProgressionService {
     // try to save medical progression
     try {
       const medProg = this.repository.create(createMedicalProgressionDto);
-      medProg.medicalRecord = medRecord;
+      medProg.medicalRecord = Promise.resolve(medRecord);
       await queryRunner.manager.save(medProg);
       await queryRunner.commitTransaction();
       return medProg;

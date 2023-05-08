@@ -1,4 +1,4 @@
-import { Entity, Column, Relation, ManyToOne } from "typeorm";
+import { Entity, Column, ManyToOne } from "typeorm";
 
 import { BaseEntity } from "../../common/base.entity";
 import { MedicalRecord } from "../../medical-records/entities/medical-records.entity";
@@ -27,5 +27,5 @@ export class MedicalProgression extends BaseEntity {
 
   /** relations */
   @ManyToOne(() => MedicalRecord, (medicalRecord) => medicalRecord.progressions)
-  medicalRecord: Relation<MedicalRecord>;
+  medicalRecord: Promise<MedicalRecord>;
 }

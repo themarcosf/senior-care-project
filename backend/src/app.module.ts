@@ -27,6 +27,9 @@ import { MedicalProgressionModule } from "./medical-progression/medical-progress
       type: "sqlite",
       database: "db.sqlite",
       autoLoadEntities: true,
+      cache: {
+        duration: 30000, // 30 seconds
+      },
       synchronize: process.env.NODE_ENV === "prod" ? false : true,
     }),
   ],

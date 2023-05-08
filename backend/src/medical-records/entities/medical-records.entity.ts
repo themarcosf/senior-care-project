@@ -4,6 +4,7 @@ import { BaseEntity } from "../../common/base.entity";
 import { MedicalProgression } from "../../medical-progression/entities/medical-progression.entity";
 ////////////////////////////////////////////////////////////////////////////////
 
+// TODO: add validation
 @Entity()
 export class MedicalRecord extends BaseEntity {
   constructor() {

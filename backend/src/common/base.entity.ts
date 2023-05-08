@@ -7,11 +7,14 @@ import {
   UpdateDateColumn,
   DeleteDateColumn,
   VersionColumn,
+  BaseEntity as TypeOrmBaseEntity,
 } from "typeorm";
 ////////////////////////////////////////////////////////////////////////////////
 
-export abstract class BaseEntity {
-  constructor(private entityName: string) {}
+export abstract class BaseEntity extends TypeOrmBaseEntity {
+  constructor(private entityName: string) {
+    super();
+  }
 
   @PrimaryGeneratedColumn()
   id: number;
@@ -23,7 +26,7 @@ export abstract class BaseEntity {
   updatedAt: Date;
 
   @DeleteDateColumn()
-  deletedAt: null | Date;
+  deletedAt?: Date;
 
   @VersionColumn()
   version: number;

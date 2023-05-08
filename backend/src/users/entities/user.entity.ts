@@ -1,7 +1,8 @@
-import { Column, Entity } from "typeorm";
+import { Column, Entity, Index } from "typeorm";
 import { BaseEntity } from "../../common/base.entity";
 ////////////////////////////////////////////////////////////////////////////////
 
+// TODO: add validation
 @Entity()
 export class User extends BaseEntity {
   constructor() {
@@ -11,7 +12,8 @@ export class User extends BaseEntity {
   @Column()
   name: string;
 
-  @Column({ unique: true })
+  @Column()
+  @Index({ unique: true })
   email: string;
 
   @Column()

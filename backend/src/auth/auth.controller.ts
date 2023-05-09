@@ -4,6 +4,7 @@ import {
   Req,
   Post,
   Body,
+  Session,
   HttpCode,
   UseGuards,
   Controller,
@@ -68,7 +69,13 @@ export class AuthController {
   }
 
   @Get(Api.PROFILE)
-  profile(@Req() req: PassportRequest): User {
+  profile(
+    @Session() session: Record<string, any>,
+    @Req() req: PassportRequest
+  ): User {
+    session.visits = session.visits ? session.visits + 1 : 1;
+    console.log("Session id: ", session.id);
+    console.log(session);
     if (!req.user) throw new UnauthorizedException("User not found");
     return req.user;
   }

@@ -1,16 +1,24 @@
 @import url("https://fonts.googleapis.com/css2?family=Montserrat:wght@100;200;300;400;500;600;700;800;900&display=swap");
 
-:root{
-  --gray-50: #ECECEC;
-  --gray-400: #627179;
+:root {
+  --neutral-0: #ffffff;
+  --neutral-50: #ececec;
+  --neutral-400: #627179;
+  --primary-100: #72CAC3;
+
+  font-size: 62.5%;
 }
 
 * {
   box-sizing: border-box;
   padding: 0;
   margin: 0;
-  font-family: "Montserrat", sans-serif!important;
-  color: var(--gray-400);
+  font-family: "Montserrat", sans-serif !important;
+  color: var(--neutral-400);
+
+  &:focus {
+    outline: none;
+  }
 }
 
 @media (max-width: 1080px) {
@@ -26,7 +34,7 @@
 }
 
 body {
-  background: var(--gray-50);
+  background: var(--neutral-50);
 }
 
 h1,
@@ -43,10 +51,14 @@ button {
 }
 
 a {
-  color: inherit;
   text-decoration: none;
+  color: unset;
+
+  &:visited {
+    color: unset;
+  }
 }
 
-ul{
+ul {
   list-style: none;
 }

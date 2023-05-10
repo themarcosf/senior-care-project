@@ -17,6 +17,7 @@ import { MedicalProgressionModule } from "./medical-progression/medical-progress
     MedicalRecordsModule,
     MedicalProgressionModule,
     /** runtime environment variables (e.g. OS shell exports) take precedence */
+    // TODO : schema validation (see https://docs.nestjs.com/techniques/configuration#schema-validation)
     ConfigModule.forRoot({
       cache: true,
       isGlobal: true,

@@ -21,7 +21,7 @@ import * as cookieParser from "cookie-parser";
   app.use(cookieParser());
   app.use(
     session({
-      secret: ["secret"], // change this to env variable
+      secret: [process.env.SESSION_SECRET!],
       cookie: {
         maxAge: 3600000,
         secure: process.env.NODE_ENV === "prod" ? true : false,

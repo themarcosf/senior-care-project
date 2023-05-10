@@ -1,7 +1,5 @@
 export enum Auth {
   PASSPORT_STRATEGY = "local",
-  JWT_SECRET = "secret",
-  JWT_EXPIRESIN = "1h",
   JWT_AUTHGUARD = "jwt",
   IS_PUBLIC_KEY = "isPublic",
 }

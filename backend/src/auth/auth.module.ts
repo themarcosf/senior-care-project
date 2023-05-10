@@ -35,9 +35,13 @@ import { Auth } from "./common/common.enum";
     PassportModule.register({
       defaultStrategy: Auth.PASSPORT_STRATEGY,
     }),
-    JwtModule.register({
-      secret: Auth.JWT_SECRET,
-      signOptions: { expiresIn: Auth.JWT_EXPIRESIN },
+    JwtModule.registerAsync({
+      useFactory: async () => ({
+        secret: process.env.JWT_SECRET,
+        signOptions: {
+          expiresIn: process.env.JWT_EXPIRES_IN,
+        },
+      }),
     }),
   ],
   controllers: [AuthController],

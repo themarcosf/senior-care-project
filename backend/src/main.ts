@@ -1,5 +1,6 @@
 /** nestjs */
 import { NestFactory } from "@nestjs/core";
+import { ConfigService } from "@nestjs/config";
 import { ValidationPipe } from "@nestjs/common";
 
 /** modules */
@@ -33,7 +34,15 @@ import * as cookieParser from "cookie-parser";
   );
 
   /** empty global validation pipe; configured at handler level */
-  app.useGlobalPipes(new ValidationPipe({ whitelist: true }));
+  app.useGlobalPipes(
+    new ValidationPipe({
+      transform: true,
+      whitelist: true,
+      forbidNonWhitelisted: true,
+      disableErrorMessages:
+        app.get(ConfigService).get("NODE_ENV") === "prod" ? true : false,
+    })
+  );
 
   /** start server listener */
   await app.listen(3000);

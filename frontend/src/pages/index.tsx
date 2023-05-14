@@ -1,11 +1,15 @@
-import styles from "@/styles/login.module.scss";
 import { FormEvent } from "react";
+import { useRouter } from "next/router";
+
+import styles from "@/styles/login.module.scss";
 
 export default function Login() {
+  const router = useRouter();
+
   const submitHandler = (event: FormEvent) => {
     event.preventDefault();
 
-    console.log("Login");
+    router.push("/patients");
   };
 
   return (
@@ -20,14 +24,14 @@ export default function Login() {
         <div className={styles.field}>
           <label htmlFor="email">E-mail</label>
           <div>
-            <img src="/icons/email.svg" />
+            <img src="/icons/email.svg" alt="email_icon" />
             <input placeholder="Digite seu e-mail" id="email" type="email" />
           </div>
         </div>
         <div className={styles.field}>
           <label htmlFor="password">Senha</label>
           <div>
-            <img src="/icons/padlock.svg" />
+            <img src="/icons/padlock.svg" alt="padlock_icon" />
             <input
               placeholder="Insira sua senha"
               id="password"

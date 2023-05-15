@@ -22,9 +22,8 @@ export class MedicalProgression extends BaseEntity {
   @Column()
   nurses: string;
 
-  // TODO : add ManyToOne relations with MedicalTests
-  @Column()
-  medicalTests: string;
+  @Column("simple-array", { nullable: true })
+  medicalTests: string[];
 
   /** relations */
   @ManyToOne(() => MedicalRecord, (medicalRecord) => medicalRecord.progressions)

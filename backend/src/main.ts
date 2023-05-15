@@ -8,6 +8,7 @@ import { AppModule } from "./app.module";
 
 /** dependencies */
 import helmet from "helmet";
+import * as compression from "compression";
 import * as session from "express-session";
 import * as cookieParser from "cookie-parser";
 ////////////////////////////////////////////////////////////////////////////////
@@ -16,9 +17,10 @@ import * as cookieParser from "cookie-parser";
 (async function () {
   /** instantiate new project */
   const app = await NestFactory.create(AppModule, { cors: true });
-
+  ``;
   /** generic middleware */
   app.use(helmet());
+  app.use(compression());
   app.use(cookieParser());
   app.use(
     session({
@@ -29,7 +31,7 @@ import * as cookieParser from "cookie-parser";
       },
       resave: false, // check store if this is needed
       saveUninitialized: false,
-      store: new session.MemoryStore(), // change this to redis store for prod
+      store: new session.MemoryStore(), // change this to redis+elastiCache for prod
     })
   );
 

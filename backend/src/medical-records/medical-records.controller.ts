@@ -1,5 +1,5 @@
 /** nestjs */
-import { Get, Post, Body, Controller, Param } from "@nestjs/common";
+import { Get, Post, Body, Controller, Param, Query } from "@nestjs/common";
 
 /** providers */
 import { Api } from "./common/common.enum";
@@ -17,8 +17,8 @@ export class MedicalRecordsController {
   }
 
   @Get()
-  async findAll() {
-    return this.medicalRecordsService.findAll();
+  async findAll(@Query("loadRels") loadRels?: boolean) {
+    return this.medicalRecordsService.findAll(loadRels);
   }
 
   @Get(":id")

@@ -1,4 +1,4 @@
-import { IsString } from "class-validator";
+import { IsOptional, IsString } from "class-validator";
 //////////////////////////////////////////////////////////////////////////////////////
 
 export class CreateMedicalProgressionDto {
@@ -11,6 +11,7 @@ export class CreateMedicalProgressionDto {
   @IsString()
   nurses: string;
 
-  @IsString()
-  medicalTests: string;
+  @IsOptional()
+  @IsString({ each: true })
+  medicalTests: string[];
 }

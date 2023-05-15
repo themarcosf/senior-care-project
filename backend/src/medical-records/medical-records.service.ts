@@ -42,8 +42,14 @@ export class MedicalRecordsService {
     }
   }
 
-  async findAll(): Promise<MedicalRecord[]> {
-    return await this.repository.find({ relations: { progressions: true } });
+  async findAll(loadRels?: boolean): Promise<MedicalRecord[]> {
+    const queryBuilder = this.repository.createQueryBuilder("medRecord");
+
+    loadRels
+      ? queryBuilder.leftJoinAndSelect("medRecord.progressions", "progressions")
+      : queryBuilder.loadAllRelationIds();
+
+    return await queryBuilder.getMany();
   }
 
   async findOne(id: number): Promise<MedicalRecord | null> {

@@ -54,8 +54,12 @@ export class MedicalProgressionService {
     return this.repository.find();
   }
 
-  findOne(id: number): Promise<MedicalProgression | null> {
-    return this.repository.findOne({ where: { id } });
+  async findOne(id: number): Promise<MedicalProgression | null> {
+    const queryBuilder = this.repository
+      .createQueryBuilder("medProg")
+      .where("medProg.id = :id", { id });
+
+    return await queryBuilder.getOne();
   }
 
   update(id: number, updateMedicalProgressionDto: UpdateMedicalProgressionDto) {

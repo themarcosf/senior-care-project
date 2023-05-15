@@ -31,7 +31,7 @@ import * as cookieParser from "cookie-parser";
       },
       resave: false, // check store if this is needed
       saveUninitialized: false,
-      store: new session.MemoryStore(), // change this to redis store for prod
+      store: new session.MemoryStore(), // change this to redis+elastiCache for prod
     })
   );
 

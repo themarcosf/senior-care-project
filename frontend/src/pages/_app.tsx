@@ -1,9 +1,11 @@
-import Navbar from "@/components/Navbar/Navbar";
-import "@/styles/globals.scss";
 import type { AppProps } from "next/app";
 import { useRouter } from "next/router";
 
-export default function App({ Component, pageProps }: AppProps) {
+import Navbar from "@/components/Navbar/Navbar";
+
+import "@/styles/globals.scss";
+
+const App = ({ Component, pageProps }: AppProps) => {
   const router = useRouter();
   const pathname = router.pathname;
 
@@ -14,3 +16,5 @@ export default function App({ Component, pageProps }: AppProps) {
     </>
   );
 }
+
+export default App; 

@@ -1,20 +1,44 @@
-import { FormEvent } from "react";
+import { FC, FormEvent, useRef } from "react";
 import { useRouter } from "next/router";
+import Cookies from "js-cookie";
 
 import styles from "@/styles/login.module.scss";
 
-export default function Login() {
+const Login: FC<{ BASE_URL: string }> = ({ BASE_URL }) => {
   const router = useRouter();
+  const emailInputRef = useRef<HTMLInputElement>(null);
+  const passwordInputRef = useRef<HTMLInputElement>(null);
 
-  const submitHandler = (event: FormEvent) => {
+  const submitHandler = async (event: FormEvent) => {
     event.preventDefault();
 
+    const enteredEmail = emailInputRef.current?.value;
+    const enteredPassword = passwordInputRef.current?.value;
+
+    const loginData = {
+      email: enteredEmail,
+      password: enteredPassword,
+    };
+
+    const response = await fetch(`${BASE_URL}/auth/signin`, {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify(loginData),
+    });
+
+    const data = await response.json();
+
+    // TODO: handle errors
+
+    Cookies.set("token", data.access_token);
     router.push("/patients");
   };
 
   return (
     <main className={styles.content}>
-      <div className={styles.imgBx}>
+      <div className={styles.imgBx} onClick={() => console.log(process.env)}>
         <img src="/logo.svg" alt="logo" />
       </div>
       <h1>
@@ -25,7 +49,12 @@ export default function Login() {
           <label htmlFor="email">E-mail</label>
           <div>
             <img src="/icons/email.svg" alt="email_icon" />
-            <input placeholder="Digite seu e-mail" id="email" type="email" />
+            <input
+              ref={emailInputRef}
+              placeholder="Digite seu e-mail"
+              id="email"
+              type="email"
+            />
           </div>
         </div>
         <div className={styles.field}>
@@ -36,6 +65,7 @@ export default function Login() {
               placeholder="Insira sua senha"
               id="password"
               type="password"
+              ref={passwordInputRef}
             />
           </div>
         </div>
@@ -45,4 +75,16 @@ export default function Login() {
       </form>
     </main>
   );
+};
+
+export async function getStaticProps() {
+  const BASE_URL = process.env.NEXT_PUBLIC_BASE_URL;
+
+  return {
+    props: {
+      BASE_URL,
+    },
+  };
 }
+
+export default Login;

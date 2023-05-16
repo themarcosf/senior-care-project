@@ -195,7 +195,7 @@ const NewEvolutionPage: FC<{ patientData: patient }> = (props) => {
                 type="file"
                 name="file"
                 id="file"
-                multiple
+                // multiple
               />
               <button onClick={() => inputFileRef.current?.click()}>
                 Faça upload
@@ -209,7 +209,7 @@ const NewEvolutionPage: FC<{ patientData: patient }> = (props) => {
 };
 
 export const getStaticPaths: GetStaticPaths = async () => {
-  const response = await fetch("http:localhost:3000/patient.json");
+  const response = await fetch("http:localhost:3001/patient.json");
   const data = await response.json();
 
   const paths = data.patients.map((patient: patient) => {
@@ -233,7 +233,7 @@ interface Params extends ParsedUrlQuery {
 export const getStaticProps: GetStaticProps = async (context) => {
   const { patientId } = context.params as Params;
 
-  const response = await fetch("http:localhost:3000/patient.json");
+  const response = await fetch("http:localhost:3001/patient.json");
   const data = await response.json();
 
   const patientData = data.patients.find(

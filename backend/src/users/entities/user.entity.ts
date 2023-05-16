@@ -22,9 +22,7 @@ export class User extends BaseEntity {
   @Column()
   licenseNum: string;
 
-  @Column({
-    enum: ["practicalNurse", "physician", "admin"],
-  })
+  @Column()
   role: string;
 
   @Column({ default: true })

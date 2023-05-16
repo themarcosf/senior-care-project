@@ -1,4 +1,3 @@
-import { mkdir } from "fs";
 import { Request } from "express";
 import { diskStorage } from "multer";
 import { UnauthorizedException } from "@nestjs/common";
@@ -9,12 +8,7 @@ function createMedicalTestsDestination(
   file: Express.Multer.File,
   cb: (error: Error | null, destination: string) => void
 ) {
-  const medicalRecord = req.query.medicalRecord;
-  const destination = `./uploads/medTests/${medicalRecord}`;
-  mkdir(destination, { recursive: true }, (err) => {
-    if (err) new UnauthorizedException(err);
-  });
-  cb(null, destination);
+  cb(null, `./uploads/medTests/${req.query.medicalRecord}`);
 }
 
 function medicalTestsFilename(

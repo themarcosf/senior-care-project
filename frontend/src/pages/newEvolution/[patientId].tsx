@@ -1,15 +1,25 @@
 import { FC, FormEvent, useEffect, useRef, useState } from "react";
-import { GetStaticPaths, GetStaticProps } from "next";
+import { GetServerSideProps } from "next";
 import { useRouter } from "next/router";
 import { ParsedUrlQuery } from "querystring";
+import Cookies from "js-cookie";
 
 import Header from "@/components/Header/Header";
 
-import { patient } from "../../../models/patient";
+import { profile } from "../../../models/profile";
 
 import styles from "@/styles/newEvolutionPage.module.scss";
 
-const NewEvolutionPage: FC<{ patientData: patient }> = (props) => {
+type patientData = {
+  medRecordId: number;
+  patientFullName: string;
+  evolutionNumber: number;
+};
+
+const NewEvolutionPage: FC<{
+  patientData: patientData;
+  profileData: profile;
+}> = (props) => {
   const [navPostion, setNavPostion] = useState(1);
   const [date, setDate] = useState("");
   const [hour, setHour] = useState("");
@@ -26,27 +36,42 @@ const NewEvolutionPage: FC<{ patientData: patient }> = (props) => {
     setHour(nowHour);
   }, []);
 
-  const { id, name, evolutions } = props.patientData;
+  const { name, licenseNum, role } = props.profileData;
+  const { medRecordId, evolutionNumber, patientFullName } = props.patientData;
 
-  const evolutionNumber = evolutions.reverse()[0].id + 1;
-
-  const saveHandler = (event: FormEvent) => {
+  const saveHandler = async (event: FormEvent) => {
     event.preventDefault();
+
+    const token = Cookies.get("token");
 
     if (navPostion === 1) {
       const enteredDescription = descriptionInputRef.current?.value;
 
       const evolutionData = {
-        name: "Carlos Abreu",
-        credential: "16H1AZ42",
+        name: name,
+        credential: licenseNum,
         date: date,
         hour: hour,
-        expertise: "Fisioterapeuta",
+        expertise: role,
         evolutionNumber: evolutionNumber,
         description: enteredDescription,
       };
 
-      console.log("POST: ", evolutionData);
+      const response = await fetch(
+        `http://127.0.0.1:3000/api/v1/med-progression?medicalRecord=${medRecordId}`,
+        {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+            Authorization: `Bearer ${token}`,
+          },
+          body: JSON.stringify(evolutionData),
+        }
+      );
+
+      const data = await response.json();
+
+      console.log("POST: ", data);
     }
 
     if (navPostion < 3) {
@@ -60,7 +85,11 @@ const NewEvolutionPage: FC<{ patientData: patient }> = (props) => {
 
   return (
     <>
-      <Header title={name} buttonName="Histórico" link={`/patients/${id}`} />
+      <Header
+        title={name}
+        buttonName="Histórico"
+        link={`/patients/${patientFullName}`}
+      />
       <nav className={styles.nav}>
         <ul>
           <li className={navPostion === 1 ? styles.active : styles.inactive}>
@@ -208,40 +237,54 @@ const NewEvolutionPage: FC<{ patientData: patient }> = (props) => {
   );
 };
 
-export const getStaticPaths: GetStaticPaths = async () => {
-  const response = await fetch("http:localhost:3001/patient.json");
-  const data = await response.json();
-
-  const paths = data.patients.map((patient: patient) => {
-    return {
-      params: {
-        patientId: patient.id.toString(),
-      },
-    };
-  });
-
-  return {
-    paths,
-    fallback: "blocking",
-  };
-};
-
 interface Params extends ParsedUrlQuery {
   patientId: string;
 }
 
-export const getStaticProps: GetStaticProps = async (context) => {
+export const getServerSideProps: GetServerSideProps = async (context) => {
+  const { req, res } = context;
+
+  const token = req.cookies["token"];
+
+  const profileResponse = await fetch(
+    `${process.env.NEXT_PUBLIC_BASE_URL}/auth/profile`,
+    {
+      headers: {
+        Authorization: "Bearer " + token,
+      },
+    }
+  );
+  const profileData = await profileResponse.json();
+
   const { patientId } = context.params as Params;
 
-  const response = await fetch("http:localhost:3001/patient.json");
-  const data = await response.json();
-
-  const patientData = data.patients.find(
-    (patient: patient) => patient.id === +patientId
+  const patientResponse = await fetch(
+    `${process.env.NEXT_PUBLIC_BASE_URL}/med-record/patient?fullName=${patientId}`,
+    {
+      headers: {
+        Authorization: "Bearer " + token,
+      },
+    }
   );
+
+  const medRecordData = await patientResponse.json();
+
+  let evolutionNumber;
+  if (medRecordData.__progressions__.length > 0) {
+    evolutionNumber = medRecordData.__progressions__.length;
+  } else {
+    evolutionNumber = 1;
+  }
+
+  const patientData = {
+    medRecordId: medRecordData.id,
+    patientFullName: medRecordData.patientFullName,
+    evolutionNumber: evolutionNumber,
+  };
 
   return {
     props: {
+      profileData: profileData,
       patientData: patientData,
     },
   };

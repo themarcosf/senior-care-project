@@ -2,17 +2,51 @@ import { FC, FormEvent, useEffect, useRef, useState } from "react";
 
 import Header from "@/components/Header/Header";
 
-import { patient } from "../../models/patient";
-
 import { useRouter } from "next/router";
 
 import styles from "@/styles/NewPatientPage.module.scss";
+import Cookies from "js-cookie";
 
 const NewPatientPage = () => {
   const route = useRouter();
 
-  const saveHandler = (event: FormEvent) => {
+  const nameInputRef = useRef<HTMLInputElement>(null);
+  const nationalIdInputRef = useRef<HTMLInputElement>(null);
+  const icdCodeInputRef = useRef<HTMLInputElement>(null);
+
+  const saveHandler = async (event: FormEvent) => {
     event.preventDefault();
+
+    const token = Cookies.get("token");
+
+    const enteredName = nameInputRef.current?.value;
+    const enteredNationalId = nationalIdInputRef.current?.value;
+    const enteredIcdCode = icdCodeInputRef.current?.value;
+
+    const patientData = {
+      patientFullName: enteredName,
+      birthDate:
+        "Tue Aug 09 2022 17:28:14 GMT-0300 (Horário Padrão de Brasília)",
+      nationalId: enteredNationalId,
+      icdCode: enteredIcdCode,
+    };
+
+    const response = await fetch(
+      // `${process.env.NEXT_PUBLIC_API_URL}/med-record`,
+      `http://127.0.0.1:3000/api/v1/med-record`,
+      {
+        method: "POST",
+        body: JSON.stringify(patientData),
+        headers: {
+          "Content-Type": "application/json",
+          Authorization: "Bearer " + token,
+        },
+      }
+    );
+
+    const data = await response.json();
+
+    // console.log(data)
 
     route.push("/patients"); //Após a finalização do post, direcionar para uma nova evolução
   };
@@ -47,6 +81,7 @@ const NewPatientPage = () => {
                   name="name"
                   id="name"
                   placeholder="Digite aqui..."
+                  ref={nameInputRef}
                 />
               </div>
               <div className={styles.field}>
@@ -56,6 +91,7 @@ const NewPatientPage = () => {
                   name="patientDocument"
                   id="patientDocument"
                   placeholder="Digite aqui..."
+                  ref={nationalIdInputRef}
                 />
               </div>
               <div className={styles.field}>
@@ -65,6 +101,7 @@ const NewPatientPage = () => {
                   name="date"
                   id="date"
                   placeholder="Digite aqui..."
+                  ref={icdCodeInputRef}
                 />
               </div>
             </div>

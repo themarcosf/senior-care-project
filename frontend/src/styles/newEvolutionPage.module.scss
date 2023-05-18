@@ -9,7 +9,7 @@
 
     li {
       z-index: 2;
-      width: calc(100vw / 3);
+      width: calc(100vw / 2);
       display: flex;
       justify-content: center;
     }
@@ -75,33 +75,32 @@
     font-weight: 500;
     font-size: 1.8rem;
   }
-
-  button {
-    color: var(--neutral-0);
-    background-color: var(--green);
-    border: none;
-    padding: 0.3rem 4rem;
-    border-radius: 1rem;
-    font-weight: 600;
-  }
 }
 
 .form {
   height: 100%;
   padding: 1.5rem 0;
+  display: flex;
+  flex-direction: column;
+  // align-items: flex-end;
 }
 
-.disabledFields {
-  display: flex;
-  flex-wrap: wrap;
-  justify-content: space-between;
+.submitBtn {
+  color: var(--neutral-0);
+  background-color: var(--green);
+  border: none;
+  padding: 0.4rem 4rem;
+  border-radius: 1rem;
+  font-weight: 600;
+  margin-top: 2rem;
+  align-self: flex-end;
 }
 
 .field {
   display: flex;
   flex-direction: column;
   width: 40%;
-  margin-bottom: 4rem;
+  margin-bottom: 1rem;
 
   label {
     font-size: 1.4rem;
@@ -109,7 +108,8 @@
   }
 
   input,
-  textarea {
+  textarea,
+  select {
     padding: 0.3rem;
     border-radius: 0.5rem;
     border: 1px solid var(--neutral-200);
@@ -122,7 +122,7 @@
 
 .descriptionfield {
   width: 100%;
-  height: calc(100vh - 54rem);
+  height: 20rem;
 
   textarea {
     height: 100%;
@@ -132,34 +132,42 @@
   }
 }
 
-.attachContainer{
-    p{
-        font-size: 1.4rem;
-        padding: 0.5rem 0;
-        border-bottom: 1px solid var(--neutral-400);
-        margin-bottom: 1.5rem;
-    }
+.inputFileContainer {
+  margin-top: 1rem;
+  width: 100%;
+  height: 15rem;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  border-radius: 1.5rem;
+  border: 2px dashed var(--neutral-400);
+
+  input {
+    display: none;
+  }
+
+  button {
+    padding: 0.8rem 3rem;
+    border-radius: 1rem;
+    border: none;
+    background-color: var(--neutral-400);
+    color: var(--neutral-0);
+    font-size: 1.4rem;
+  }
+
+  p{
+    font-size: 1.4rem;
+    margin-top: 0.5rem;
+    span{
+      font-weight: 600;
+    }    
+  }
 }
 
-.inputFileContainer{
-    width: 100%;
-    height: 24rem;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    border-radius: 1.5rem;
-    border: 2px dashed var(--neutral-400);
-
-    input{
-        display: none;
-    }
-
-    button{
-        padding: 0.8rem 3rem;
-        border-radius: 1rem;
-        border: none;
-        background-color: var(--neutral-400);
-        color: var(--neutral-0);
-        font-size: 1.4rem;
-    }
+.pharmacyContainer{
+  width: 100%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
 }

@@ -1,14 +1,17 @@
-import { FC, FormEvent, useEffect, useRef, useState } from "react";
+import { ChangeEvent, FC, FormEvent, useEffect, useRef, useState } from "react";
 import { GetServerSideProps } from "next";
 import { useRouter } from "next/router";
-import { ParsedUrlQuery } from "querystring";
 import Cookies from "js-cookie";
+import { v4 as uuidv4 } from "uuid";
+import { ParsedUrlQuery } from "querystring";
 
 import Header from "@/components/Header/Header";
 
-import { profile } from "../../../models/profile";
+import { profile } from "../../models/profile";
 
 import styles from "@/styles/newEvolutionPage.module.scss";
+import axios from "axios";
+import api from "@/services/api";
 
 type patientData = {
   medRecordId: number;
@@ -20,94 +23,75 @@ const NewEvolutionPage: FC<{
   patientData: patientData;
   profileData: profile;
 }> = (props) => {
-  const [navPostion, setNavPostion] = useState(1);
-  const [date, setDate] = useState("");
-  const [hour, setHour] = useState("");
-  const inputFileRef = useRef<HTMLInputElement>(null);
-  const descriptionInputRef = useRef<HTMLTextAreaElement>(null);
+  const [navPosition, setNavPosition] = useState(1);
+
+  const diagnosisInputRef = useRef<HTMLTextAreaElement>(null);
+  const progressionTypeInputRef = useRef<HTMLSelectElement>(null);
+  const fileInputRef = useRef<HTMLInputElement>(null);
+
+  const [selectedFile, setSelectedFile] = useState<File | null>(null);
+
   const route = useRouter();
 
-  useEffect(() => {
-    const now = new Date();
-    const nowDate = now.toLocaleDateString();
-    const nowHour = [now.getHours(), now.getMinutes()].join(":");
+  const { role } = props.profileData;
+  const { patientFullName } = props.patientData;
 
-    setDate(nowDate);
-    setHour(nowHour);
-  }, []);
+  const handleFileChange = (event: ChangeEvent<HTMLInputElement>) => {
+    if (event.target.files && event.target.files.length > 0) {
+      setSelectedFile(event.target.files[0]);
+    }
+  };
 
-  const { name, licenseNum, role } = props.profileData;
-  const { medRecordId, evolutionNumber, patientFullName } = props.patientData;
-
-  const saveHandler = async (event: FormEvent) => {
+  const handleFormSubmit = async (event: FormEvent<HTMLFormElement>) => {
     event.preventDefault();
 
-    const token = Cookies.get("token");
+    const dateNow = Math.floor(new Date().getTime() / 1000).toString();
+    const enteredDiagnosis = diagnosisInputRef.current?.value;
+    const enteredProgressionType = progressionTypeInputRef.current?.value;
 
-    if (navPostion === 1) {
-      const enteredDescription = descriptionInputRef.current?.value;
+    const formData = new FormData();
 
-      const evolutionData = {
-        name: name,
-        credential: licenseNum,
-        date: date,
-        hour: hour,
-        expertise: role,
-        evolutionNumber: evolutionNumber,
-        description: enteredDescription,
-      };
+    console.log(selectedFile);
 
-      const response = await fetch(
-        `http://127.0.0.1:3000/api/v1/med-progression?medicalRecord=${medRecordId}`,
-        {
-          method: "POST",
-          headers: {
-            "Content-Type": "application/json",
-            Authorization: `Bearer ${token}`,
-          },
-          body: JSON.stringify(evolutionData),
-        }
-      );
+    // if (selectedFile) {
+    //   formData.append("diagnosis", enteredDiagnosis as string);
+    //   formData.append("medicalTests", selectedFile);
+    //   // formData.append("date", dateNow as string);
 
-      const data = await response.json();
+    //   await api
+    //     .post(`/med-progression?medicalRecord=${medRecordId}`, formData)
+    //     .then((data) => {
+    //       console.log("File uploaded successfully:", data);
+    //     })
+    //     .catch((error) => {
+    //       console.error("Error uploading file:", error);
+    //     });
 
-      console.log("POST: ", data);
-    }
+    //   setNavPosition(2);
 
-    if (navPostion < 3) {
-      setNavPostion((prevState) => {
-        return prevState + 1;
-      });
-    } else {
-      route.push("/patients");
-    }
+    //   // route.push("/patients");
+    // }
   };
 
   return (
     <>
       <Header
-        title={name}
+        title={patientFullName}
         buttonName="Histórico"
         link={`/patients/${patientFullName}`}
       />
       <nav className={styles.nav}>
         <ul>
-          <li className={navPostion === 1 ? styles.active : styles.inactive}>
-            <button onClick={() => setNavPostion(1)}>
+          <li className={navPosition === 1 ? styles.active : styles.inactive}>
+            <button onClick={() => setNavPosition(1)}>
               <img src="/icons/clipboard.svg" alt="clipboard_icon" />
               <p>Evolução</p>
             </button>
           </li>
-          <li className={navPostion === 2 ? styles.active : styles.inactive}>
-            <button onClick={() => setNavPostion(2)}>
+          <li className={navPosition === 2 ? styles.active : styles.inactive}>
+            <button onClick={() => setNavPosition(2)}>
               <img src="/icons/pharmacy.svg" alt="pharmacy_icon" />
               <p>Farmácia</p>
-            </button>
-          </li>
-          <li className={navPostion === 3 ? styles.active : styles.inactive}>
-            <button onClick={() => setNavPostion(3)}>
-              <img src="/icons/clip.svg" alt="clip_icon" />
-              <p>Anexar</p>
             </button>
           </li>
         </ul>
@@ -115,122 +99,80 @@ const NewEvolutionPage: FC<{
       <main
         className={`
         ${styles.main}
-        ${navPostion === 1 && styles.noBorderLeft}
-        ${navPostion === 3 && styles.noBorderRight}
+        ${navPosition === 1 && styles.noBorderLeft}
+        ${navPosition === 2 && styles.noBorderRight}
         `}
       >
         <div className={styles.formsHeader}>
           <h1>
-            {navPostion === 1 && "Evolução"}
-            {navPostion === 2 && "Farmácia"}
-            {navPostion === 3 && "Anexar"}
+            {navPosition === 1 && "Evolução"}
+            {navPosition === 2 && "Farmácia"}
           </h1>
-          <button onClick={saveHandler} form="evolutionForm">
-            Salvar
-          </button>
         </div>
 
-        {navPostion === 1 && (
-          <form
-            className={styles.form}
-            onSubmit={saveHandler}
-            id="evolutionForm"
-          >
-            <div className={styles.disabledFields}>
+        {navPosition === 1 && (
+          <>
+            <form className={styles.form} onSubmit={handleFormSubmit}>
               <div className={styles.field}>
-                <label htmlFor="name">Nome</label>
-                <input
-                  type="text"
-                  name="name"
-                  id="name"
-                  disabled
-                  placeholder="Carlos Abreu" //Placeholder from loginData
-                />
+                <label htmlFor="progressionType">Tipo de progressão</label>
+                <select
+                  name="progressionType"
+                  id="progressionType"
+                  ref={progressionTypeInputRef}
+                >
+                  <option value="type1">Tipo 1</option>
+                  <option value="type2">Tipo 2</option>
+                  <option value="type3">Tipo 3</option>
+                  <option value="type4">Tipo 4</option>
+                </select>
               </div>
-              <div className={styles.field}>
-                <label htmlFor="credential">Credencial</label>
-                <input
-                  type="text"
-                  name="credential"
-                  id="credential"
-                  disabled
-                  placeholder="16H1AZ42" //Placeholder from loginData
-                />
+              <div className={`${styles.field} ${styles.descriptionfield}`}>
+                <label htmlFor="diagnosis">Diagnose</label>
+                <textarea
+                  ref={diagnosisInputRef}
+                  name="diagnosis"
+                  id="diagnosis"
+                  placeholder="Insira os detalhes da evolução aqui..."
+                ></textarea>
               </div>
-              <div className={styles.field}>
-                <label htmlFor="date">Data</label>
+              <div className={styles.inputFileContainer}>
                 <input
-                  type="text"
-                  name="date"
-                  id="date"
-                  disabled
-                  placeholder={date}
+                  ref={fileInputRef}
+                  onChange={handleFileChange}
+                  type="file"
+                  name="file"
+                  id="file"
                 />
+                <button
+                  type="button"
+                  onClick={() => fileInputRef.current?.click()}
+                >
+                  Faça upload
+                </button>
+                {selectedFile && (
+                  <p>
+                    <span>Arquivo selecionado:</span> {selectedFile.name}
+                  </p>
+                )}
               </div>
-              <div className={styles.field}>
-                <label htmlFor="hour">Hora</label>
-                <input
-                  type="text"
-                  name="hour"
-                  id="hour"
-                  disabled
-                  placeholder={hour}
-                />
-              </div>
-              <div className={styles.field}>
-                <label htmlFor="expertise">Especialidade</label>
-                <input
-                  type="text"
-                  name="expertise"
-                  id="expertise"
-                  disabled
-                  placeholder="Fisioterapeuta" //Placeholder from loginData
-                />
-              </div>
-              <div className={styles.field}>
-                <label htmlFor="evolutionNumber">Nº da Evolução</label>
-                <input
-                  type="text"
-                  name="evolutionNumber"
-                  id="evolutionNumber"
-                  disabled
-                  placeholder={`${evolutionNumber}ª`} //Placeholder from loginData
-                />
-              </div>
-            </div>
-            <div className={`${styles.field} ${styles.descriptionfield}`}>
-              <label htmlFor="description">Descrição</label>
-              <textarea
-                ref={descriptionInputRef}
-                name="description"
-                id="description"
-                placeholder="Insira os detalhes da evolução aqui..."
-              ></textarea>
-            </div>
-          </form>
+              <button className={styles.submitBtn} type="submit">
+                Salvar
+              </button>
+            </form>
+          </>
         )}
 
-        {navPostion === 3 && (
-          <div className={styles.attachContainer}>
-            <p>
-              Lorem ipsum dolor sit amet, consectetur adipiscing elit. Sed a
-              nulla fermentum est commodo laoreet. Donec rutrum accumsan
-              dignissim. Nunc varius faucibus dolor ac placerat. Mauris semper
-              erat quis magna ultricies, egestas consectetur lectus dignissim.
-            </p>
-            <div className={styles.inputFileContainer}>
-              <input
-                ref={inputFileRef}
-                type="file"
-                name="file"
-                id="file"
-                // multiple
-              />
-              <button onClick={() => inputFileRef.current?.click()}>
-                Faça upload
+        {navPosition === 2 && (
+          <>
+            <div className={styles.pharmacyContainer}>
+              <button
+                className={styles.submitBtn}
+                onClick={() => route.push("/patients")}
+              >
+                Salvar
               </button>
             </div>
-          </div>
+          </>
         )}
       </main>
     </>
@@ -269,17 +211,9 @@ export const getServerSideProps: GetServerSideProps = async (context) => {
 
   const medRecordData = await patientResponse.json();
 
-  let evolutionNumber;
-  if (medRecordData.__progressions__.length > 0) {
-    evolutionNumber = medRecordData.__progressions__.length;
-  } else {
-    evolutionNumber = 1;
-  }
-
   const patientData = {
     medRecordId: medRecordData.id,
     patientFullName: medRecordData.patientFullName,
-    evolutionNumber: evolutionNumber,
   };
 
   return {

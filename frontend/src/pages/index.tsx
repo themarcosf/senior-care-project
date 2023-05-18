@@ -32,6 +32,11 @@ const Login: FC<{ BASE_URL: string }> = ({ BASE_URL }) => {
 
     // TODO: handle errors
 
+    if (!response.ok){
+      console.log(data)
+      return;
+    }
+
     Cookies.set("token", data.access_token);
     router.push("/patients");
   };

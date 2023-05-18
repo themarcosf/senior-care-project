@@ -6,6 +6,7 @@ import { useRouter } from "next/router";
 
 import styles from "@/styles/NewPatientPage.module.scss";
 import Cookies from "js-cookie";
+import api from "@/services/api";
 
 const NewPatientPage = () => {
   const route = useRouter();
@@ -13,40 +14,51 @@ const NewPatientPage = () => {
   const nameInputRef = useRef<HTMLInputElement>(null);
   const nationalIdInputRef = useRef<HTMLInputElement>(null);
   const icdCodeInputRef = useRef<HTMLInputElement>(null);
+  const birthDateInputRef = useRef<HTMLInputElement>(null);
+  const legalGuardianInputRef = useRef<HTMLInputElement>(null);
+  const legalGuardianIdNumberInputRef = useRef<HTMLInputElement>(null);
+  const legalGuardianPhoneInputRef = useRef<HTMLInputElement>(null);
+  const legalGuardianEmailInputRef = useRef<HTMLInputElement>(null);
+  const insurancePlanInputRef = useRef<HTMLInputElement>(null);
+  const insurancePolicyNumberInputRef = useRef<HTMLInputElement>(null);
+  const observationInputRef = useRef<HTMLTextAreaElement>(null);
 
   const saveHandler = async (event: FormEvent) => {
     event.preventDefault();
 
-    const token = Cookies.get("token");
-
+    let enteredBirthDate;
+    if (birthDateInputRef.current?.value) {
+      enteredBirthDate = new Date(birthDateInputRef.current?.value);
+    }
     const enteredName = nameInputRef.current?.value;
     const enteredNationalId = nationalIdInputRef.current?.value;
     const enteredIcdCode = icdCodeInputRef.current?.value;
+    const enteredLegalGuardian = legalGuardianInputRef.current?.value;
+    const enteredLegalGuardianIdNumber =
+      legalGuardianIdNumberInputRef.current?.value;
+    const enteredLegalGuardianPhone = legalGuardianPhoneInputRef.current?.value;
+    const enteredLegalGuardianEmail = legalGuardianEmailInputRef.current?.value;
+    const enteredInsurancePlan = insurancePlanInputRef.current?.value;
+    const enteredInsurancePolicyNumber =
+      insurancePolicyNumberInputRef.current?.value;
+    const enteredObservation = observationInputRef.current?.value;
 
     const patientData = {
       patientFullName: enteredName,
-      birthDate:
-        "Tue Aug 09 2022 17:28:14 GMT-0300 (Horário Padrão de Brasília)",
+      birthDate: enteredBirthDate,
       nationalId: enteredNationalId,
       icdCode: enteredIcdCode,
+      email: enteredLegalGuardianEmail,
+      legalGuardian: enteredLegalGuardian,
+      legalGuardianIdNumber: enteredLegalGuardianIdNumber,
+      legalGuardianPhone: enteredLegalGuardianPhone,
+      insurancePlan: enteredInsurancePlan,
+      insurancePolicyNumber: enteredInsurancePolicyNumber,
+      observation: enteredObservation,
     };
 
-    const response = await fetch(
-      // `${process.env.NEXT_PUBLIC_API_URL}/med-record`,
-      `http://127.0.0.1:3000/api/v1/med-record`,
-      {
-        method: "POST",
-        body: JSON.stringify(patientData),
-        headers: {
-          "Content-Type": "application/json",
-          Authorization: "Bearer " + token,
-        },
-      }
-    );
 
-    const data = await response.json();
-
-    // console.log(data)
+    await api.post(`/med-record`, patientData);
 
     route.push("/patients"); //Após a finalização do post, direcionar para uma nova evolução
   };
@@ -59,7 +71,15 @@ const NewPatientPage = () => {
           <li className={styles.active}>
             <button>
               <img src="/icons/info.svg" alt="info_icon" />
-              <p>Cadastro</p>
+              <p
+                onClick={() => {
+                  if (birthDateInputRef.current?.value) {
+                    const date = new Date(birthDateInputRef.current?.value);
+                  }
+                }}
+              >
+                Cadastro
+              </p>
             </button>
           </li>
         </ul>
@@ -68,7 +88,7 @@ const NewPatientPage = () => {
       <main className={styles.main}>
         <div className={styles.formsHeader}>
           <h1> Cadastro do paciente </h1>
-          <button form="registerForm">Salvar</button>
+          <button form="registerForm">Cadastrar</button>
         </div>
 
         <form className={styles.form} id="registerForm" onSubmit={saveHandler}>
@@ -95,42 +115,64 @@ const NewPatientPage = () => {
                 />
               </div>
               <div className={styles.field}>
-                <label htmlFor="date">CID</label>
+                <label htmlFor="CID">CID</label>
                 <input
                   type="text"
-                  name="date"
-                  id="date"
+                  name="CID"
+                  id="CID"
                   placeholder="Digite aqui..."
                   ref={icdCodeInputRef}
                 />
               </div>
+              <div className={styles.field}>
+                <label htmlFor="birthDate">Data de nascimento</label>
+                <input
+                  type="date"
+                  name="birthDate"
+                  id="birthDate"
+                  ref={birthDateInputRef}
+                />
+              </div>
             </div>
 
             <div className={styles.fieldBlocks}>
               <div className={styles.field}>
-                <label htmlFor="legalResponsible">Responsável Legal</label>
+                <label htmlFor="legalGuardian">Responsável Legal</label>
                 <input
+                  ref={legalGuardianInputRef}
                   type="text"
-                  name="legalResponsible"
-                  id="legalResponsible"
+                  name="legalGuardian"
+                  id="legalGuardian"
                   placeholder="Digite aqui..."
                 />
               </div>
               <div className={styles.field}>
-                <label htmlFor="responsibleDocument">RG do Responsável</label>
+                <label htmlFor="legalGuardianIdNumber">RG do Responsável</label>
                 <input
+                  ref={legalGuardianIdNumberInputRef}
                   type="text"
-                  name="responsibleDocument"
-                  id="responsibleDocument"
+                  name="legalGuardianIdNumber"
+                  id="legalGuardianIdNumber"
                   placeholder="Digite aqui..."
                 />
               </div>
               <div className={styles.field}>
-                <label htmlFor="tel">Tel para contato</label>
+                <label htmlFor="legalGuardianPhone">Tel para contato</label>
                 <input
+                  ref={legalGuardianPhoneInputRef}
                   type="tel"
-                  name="tel"
-                  id="tel"
+                  name="legalGuardianPhone"
+                  id="legalGuardianPhone"
+                  placeholder="Digite aqui..."
+                />
+              </div>
+              <div className={styles.field}>
+                <label htmlFor="legalGuardianEmail">Email para contato</label>
+                <input
+                  ref={legalGuardianEmailInputRef}
+                  type="email"
+                  name="legalGuardianEmail"
+                  id="legalGuardianEmail"
                   placeholder="Digite aqui..."
                 />
               </div>
@@ -138,30 +180,33 @@ const NewPatientPage = () => {
 
             <div className={styles.fieldBlocks}>
               <div className={styles.field}>
-                <label htmlFor="healthInsurance">Plano de saúde</label>
+                <label htmlFor="insurancePlan">Plano de saúde</label>
                 <input
+                  ref={insurancePlanInputRef}
                   type="text"
-                  name="healthInsurance"
-                  id="healthInsurance"
+                  name="insurancePlan"
+                  id="insurancePlan"
                   placeholder="Digite aqui..."
                 />
               </div>
               <div className={styles.field}>
-                <label htmlFor="healthInsuranceNumber">Nº do Plano</label>
+                <label htmlFor="insurancePolicyNumber">Nº do Plano</label>
                 <input
+                  ref={insurancePolicyNumberInputRef}
                   type="text"
-                  name="healthInsuranceNumber"
-                  id="healthInsuranceNumber"
+                  name="insurancePolicyNumber"
+                  id="insurancePolicyNumber"
                   placeholder="Digite aqui..."
                 />
               </div>
             </div>
           </div>
           <div className={`${styles.field} ${styles.descriptionfield}`}>
-            <label htmlFor="comments">Observações</label>
+            <label htmlFor="observation">Observações</label>
             <textarea
-              name="comments"
-              id="comments"
+              ref={observationInputRef}
+              name="observation"
+              id="observation"
               placeholder="Digite aqui..."
             ></textarea>
           </div>

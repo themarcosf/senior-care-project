@@ -5,11 +5,12 @@ import Link from "next/link";
 import styles from "./PatientCard.module.scss";
 
 const PatientCard: FC<{
-  id: number;
+  progressionId: number;
   physician: string;
   physicianArea: string;
+  patientFullName: string;
 }> = (props) => {
-  const { id, physician, physicianArea } = props;
+  const { progressionId, physician, physicianArea, patientFullName } = props;
 
   return (
     <div className={styles.container}>
@@ -20,7 +21,7 @@ const PatientCard: FC<{
           : `${physicianArea}`}
       </p>
       <div className={styles.actions}>
-          <Link href="#">Mais detalhes</Link>
+          <Link href={`${patientFullName}/${progressionId.toString()}`}>Mais detalhes</Link>
       </div>
     </div>
   );

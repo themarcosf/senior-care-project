@@ -1,4 +1,4 @@
-import { FC } from "react";
+import { FC, use, useEffect, useState } from "react";
 import { GetServerSideProps } from "next";
 
 import Header from "@/components/Header/Header";
@@ -6,9 +6,18 @@ import Search from "@/components/Search/Search";
 import CardsList from "@/components/CardsList/CardsList";
 import HomeCard from "@/components/HomeCard/HomeCard";
 
-import { homeCard } from "../../../models/homeCard";
+import { homeCard } from "../../models/homeCard";
 
 const HomePage: FC<{ homeData: homeCard[] }> = ({ homeData }) => {
+  const [search, setSearch] = useState("");
+
+  const filteredData =
+    search.length > 0
+      ? homeData.filter((card) =>
+          card.patientFullName.toLowerCase().includes(search.toLowerCase())
+        )
+      : homeData;
+
   return (
     <>
       <Header
@@ -16,16 +25,20 @@ const HomePage: FC<{ homeData: homeCard[] }> = ({ homeData }) => {
         buttonName="Adicionar Paciente"
         link="/newPatient"
       />
-      <Search />
+      <Search search={search} onSearch={setSearch}/>
       <CardsList>
-        {homeData.map((card) => (
-          <HomeCard
-            key={card.id}
-            id={card.id}
-            patientFullName={card.patientFullName}
-            lastProgression={card.lastProgression}
-          />
-        ))}
+        {filteredData.length !== 0 && filteredData ? (
+          filteredData.map((card) => (
+            <HomeCard
+              key={card.id}
+              id={card.id}
+              patientFullName={card.patientFullName}
+              lastProgression={card.lastProgression}
+            />
+          ))
+        ) : (
+          <h1>Nenhum paciente encontrado</h1>
+        )}
       </CardsList>
     </>
   );
@@ -63,22 +76,3 @@ export const getServerSideProps: GetServerSideProps = async (context) => {
 };
 
 export default HomePage;
-
-// export async function getStaticProps() {
-//   const response = await fetch("http:localhost:3001/patient.json");
-//   const data = await response.json();
-
-//   const cardData = data.patients.map((patient: patient) => {
-//     return {
-//       id: patient.id,
-//       title: patient.name,
-//       subtitle: patient.lastEvolution,
-//     };
-//   });
-
-//   return {
-//     props: {
-//       cardData: cardData,
-//     },
-//   };
-// }

@@ -6,10 +6,7 @@ export class CreateMedicalProgressionDto {
   diagnosis: string;
 
   @IsString()
-  physicians: string;
-
-  @IsString()
-  nurses: string;
+  professional: string;
 
   @IsOptional()
   @IsString({ each: true })

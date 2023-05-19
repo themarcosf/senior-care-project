@@ -2,8 +2,8 @@
 import { Get, Post, Body, Controller, Req, Query } from "@nestjs/common";
 
 /** providers */
-import { Api } from "./common/common.enum";
 import { User } from "../users/entities/user.entity";
+import { Api, QueryField } from "./common/common.enum";
 import { MedicalRecord } from "./entities/medical-records.entity";
 import { MedicalRecordsService } from "./medical-records.service";
 import { CreateMedicalRecordDto } from "./dto/create-medical-record.dto";
@@ -39,11 +39,16 @@ export class MedicalRecordsController {
 
   @Get(Api.PATIENT)
   findOne(
-    @Query(Api.QUERY_ID) patientId: number,
-    @Query(Api.QUERY_FULL_NAME) patientFullName: string
+    @Query(QueryField.ID) patientId: number,
+    @Query(QueryField.FULL_NAME) patientFullName: string
   ): Promise<MedicalRecord | null> {
     return patientId
       ? this.medicalRecordsService.findOne(patientId, "DESC")
       : this.medicalRecordsService.findOne(patientFullName, "DESC");
+  }
+
+  @Get(QueryField.TOGGLE_STATUS)
+  toggleStatus(@Query(QueryField.ID) id: number) {
+    return this.medicalRecordsService.toggleStatus(id);
   }
 }

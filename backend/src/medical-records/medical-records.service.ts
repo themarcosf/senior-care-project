@@ -161,6 +161,27 @@ export class MedicalRecordsService {
     return await queryBuilder.getOne();
   }
 
+  async toggleStatus(id: number) {
+    const record = await this.findOne(id);
+
+    // check if record exists and is active
+    if (!record || !record.isActive)
+      throw new UnauthorizedException(
+        "Medical record not found or is inactive"
+      );
+
+    // toggle isActive using QueryBuilder
+    await this.repository
+      .createQueryBuilder()
+      .update(MedicalRecord)
+      .set({ isActive: false })
+      .where("id = :id", { id })
+      .execute();
+
+    // return toggled record
+    return await this.findOne(id);
+  }
+
   update(id: number, updateMedicalRecordDto: UpdateMedicalRecordDto) {
     return "// TODO: implement update method";
   }

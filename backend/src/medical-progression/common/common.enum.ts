@@ -5,6 +5,7 @@ export enum Api {
 
 export enum QueryField {
   MEDICAL_RECORD = "medicalRecord",
+  PROGRESSION_TYPE = "progressionType",
   ID = "id",
 }
 

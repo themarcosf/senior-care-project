@@ -18,6 +18,7 @@ import { MedicalProgressionService } from "./medical-progression.service";
 
 /** dependencies */
 import { Api, QueryField, ParamField } from "./common/common.enum";
+import { MedicalProgression } from "./entities/medical-progression.entity";
 import { CreateMedicalProgressionDto } from "./dto/create-medical-progression.dto";
 import { UpdateMedicalProgressionDto } from "./dto/update-medical-progression.dto";
 ////////////////////////////////////////////////////////////////////////////////
@@ -33,23 +34,28 @@ export class MedicalProgressionController {
   @Post()
   create(
     @Query(QueryField.MEDICAL_RECORD) medicalRecordId: number,
+    @Query(QueryField.PROGRESSION_TYPE) progressionType: number,
     @Body() createMedicalProgressionDto: CreateMedicalProgressionDto,
     @UploadedFile() file: Express.Multer.File
-  ) {
+  ): Promise<MedicalProgression> {
     if (file) createMedicalProgressionDto.medicalTests = [file.filename];
+
     return this.medicalProgressionService.create(
       createMedicalProgressionDto,
-      medicalRecordId
+      medicalRecordId,
+      progressionType
     );
   }
 
   @Get()
-  findAll() {
+  findAll(): Promise<MedicalProgression[]> {
     return this.medicalProgressionService.findAll();
   }
 
   @Get(Api.ID)
-  findOne(@Param(ParamField.ID) id: number) {
+  findOne(
+    @Param(ParamField.ID) id: number
+  ): Promise<MedicalProgression | null> {
     return this.medicalProgressionService.findOne(id);
   }
 
@@ -57,7 +63,7 @@ export class MedicalProgressionController {
   update(
     @Param(ParamField.ID) id: number,
     @Body() updateMedicalProgressionDto: UpdateMedicalProgressionDto
-  ) {
+  ): Promise<MedicalProgression | null> {
     return this.medicalProgressionService.update(
       id,
       updateMedicalProgressionDto
@@ -65,7 +71,7 @@ export class MedicalProgressionController {
   }
 
   @Delete(Api.ID)
-  remove(@Param(ParamField.ID) id: number) {
+  remove(@Param(ParamField.ID) id: number): Promise<void> {
     return this.medicalProgressionService.remove(id);
   }
 }

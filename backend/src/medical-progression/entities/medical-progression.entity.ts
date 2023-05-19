@@ -2,6 +2,7 @@ import { Entity, Column, ManyToOne } from "typeorm";
 
 import { BaseEntity } from "../../common/base.entity";
 import { MedicalRecord } from "../../medical-records/entities/medical-records.entity";
+import { ProgressionType } from "../../progression-type/entities/progression-type.entity";
 ////////////////////////////////////////////////////////////////////////////////
 
 // TODO: add validation
@@ -24,4 +25,10 @@ export class MedicalProgression extends BaseEntity {
   /** relations */
   @ManyToOne(() => MedicalRecord, (medicalRecord) => medicalRecord.progressions)
   medicalRecord: Promise<MedicalRecord>;
+
+  @ManyToOne(
+    () => ProgressionType,
+    (progressionType) => progressionType.progressions
+  )
+  progressionType: Promise<ProgressionType>;
 }

@@ -2,16 +2,12 @@
 import { Get, Post, Body, Controller, Req, Query } from "@nestjs/common";
 
 /** providers */
-import { User } from "../users/entities/user.entity";
 import { Api, QueryField } from "./common/common.enum";
+import { PassportRequest } from "../auth/auth.controller";
 import { MedicalRecord } from "./entities/medical-records.entity";
 import { MedicalRecordsService } from "./medical-records.service";
 import { CreateMedicalRecordDto } from "./dto/create-medical-record.dto";
 ////////////////////////////////////////////////////////////////////////////////
-
-interface Request extends Express.Request {
-  user: User;
-}
 
 export interface PartialMedicalRecord {
   id: number;
@@ -25,10 +21,10 @@ export class MedicalRecordsController {
 
   @Post()
   async create(
-    @Req() req: Request,
+    @Req() req: PassportRequest,
     @Body() createMedicalRecordDto: CreateMedicalRecordDto
   ): Promise<MedicalRecord> {
-    createMedicalRecordDto.createdByUserId = req.user.id;
+    createMedicalRecordDto.createdByUserId = req.user!.id;
     return await this.medicalRecordsService.create(createMedicalRecordDto);
   }
 

@@ -8,6 +8,7 @@ import { MedicalProgression } from "./entities/medical-progression.entity";
 import { CreateMedicalProgressionDto } from "./dto/create-medical-progression.dto";
 import { UpdateMedicalProgressionDto } from "./dto/update-medical-progression.dto";
 import { MedicalRecordsService } from "../medical-records/medical-records.service";
+import { ProgressionTypeService } from "../progression-type/progression-type.service";
 ////////////////////////////////////////////////////////////////////////////////
 
 @Injectable()
@@ -15,36 +16,38 @@ export class MedicalProgressionService {
   constructor(
     @InjectRepository(MedicalProgression)
     private repository: Repository<MedicalProgression>,
-    private service: MedicalRecordsService,
-    private dataSource: DataSource
+    private readonly dataSource: DataSource,
+    private readonly medicalRecordService: MedicalRecordsService,
+    private readonly progressionTypeService: ProgressionTypeService
   ) {}
 
   async create(
     createMedicalProgressionDto: CreateMedicalProgressionDto,
-    record: number
+    medicalRecord: number,
+    progressionType: number
   ): Promise<MedicalProgression> {
     // check if medical record exists and is active
-    const medRecord = await this.service.findOne(record);
+    const medRecord = await this.medicalRecordService.findOne(medicalRecord);
     if (!medRecord || !medRecord.isActive)
       throw new UnauthorizedException("Medical record not found or not active");
+
+    // check progression type
+    const progType = await this.progressionTypeService.findOne(progressionType);
+    if (!progType)
+      throw new UnauthorizedException("Progression type not found");
 
     // create a query runner
     const queryRunner = this.dataSource.createQueryRunner();
     await queryRunner.connect();
     await queryRunner.startTransaction();
 
-    // try to save medical progression
+    // try to save medical progression with relations
+    const medProg = this.repository.create(createMedicalProgressionDto);
     try {
-      const medProg = this.repository.create(createMedicalProgressionDto);
       medProg.medicalRecord = Promise.resolve(medRecord);
+      medProg.progressionType = Promise.resolve(progType);
       await queryRunner.manager.save(medProg);
       await queryRunner.commitTransaction();
-      // console.log(medProg.createdAtUnixTimestamp);
-      // console.log({
-      //   ...medProg,
-      //   createdAtUnixTimestamp: medProg.createdAtUnixTimestamp,
-      // });
-      return medProg;
     } catch (err) {
       // rollback changes made in case of error
       await queryRunner.rollbackTransaction();
@@ -53,24 +56,50 @@ export class MedicalProgressionService {
       // release queryRunner after transaction
       await queryRunner.release();
     }
+
+    // toggle medical record active status if progressionType.toggleStatus is true
+    if (progType.toggleStatus) {
+      await this.medicalRecordService.toggleStatus(medRecord.id);
+    }
+
+    // return created medical progression
+    return medProg;
   }
 
   findAll(): Promise<MedicalProgression[]> {
-    return this.repository.find();
+    // create query builder
+    const queryBuilder = this.repository
+      .createQueryBuilder("medProg")
+      .orderBy("medProg.createdAt", "DESC");
+
+    // add relations to query builder
+    queryBuilder
+      .leftJoinAndSelect("medProg.medicalRecord", "medRecord")
+      .leftJoinAndSelect("medProg.progressionType", "progType");
+
+    // return medical progressions
+    return queryBuilder.getMany();
   }
 
   async findOne(id: number): Promise<MedicalProgression | null> {
+    // create query builder
     const queryBuilder = this.repository
       .createQueryBuilder("medProg")
       .where("medProg.id = :id", { id });
 
+    // add relations to query builder
+    queryBuilder
+      .leftJoinAndSelect("medProg.medicalRecord", "medRecord")
+      .leftJoinAndSelect("medProg.progressionType", "progType");
+
+    // return medical progression
     return await queryBuilder.getOne();
   }
 
   async update(
     id: number,
     updateMedicalProgressionDto: UpdateMedicalProgressionDto
-  ) {
+  ): Promise<MedicalProgression | null> {
     // check if medical progression exists
     const medProg = await this.findOne(id);
     if (!medProg)

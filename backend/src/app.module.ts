@@ -8,6 +8,7 @@ import { AuthModule } from "./auth/auth.module";
 import { UsersModule } from "./users/users.module";
 import { MedicalRecordsModule } from "./medical-records/medical-records.module";
 import { MedicalProgressionModule } from "./medical-progression/medical-progression.module";
+import { ProgressionTypeModule } from "./progression-type/progression-type.module";
 ////////////////////////////////////////////////////////////////////////////////
 
 @Module({
@@ -16,6 +17,7 @@ import { MedicalProgressionModule } from "./medical-progression/medical-progress
     AuthModule,
     MedicalRecordsModule,
     MedicalProgressionModule,
+    ProgressionTypeModule,
     /** runtime environment variables (e.g. OS shell exports) take precedence */
     // TODO : schema validation (see https://docs.nestjs.com/techniques/configuration#schema-validation)
     ConfigModule.forRoot({

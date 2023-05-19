@@ -194,7 +194,14 @@ export const getServerSideProps: GetServerSideProps = async (context) => {
 
   const token = req.cookies["token"];
 
-  
+  if (!token) {
+    return {
+      redirect: {
+        destination: "/",
+        permanent: false,
+      },
+    };
+  }
 
   const { patientId } = context.params as Params;
 

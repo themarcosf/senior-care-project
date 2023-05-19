@@ -57,6 +57,16 @@ interface Params extends ParsedUrlQuery {
 export const getServerSideProps: GetServerSideProps = async (context) => {
   const { req, res } = context;
   const token = req.cookies["token"];
+
+  if (!token) {
+    return {
+      redirect: {
+        destination: "/",
+        permanent: false,
+      },
+    };
+  }
+
   const progressionId = context.query.progressionId;
   let progressionData;
   let patientData;

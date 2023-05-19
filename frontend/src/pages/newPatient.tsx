@@ -7,6 +7,7 @@ import { useRouter } from "next/router";
 import styles from "@/styles/NewPatientPage.module.scss";
 import Cookies from "js-cookie";
 import api from "@/services/api";
+import { GetServerSideProps } from "next";
 
 const NewPatientPage = () => {
   const route = useRouter();
@@ -217,3 +218,22 @@ const NewPatientPage = () => {
 };
 
 export default NewPatientPage;
+
+export const getServerSideProps: GetServerSideProps = async (context) => {
+  const { req, res } = context;
+
+  const token = req.cookies["token"];
+
+  if (!token) {
+    return {
+      redirect: {
+        destination: "/",
+        permanent: false,
+      },
+    };
+  }
+
+  return {
+    props: {},
+  };
+};

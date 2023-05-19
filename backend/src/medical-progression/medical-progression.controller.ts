@@ -17,7 +17,7 @@ import { FileInterceptor } from "@nestjs/platform-express";
 import { MedicalProgressionService } from "./medical-progression.service";
 
 /** dependencies */
-import { Api, QueryField } from "./common/common.enum";
+import { Api, QueryField, ParamField } from "./common/common.enum";
 import { CreateMedicalProgressionDto } from "./dto/create-medical-progression.dto";
 import { UpdateMedicalProgressionDto } from "./dto/update-medical-progression.dto";
 ////////////////////////////////////////////////////////////////////////////////
@@ -48,14 +48,14 @@ export class MedicalProgressionController {
     return this.medicalProgressionService.findAll();
   }
 
-  @Get(":id")
-  findOne(@Param("id") id: number) {
+  @Get(Api.ID)
+  findOne(@Param(ParamField.ID) id: number) {
     return this.medicalProgressionService.findOne(id);
   }
 
-  @Patch(":id")
+  @Patch(Api.ID)
   update(
-    @Param("id") id: number,
+    @Param(ParamField.ID) id: number,
     @Body() updateMedicalProgressionDto: UpdateMedicalProgressionDto
   ) {
     return this.medicalProgressionService.update(
@@ -64,8 +64,8 @@ export class MedicalProgressionController {
     );
   }
 
-  @Delete(":id")
-  remove(@Param("id") id: number) {
+  @Delete(Api.ID)
+  remove(@Param(ParamField.ID) id: number) {
     return this.medicalProgressionService.remove(id);
   }
 }

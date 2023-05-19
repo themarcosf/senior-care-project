@@ -39,6 +39,11 @@ export class MedicalProgressionService {
       medProg.medicalRecord = Promise.resolve(medRecord);
       await queryRunner.manager.save(medProg);
       await queryRunner.commitTransaction();
+      // console.log(medProg.createdAtUnixTimestamp);
+      // console.log({
+      //   ...medProg,
+      //   createdAtUnixTimestamp: medProg.createdAtUnixTimestamp,
+      // });
       return medProg;
     } catch (err) {
       // rollback changes made in case of error
@@ -62,8 +67,35 @@ export class MedicalProgressionService {
     return await queryBuilder.getOne();
   }
 
-  update(id: number, updateMedicalProgressionDto: UpdateMedicalProgressionDto) {
-    return `This action updates a #${id} medicalProgression`;
+  async update(
+    id: number,
+    updateMedicalProgressionDto: UpdateMedicalProgressionDto
+  ) {
+    // check if medical progression exists
+    const medProg = await this.findOne(id);
+    if (!medProg)
+      throw new UnauthorizedException("Medical progression not found");
+
+    // check if request for update is within 24 hours
+    const now = new Date();
+    const createdAt = new Date(medProg.createdAt);
+    const diff = now.getTime() - createdAt.getTime();
+    const diffHours = Math.ceil(diff / (1000 * 60 * 60));
+    if (diffHours > 24)
+      throw new UnauthorizedException(
+        "Medical progression can only be updated within 24 hours"
+      );
+
+    // update medical progression using QueryBuilder
+    await this.repository
+      .createQueryBuilder()
+      .update(MedicalProgression)
+      .set(updateMedicalProgressionDto)
+      .where("id = :id", { id })
+      .execute();
+
+    // return updated medical progression
+    return await this.findOne(id);
   }
 
   async remove(id: number): Promise<void> {

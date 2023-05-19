@@ -16,11 +16,7 @@ export class MedicalProgression extends BaseEntity {
 
   // TODO : add ManyToMany relations with Physicians
   @Column()
-  physicians: string;
-
-  // TODO : add ManyToMany relations with Nurses
-  @Column()
-  nurses: string;
+  professional: string;
 
   @Column("simple-array", { nullable: true })
   medicalTests: string[];

@@ -11,8 +11,9 @@ import { patientCard } from "../../models/patientCard";
 
 import styles from "@/styles/patientPage.module.scss";
 import Search from "@/components/Search/Search";
+import Placeholder from "@/components/Placeholder/Placeholder";
 
-const PatientPage: FC<{ patientData: patientCard }> = ({patientData}) => {
+const PatientPage: FC<{ patientData: patientCard }> = ({ patientData }) => {
   const { id, patientFullName, __progressions__ } = patientData;
 
   const [search, setSearch] = useState("");
@@ -24,18 +25,21 @@ const PatientPage: FC<{ patientData: patientCard }> = ({patientData}) => {
         )
       : __progressions__;
 
+  const contentSize = filteredData.length;
+
   return (
     <>
       <Header
         title={patientFullName}
         buttonName="Nova Evolução"
         link={
-          __progressions__.length > 5 ? `/newEvolution/${patientFullName}` : ""
+          contentSize > 5 ? `/newEvolution/${patientFullName}` : ""
         }
       />
-      <Search search={search} onSearch={setSearch} />
+      <Search search={search} onSearch={setSearch} placeholder="Digite o nome do profissional aqui..."/>
       <CardsList>
-        {filteredData.length !== 0 && filteredData ? (
+        {filteredData.length !== 0 &&
+          filteredData && (
           filteredData.map((progression) => (
             <PatientCard
               key={progression.id}
@@ -46,22 +50,15 @@ const PatientPage: FC<{ patientData: patientCard }> = ({patientData}) => {
               progressionDate={1684585859}
             />
           ))
-        ) : (
-          <div className={styles.placeholder}>
-            <h1>
-              Não há evoluções cadastradas
-              {search ? " por esse profissional" : " para este paciente"}
-            </h1>
-          </div>
         )}
-        {__progressions__.length < 5 && (
-          <div className={styles.newEvolutionBtn}>
-            <button>
-              <Link href={`/newEvolution/${patientFullName}`}>
-                Nova Evolução
-              </Link>
-            </button>
-          </div>
+        {contentSize < 5 && (
+          <Placeholder
+            contentSize={filteredData.length}
+            text={`Não há evoluções cadastradas
+            ${search ? " por esse profissional" : " para este paciente"}`}
+            link={`/newEvolution/${patientFullName}`}
+            btnText="Nova Evolução"
+          />
         )}
       </CardsList>
     </>

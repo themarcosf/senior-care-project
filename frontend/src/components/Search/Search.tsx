@@ -2,15 +2,16 @@ import { FC } from "react";
 
 import styles from "./Search.module.scss";
 
-const Search: FC<{ search: string; onSearch: (value: string) => void }> = ({
+const Search: FC<{ search: string; onSearch: (value: string) => void, placeholder: string }> = ({
   search,
   onSearch,
+  placeholder,
 }) => {
   return (
     <div className={styles.content}>
       <div className={styles.inputField}>
         <input
-          placeholder="Pesquise aqui"
+          placeholder={placeholder}
           type="text"
           value={search}
           onChange={(e) => onSearch(e.target.value)}

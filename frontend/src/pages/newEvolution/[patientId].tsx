@@ -2,7 +2,6 @@ import { ChangeEvent, FC, FormEvent, useEffect, useRef, useState } from "react";
 import { GetServerSideProps } from "next";
 import { useRouter } from "next/router";
 import Cookies from "js-cookie";
-import { v4 as uuidv4 } from "uuid";
 import { ParsedUrlQuery } from "querystring";
 
 import Header from "@/components/Header/Header";

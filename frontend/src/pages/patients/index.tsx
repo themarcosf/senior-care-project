@@ -1,4 +1,4 @@
-import { FC, use, useEffect, useState } from "react";
+import { FC, useEffect, useState } from "react";
 import { GetServerSideProps } from "next";
 
 import Header from "@/components/Header/Header";
@@ -8,15 +8,19 @@ import HomeCard from "@/components/HomeCard/HomeCard";
 
 import { homeCard } from "../../models/homeCard";
 
+import Placeholder from "@/components/Placeholder/Placeholder";
+
 const HomePage: FC<{ homeData: homeCard[] }> = ({ homeData }) => {
   const [search, setSearch] = useState("");
+  const [role, setRole] = useState("");
 
-  let role;
-  const profileData = localStorage.getItem("profileData");
+  useEffect(() => {
+    const profileData = localStorage.getItem("profileData");
 
-  if (profileData !== null) {
-    role = JSON.parse(profileData).role;
-  }
+    if (profileData !== null) {
+      setRole(JSON.parse(profileData).role);
+    }
+  }, []);
 
   const filteredData =
     search.length > 0
@@ -25,16 +29,23 @@ const HomePage: FC<{ homeData: homeCard[] }> = ({ homeData }) => {
         )
       : homeData;
 
+  const contentSize = filteredData.length;
+
   return (
     <>
       <Header
         title="Pacientes"
         buttonName="Adicionar Paciente"
-        link={role === "physician" ? "/newPatient" : ""}
+        link={role === "physician" && contentSize >= 5 ? "/newPatient" : ""}
       />
-      <Search search={search} onSearch={setSearch} />
+      <Search
+        search={search}
+        onSearch={setSearch}
+        placeholder="Digite o nome do paciente aqui"
+      />
       <CardsList>
-        {filteredData.length !== 0 && filteredData ? (
+        {filteredData.length !== 0 &&
+          filteredData &&
           filteredData.map((card) => (
             <HomeCard
               key={card.id}
@@ -42,9 +53,14 @@ const HomePage: FC<{ homeData: homeCard[] }> = ({ homeData }) => {
               patientFullName={card.patientFullName}
               lastProgression={card.lastProgression}
             />
-          ))
-        ) : (
-          <h1>Nenhum paciente encontrado</h1>
+          ))}
+        {contentSize < 5 && (
+          <Placeholder
+            contentSize={filteredData.length}
+            text="Nenhum paciente encontrado"
+            link="/newPatient"
+            btnText="Adicionar paciente"
+          />
         )}
       </CardsList>
     </>

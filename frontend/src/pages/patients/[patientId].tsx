@@ -12,8 +12,8 @@ import { patientCard } from "../../models/patientCard";
 import styles from "@/styles/patientPage.module.scss";
 import Search from "@/components/Search/Search";
 
-const PatientPage: FC<{ patientData: patientCard }> = (props) => {
-  const { id, patientFullName, __progressions__ } = props.patientData;
+const PatientPage: FC<{ patientData: patientCard }> = ({patientData}) => {
+  const { id, patientFullName, __progressions__ } = patientData;
 
   const [search, setSearch] = useState("");
 
@@ -43,13 +43,14 @@ const PatientPage: FC<{ patientData: patientCard }> = (props) => {
               physicianArea={progression.physiciansArea}
               progressionId={progression.id}
               patientFullName={patientFullName}
+              progressionDate={1684585859}
             />
           ))
         ) : (
           <div className={styles.placeholder}>
             <h1>
               Não há evoluções cadastradas
-              {search ? " por esse profissional" : " para este paciente"}{" "}
+              {search ? " por esse profissional" : " para este paciente"}
             </h1>
           </div>
         )}

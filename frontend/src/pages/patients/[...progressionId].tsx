@@ -26,8 +26,6 @@ const PatientPage: FC<{
 
   const readableDate = new Date(createdAt).toLocaleDateString("pt-BR");
 
-  console.log(progressionData);
-
   return (
     <>
       <Header title={patientName} buttonName="Nova Evolução" link="" />

@@ -4,16 +4,42 @@
   border-radius: 1.5rem;
   box-shadow: 4px 4px 4px #62717940;
   margin-bottom: 2rem;
+}
 
-  h1 {
-    font-size: 2rem;
-    font-weight: 500;
+.cardHeader {
+  display: flex;
+  justify-content: space-between;
+
+  div {
+    h1 {
+      font-size: 2rem;
+      font-weight: 500;
+    }
+
+    p {
+      color: var(--neutral-300);
+      font-size: 1.4rem;
+      margin-bottom: 1.5rem;
+    }
   }
 
-  p {
-    color: var(--neutral-300);
+  a {
+    display: flex;
+    align-items: center;
     font-size: 1.4rem;
-    margin-bottom: 1.5rem;
+    background-color: var(--neutral-200);
+    padding: 0.5rem 1rem;
+    border-radius:1rem ;
+    height: min-content;
+
+    img {
+      width: 2rem;
+    }
+
+    p {
+      color: var(--neutral-0);
+      margin-left: 0.5rem;
+    }
   }
 }
 

@@ -21,7 +21,6 @@ type patientData = {
 
 const NewEvolutionPage: FC<{
   patientData: patientData;
-  profileData: profile;
 }> = (props) => {
   const [navPosition, setNavPosition] = useState(1);
 
@@ -33,8 +32,14 @@ const NewEvolutionPage: FC<{
 
   const route = useRouter();
 
-  const { role } = props.profileData;
   const { patientFullName } = props.patientData;
+
+  let role;
+  const profileData = localStorage.getItem("profileData");
+
+  if (profileData !== null) {
+    role = JSON.parse(profileData).role;
+  }
 
   const handleFileChange = (event: ChangeEvent<HTMLInputElement>) => {
     if (event.target.files && event.target.files.length > 0) {
@@ -50,8 +55,6 @@ const NewEvolutionPage: FC<{
     const enteredProgressionType = progressionTypeInputRef.current?.value;
 
     const formData = new FormData();
-
-    console.log(selectedFile);
 
     // if (selectedFile) {
     //   formData.append("diagnosis", enteredDiagnosis as string);
@@ -123,7 +126,10 @@ const NewEvolutionPage: FC<{
                   <option value="type1">Tipo 1</option>
                   <option value="type2">Tipo 2</option>
                   <option value="type3">Tipo 3</option>
-                  <option value="type4">Tipo 4</option>
+                  {role === "physician" && (
+                    <option value="finishing">Encerrar prontuário</option>
+
+                  )}
                 </select>
               </div>
               <div className={`${styles.field} ${styles.descriptionfield}`}>
@@ -188,15 +194,7 @@ export const getServerSideProps: GetServerSideProps = async (context) => {
 
   const token = req.cookies["token"];
 
-  const profileResponse = await fetch(
-    `${process.env.NEXT_PUBLIC_BASE_URL}/auth/profile`,
-    {
-      headers: {
-        Authorization: "Bearer " + token,
-      },
-    }
-  );
-  const profileData = await profileResponse.json();
+  
 
   const { patientId } = context.params as Params;
 
@@ -218,7 +216,6 @@ export const getServerSideProps: GetServerSideProps = async (context) => {
 
   return {
     props: {
-      profileData: profileData,
       patientData: patientData,
     },
   };

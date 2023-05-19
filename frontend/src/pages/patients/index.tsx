@@ -11,6 +11,13 @@ import { homeCard } from "../../models/homeCard";
 const HomePage: FC<{ homeData: homeCard[] }> = ({ homeData }) => {
   const [search, setSearch] = useState("");
 
+  let role;
+  const profileData = localStorage.getItem("profileData");
+
+  if (profileData !== null) {
+    role = JSON.parse(profileData).role;
+  }
+
   const filteredData =
     search.length > 0
       ? homeData.filter((card) =>
@@ -23,9 +30,9 @@ const HomePage: FC<{ homeData: homeCard[] }> = ({ homeData }) => {
       <Header
         title="Pacientes"
         buttonName="Adicionar Paciente"
-        link="/newPatient"
+        link={role === "physician" ? "/newPatient" : ""}
       />
-      <Search search={search} onSearch={setSearch}/>
+      <Search search={search} onSearch={setSearch} />
       <CardsList>
         {filteredData.length !== 0 && filteredData ? (
           filteredData.map((card) => (

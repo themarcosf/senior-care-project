@@ -3,6 +3,7 @@ import { useRouter } from "next/router";
 import Cookies from "js-cookie";
 
 import styles from "@/styles/login.module.scss";
+import api from "@/services/api";
 
 const Login: FC<{ BASE_URL: string }> = ({ BASE_URL }) => {
   const router = useRouter();
@@ -32,10 +33,19 @@ const Login: FC<{ BASE_URL: string }> = ({ BASE_URL }) => {
 
     // TODO: handle errors
 
-    if (!response.ok){
-      console.log(data)
+    if (!response.ok) {
       return;
     }
+
+    const profileData = await api
+      .get("/auth/profile", {
+        headers: {
+          Authorization: `Bearer ${data.access_token}`,
+        },
+      })
+      .then((data) => data.data);
+
+    localStorage.setItem("profileData", JSON.stringify(profileData));
 
     Cookies.set("token", data.access_token);
     router.push("/patients");

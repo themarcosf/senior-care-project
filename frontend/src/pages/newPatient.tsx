@@ -4,7 +4,7 @@ import Header from "@/components/Header/Header";
 
 import { useRouter } from "next/router";
 
-import styles from "@/styles/NewPatientPage.module.scss";
+import styles from "@/styles/newPatientPage.module.scss";
 import Cookies from "js-cookie";
 import api from "@/services/api";
 import { GetServerSideProps } from "next";

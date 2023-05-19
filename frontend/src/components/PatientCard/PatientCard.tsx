@@ -1,4 +1,5 @@
 import { FC, useEffect, useState } from "react";
+import { AiFillEdit } from "react-icons/ai";
 
 import Link from "next/link";
 
@@ -6,14 +7,14 @@ import styles from "./PatientCard.module.scss";
 
 const PatientCard: FC<{
   progressionId: number;
-  physician: string;
+  professional: string;
   physicianArea: string;
   patientFullName: string;
-  progressionDate: number;
+  progressionDate: string;
 }> = (props) => {
   const {
     progressionId,
-    physician,
+    professional,
     physicianArea,
     patientFullName,
     progressionDate,
@@ -22,9 +23,10 @@ const PatientCard: FC<{
   const [canEdit, setCanEdit] = useState(false);
 
   let dateNow = Math.floor(new Date().getTime() / 1000);
+  let progressionDateUnix = Math.floor(new Date(progressionDate).getTime() / 1000);
 
   useEffect(() => {
-    if (dateNow - progressionDate < 86400) {
+    if (dateNow - progressionDateUnix < 86400) {
       setCanEdit(true);
     }
   }, [progressionDate]);
@@ -33,13 +35,12 @@ const PatientCard: FC<{
     <div className={styles.container}>
       <div className={styles.cardHeader}>
         <div>
-          <h1>{physician}</h1>
+          <h1>{professional}</h1>
           <p>{physicianArea === undefined ? "Sem area" : `${physicianArea}`}</p>
         </div>
         {canEdit && (
           <Link href={`/editEvolution/${progressionId.toString()}`}>
-            <img src="/icons/edit.svg" alt="edit_icon" />
-            <p>Editar</p>
+            <AiFillEdit size={24} />
           </Link>
         )}
       </div>

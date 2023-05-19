@@ -12,7 +12,7 @@ import { patientCard } from "@/models/patientCard";
 import styles from "@/styles/progressionDetail.module.scss";
 
 type progressionData = {
-  physicians: string;
+  professional: string;
   diagnosis: string;
   createdAt: string;
   medicalTests: string[];
@@ -22,18 +22,22 @@ const PatientPage: FC<{
   progressionData: progressionData;
   patientName: string;
 }> = ({ progressionData, patientName }) => {
-  const { physicians, diagnosis, createdAt, medicalTests } = progressionData;
+  const { professional, diagnosis, createdAt, medicalTests } = progressionData;
 
   const readableDate = new Date(createdAt).toLocaleDateString("pt-BR");
 
   return (
     <>
-      <Header title={patientName} buttonName="Nova Evolução" link="" />
+      <Header
+        title={patientName}
+        buttonName="Voltar"
+        link={`/patients/${patientName}`}
+      />
       <CardsList>
         <div className={styles.detailsContainer}>
-        <h1>Detalhes da Evolução</h1>
-          <p>
-            <b>Autor da evolução:</b> {physicians}
+          <h1>Detalhes da Evolução</h1>
+            <p>
+            <b>Autor da evolução:</b> {professional}
           </p>
           <p>
             <b>Data da evolução:</b> {readableDate}

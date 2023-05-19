@@ -6,6 +6,7 @@ export type patientCard = {
 
 export type progressions = {
   id: number;
-  physicians: string;
+  professional: string;
   physiciansArea: string;
+  createdAt: string;
 };

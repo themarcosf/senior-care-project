@@ -1,18 +1,17 @@
-.detailsContainer{
+.detailsContainer {
+  h1 {
+    font-size: 2.4rem;
+    margin-bottom: 1rem;
+  }
 
-    h1{
-        font-size: 2.4rem;
-        margin-bottom: 1rem;
-    }
+  p {
+    margin: 0.5rem 0;
+    font-size: 1.4rem;
+    text-align: justify;
+  }
 
-    p{
-        margin: 0.5rem 0;
-        font-size: 1.4rem;
-        text-align: justify;
-    }
-
-    h2{
-        font-size: 1.8rem;
-        margin-top: 3rem;
-    }
+  h2 {
+    font-size: 1.8rem;
+    margin-top: 3rem;
+  }
 }

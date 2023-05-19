@@ -1,4 +1,4 @@
-import { FC, useState } from "react";
+import { FC, use, useEffect, useState } from "react";
 import Link from "next/link";
 import { GetServerSideProps } from "next";
 import { ParsedUrlQuery } from "querystring";
@@ -17,43 +17,48 @@ const PatientPage: FC<{ patientData: patientCard }> = ({ patientData }) => {
   const { id, patientFullName, __progressions__ } = patientData;
 
   const [search, setSearch] = useState("");
+  const [contentSize, setContentSize] = useState(0);
 
   const filteredData =
     search.length > 0
       ? __progressions__.filter((card) =>
-          card.physicians.toLowerCase().includes(search.toLowerCase())
+          card.professional.toLowerCase().includes(search.toLowerCase())
         )
       : __progressions__;
 
-  const contentSize = filteredData.length;
+  useEffect(() => {
+    setContentSize(filteredData.length);
+  }, [search]);
+  
 
   return (
     <>
       <Header
         title={patientFullName}
         buttonName="Nova Evolução"
-        link={
-          contentSize > 5 ? `/newEvolution/${patientFullName}` : ""
-        }
+        link={contentSize > 5 ? `/newEvolution/${patientFullName}` : ""}
       />
-      <Search search={search} onSearch={setSearch} placeholder="Digite o nome do profissional aqui..."/>
+      <Search
+        search={search}
+        onSearch={setSearch}
+        placeholder="Digite o nome do profissional aqui..."
+      />
       <CardsList>
         {filteredData.length !== 0 &&
-          filteredData && (
+          filteredData &&
           filteredData.map((progression) => (
             <PatientCard
               key={progression.id}
-              physician={progression.physicians}
+              professional={progression.professional}
               physicianArea={progression.physiciansArea}
               progressionId={progression.id}
               patientFullName={patientFullName}
-              progressionDate={1684585859}
+              progressionDate={progression.createdAt}
             />
-          ))
-        )}
+          ))}
         {contentSize < 5 && (
           <Placeholder
-            contentSize={filteredData.length}
+            contentSize={contentSize}
             text={`Não há evoluções cadastradas
             ${search ? " por esse profissional" : " para este paciente"}`}
             link={`/newEvolution/${patientFullName}`}

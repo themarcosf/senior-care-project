@@ -1,4 +1,4 @@
-import { FC, useEffect } from "react";
+import { FC, useEffect, useState } from "react";
 import { BsHeadset } from "react-icons/bs";
 import { AiOutlineHome } from "react-icons/ai";
 import { BsFillPersonFill } from "react-icons/bs";
@@ -10,13 +10,13 @@ import { useRouter } from "next/router";
 const Navbar: FC = () => {
   const router = useRouter();
   const pathname = router.pathname;
-  let profileName;
+  const [profileName, setProfileName] = useState("");
 
   useEffect(() => {
     const profileData = localStorage.getItem("profileData");
 
     if (profileData !== null) {
-      profileName = JSON.parse(profileData).name;
+      setProfileName(JSON.parse(profileData).name);
     }
   }, []);
 
@@ -25,7 +25,7 @@ const Navbar: FC = () => {
       <ul>
         <li>
           <Link
-            className={pathname === "/suport" ? styles.active : ""}
+            className={pathname.includes("/suport") ? styles.active : ""}
             href="#"
           >
             <BsHeadset size={35} />
@@ -34,7 +34,7 @@ const Navbar: FC = () => {
         </li>
         <li>
           <Link
-            className={pathname === "/patients" ? styles.active : ""}
+            className={pathname.includes("/patients") ? styles.active : ""}
             href="/patients"
           >
             <AiOutlineHome size={35} />
@@ -43,7 +43,7 @@ const Navbar: FC = () => {
         </li>
         <li>
           <Link
-            className={pathname === "/profile" ? styles.active : ""}
+            className={pathname.includes("/profile") ? styles.active : ""}
             href="/profile"
           >
             <BsFillPersonFill size={35} />

@@ -8,18 +8,13 @@ import Header from "@/components/Header/Header";
 
 import { profile } from "../../models/profile";
 
-import styles from "@/styles/newEvolutionPage.module.scss";
+import styles from "@/styles/editEvolutionPage.module.scss";
 import axios from "axios";
 import api from "@/services/api";
 
-type patientData = {
-  medRecordId: number;
-  patientFullName: string;
-};
-
 const NewEvolutionPage: FC<{
-  patientData: patientData;
-}> = (props) => {
+  progressionId: number;
+}> = ({ progressionId }) => {
   const [navPosition, setNavPosition] = useState(1);
 
   const diagnosisInputRef = useRef<HTMLTextAreaElement>(null);
@@ -32,9 +27,6 @@ const NewEvolutionPage: FC<{
 
   const route = useRouter();
 
-  const { patientFullName, medRecordId } = props.patientData;
-
-
   useEffect(() => {
     const profileData = localStorage.getItem("profileData");
 
@@ -42,7 +34,7 @@ const NewEvolutionPage: FC<{
       setRole(JSON.parse(profileData).role);
       setName(JSON.parse(profileData).name);
     }
-  }, [])
+  }, []);
 
   const handleFileChange = (event: ChangeEvent<HTMLInputElement>) => {
     if (event.target.files && event.target.files.length > 0) {
@@ -56,33 +48,25 @@ const NewEvolutionPage: FC<{
     const enteredDiagnosis = diagnosisInputRef.current?.value;
     const enteredProgressionType = progressionTypeInputRef.current?.value;
 
-    const formData = new FormData();
+    const formData = {
+      diagnosis: enteredDiagnosis,
+    };
 
-    if (selectedFile) {
-      formData.append("diagnosis", enteredDiagnosis as string);
-      formData.append("medicalTests", selectedFile);
-      formData.append("professional", name as string);
+    await api
+      .patch(`/med-progression/${progressionId}`, formData)
+      .then((data) => {
+        console.log("Progression edited successfully:", data);
+      })
+      .catch((error) => {
+        console.error("Error uploading file:", error);
+      });
 
-      await api
-        .post(`/med-progression?medicalRecord=${medRecordId}`, formData)
-        .then((data) => {
-          console.log("Progression created successfully:", data);
-        })
-        .catch((error) => {
-          console.error("Error uploading file:", error);
-        });
-
-      route.push("/patients");
-    }
+    route.push("/patients");
   };
 
   return (
     <>
-      <Header
-        title={patientFullName}
-        buttonName="Histórico"
-        link={`/patients/${patientFullName}`}
-      />
+      <Header title="Editar Evolução" buttonName="" link="" />
       <nav className={styles.nav}>
         <ul>
           <li className={navPosition === 1 ? styles.active : styles.inactive}>
@@ -128,7 +112,6 @@ const NewEvolutionPage: FC<{
                   <option value="type3">Tipo 3</option>
                   {role === "physician" && (
                     <option value="finishing">Encerrar prontuário</option>
-
                   )}
                 </select>
               </div>
@@ -141,7 +124,7 @@ const NewEvolutionPage: FC<{
                   placeholder="Insira os detalhes da evolução aqui..."
                 ></textarea>
               </div>
-              <div className={styles.inputFileContainer}>
+              {/* <div className={styles.inputFileContainer}>
                 <input
                   ref={fileInputRef}
                   onChange={handleFileChange}
@@ -160,7 +143,7 @@ const NewEvolutionPage: FC<{
                     <span>Arquivo selecionado:</span> {selectedFile.name}
                   </p>
                 )}
-              </div>
+              </div> */}
               <button className={styles.submitBtn} type="submit">
                 Salvar
               </button>
@@ -186,7 +169,7 @@ const NewEvolutionPage: FC<{
 };
 
 interface Params extends ParsedUrlQuery {
-  patientId: string;
+  progressionId: string;
 }
 
 export const getServerSideProps: GetServerSideProps = async (context) => {
@@ -203,27 +186,11 @@ export const getServerSideProps: GetServerSideProps = async (context) => {
     };
   }
 
-  const { patientId } = context.params as Params;
-
-  const patientResponse = await fetch(
-    `${process.env.NEXT_PUBLIC_BASE_URL}/med-record/patient?fullName=${patientId}`,
-    {
-      headers: {
-        Authorization: "Bearer " + token,
-      },
-    }
-  );
-
-  const medRecordData = await patientResponse.json();
-
-  const patientData = {
-    medRecordId: medRecordData.id,
-    patientFullName: medRecordData.patientFullName,
-  };
+  const { progressionId } = context.params as Params;
 
   return {
     props: {
-      patientData: patientData,
+      progressionId,
     },
   };
 };

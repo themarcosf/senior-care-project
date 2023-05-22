@@ -8,6 +8,6 @@ export default axios.create({
   baseURL: BASE_URL,
   headers: {
     Authorization: `Bearer ${token}`,
-    "Content-Type": "application/json"
+    // "Content-Type": "application/json"
   },
 });

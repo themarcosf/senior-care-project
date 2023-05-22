@@ -24,11 +24,11 @@ import { AllowAnon } from "./guards/allow-anon.guard";
 import { CreateUserDto } from "./../users/dto/create-user.dto";
 ////////////////////////////////////////////////////////////////////////////////
 
-interface PassportRequest extends Request {
+export interface PassportRequest extends Request {
   user?: User;
 }
 
-interface PassportJwt {
+export interface PassportJwt {
   access_token: string;
 }
 
@@ -59,13 +59,13 @@ export class AuthController {
   }
 
   @Get(Api.SIGNOUT)
-  async signout(@Req() req: PassportRequest): Promise<void> {
+  signout(@Req() req: PassportRequest): string {
     /**
      * TODO :
      * - add jwt to blacklist
      * - persist user session
      */
-    return;
+    return "TODO";
   }
 
   @Get(Api.PROFILE)

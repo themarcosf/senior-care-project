@@ -13,11 +13,13 @@ import { MedicalRecordsModule } from "../medical-records/medical-records.module"
 /** dependencies */
 import { MedicalProgression } from "./entities/medical-progression.entity";
 import fileValidationOptions from "./common/file-validation.options";
+import { ProgressionTypeModule } from "../progression-type/progression-type.module";
 ////////////////////////////////////////////////////////////////////////////////
 
 @Module({
   imports: [
     MedicalRecordsModule,
+    ProgressionTypeModule,
     TypeOrmModule.forFeature([MedicalProgression]),
     MulterModule.register(fileValidationOptions),
   ],

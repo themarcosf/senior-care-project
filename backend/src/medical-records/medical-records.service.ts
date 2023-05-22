@@ -69,6 +69,7 @@ export class MedicalRecordsService {
       .createQueryBuilder("medRecord")
       .leftJoinAndSelect("medRecord.progressions", "progressions")
       .where("progressions.id IS NOT NULL")
+      .andWhere("medRecord.isActive = true")
       .orderBy("progressions.createdAt", order)
       .select([
         "medRecord.id",
@@ -82,6 +83,7 @@ export class MedicalRecordsService {
       .createQueryBuilder("medRecord")
       .leftJoinAndSelect("medRecord.progressions", "progressions")
       .where("progressions.id IS NULL")
+      .andWhere("medRecord.isActive = true")
       .orderBy("medRecord.createdAt", order)
       .select(["medRecord.id", "medRecord.patientFullName"])
       .getRawMany();
@@ -101,6 +103,7 @@ export class MedicalRecordsService {
       };
     } = {};
 
+    // create a map of records with the last progression
     allRecords.forEach((record) => {
       const {
         medRecord_id,
@@ -108,6 +111,7 @@ export class MedicalRecordsService {
         progressions_createdAt,
       } = record;
 
+      // check if record is already in map
       if (
         !recordMap[medRecord_id] ||
         progressions_createdAt > recordMap[medRecord_id].lastProgression
@@ -120,6 +124,7 @@ export class MedicalRecordsService {
       }
     });
 
+    // push records into uniqueRecords array
     for (const key in recordMap) {
       uniqueRecords.push(recordMap[key]);
     }
@@ -140,12 +145,15 @@ export class MedicalRecordsService {
     criteria: number | string,
     order?: "ASC" | "DESC"
   ): Promise<MedicalRecord | null> {
+    // check if criteria is valid
     if (!criteria) return null;
 
+    // query medical record with progressions
     const queryBuilder = this.repository
       .createQueryBuilder("medRecord")
       .leftJoinAndSelect("medRecord.progressions", "progression");
 
+    // check if criteria is a number (id) or string (patientFullName)
     if (typeof criteria === "number") {
       queryBuilder.where("medRecord.id = :id", { id: criteria });
     } else {
@@ -154,14 +162,16 @@ export class MedicalRecordsService {
       });
     }
 
+    // check if order is valid
     if (order) {
       queryBuilder.orderBy("progression.createdAt", order);
     }
 
+    // return medical record
     return await queryBuilder.getOne();
   }
 
-  async toggleStatus(id: number) {
+  async toggleStatus(id: number): Promise<MedicalRecord | null> {
     const record = await this.findOne(id);
 
     // check if record exists and is active

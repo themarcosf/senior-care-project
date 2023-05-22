@@ -7,19 +7,30 @@ import { ParsedUrlQuery } from "querystring";
 import Header from "@/components/Header/Header";
 
 import { profile } from "../../models/profile";
+import fileApi  from "@/services/fileApi";
 
 import styles from "@/styles/newEvolutionPage.module.scss";
-import axios from "axios";
-import api from "@/services/api";
 
 type patientData = {
   medRecordId: number;
   patientFullName: string;
 };
 
+type progressionType = {
+  createdAt: string;
+  createdByUserId: number;
+  description: string;
+  entityName: string;
+  id: number;
+  isActive: boolean;
+  toggleStatus: boolean;
+  updatedAt: string;
+};
+
 const NewEvolutionPage: FC<{
   patientData: patientData;
-}> = (props) => {
+  progressionTypes: progressionType[];
+}> = ({ patientData, progressionTypes }) => {
   const [navPosition, setNavPosition] = useState(1);
 
   const diagnosisInputRef = useRef<HTMLTextAreaElement>(null);
@@ -32,8 +43,7 @@ const NewEvolutionPage: FC<{
 
   const route = useRouter();
 
-  const { patientFullName, medRecordId } = props.patientData;
-
+  const { patientFullName, medRecordId } = patientData;
 
   useEffect(() => {
     const profileData = localStorage.getItem("profileData");
@@ -42,7 +52,7 @@ const NewEvolutionPage: FC<{
       setRole(JSON.parse(profileData).role);
       setName(JSON.parse(profileData).name);
     }
-  }, [])
+  }, []);
 
   const handleFileChange = (event: ChangeEvent<HTMLInputElement>) => {
     if (event.target.files && event.target.files.length > 0) {
@@ -63,8 +73,11 @@ const NewEvolutionPage: FC<{
       formData.append("medicalTests", selectedFile);
       formData.append("professional", name as string);
 
-      await api
-        .post(`/med-progression?medicalRecord=${medRecordId}`, formData)
+      await fileApi
+        .post(
+          `/med-progression?medicalRecord=${medRecordId}&progressionType=${enteredProgressionType}`,
+          formData
+        )
         .then((data) => {
           console.log("Progression created successfully:", data);
         })
@@ -123,13 +136,23 @@ const NewEvolutionPage: FC<{
                   id="progressionType"
                   ref={progressionTypeInputRef}
                 >
-                  <option value="type1">Tipo 1</option>
-                  <option value="type2">Tipo 2</option>
-                  <option value="type3">Tipo 3</option>
-                  {role === "physician" && (
-                    <option value="finishing">Encerrar prontuário</option>
+                  {progressionTypes.map((progressionType) => {
+                    if (
+                      role !== "physician" &&
+                      progressionType.description === "Alta"
+                    ) {
+                      return;
+                    }
 
-                  )}
+                    return (
+                      <option
+                        key={progressionType.id}
+                        value={progressionType.id}
+                      >
+                        {progressionType.description}
+                      </option>
+                    );
+                  })}
                 </select>
               </div>
               <div className={`${styles.field} ${styles.descriptionfield}`}>
@@ -216,6 +239,17 @@ export const getServerSideProps: GetServerSideProps = async (context) => {
 
   const medRecordData = await patientResponse.json();
 
+  const typesResponse = await fetch(
+    `${process.env.NEXT_PUBLIC_BASE_URL}/progression-type`,
+    {
+      headers: {
+        Authorization: "Bearer " + token,
+      },
+    }
+  );
+
+  const progressionTypes = await typesResponse.json();
+
   const patientData = {
     medRecordId: medRecordData.id,
     patientFullName: medRecordData.patientFullName,
@@ -223,7 +257,8 @@ export const getServerSideProps: GetServerSideProps = async (context) => {
 
   return {
     props: {
-      patientData: patientData,
+      patientData,
+      progressionTypes,
     },
   };
 };

@@ -1,9 +1,19 @@
-// import styles from './profile.module.scss'
+import styles from '@/styles/profile.module.scss'
+
+import Cookies from 'js-cookie';
+import { useRouter } from 'next/router';
 
 const profile = () => {
+    const route = useRouter();
+
+    const signoutHandler = () => {
+        Cookies.remove('token');
+        route.push('/');
+    }
+
      return (
-       <div>
-           profile
+       <div className={styles.content}>
+          <button onClick={signoutHandler}>Sair</button>
        </div>
    )
 }

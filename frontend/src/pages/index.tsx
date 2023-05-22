@@ -11,7 +11,7 @@ const Login: FC<{ BASE_URL: string }> = ({ BASE_URL }) => {
   const emailInputRef = useRef<HTMLInputElement>(null);
   const passwordInputRef = useRef<HTMLInputElement>(null);
   const [show, setShow] = useState(false);
-  const [error, setError] = useState("  ");
+  const [error, setError] = useState("");
 
   const togglePassword = () => {
     setShow(!show);

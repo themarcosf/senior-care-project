@@ -1,6 +1,7 @@
-import { FC, FormEvent, useRef } from "react";
+import { FC, FormEvent, useRef, useState } from "react";
 import { useRouter } from "next/router";
 import Cookies from "js-cookie";
+import { AiFillEyeInvisible, AiFillEye } from "react-icons/ai";
 
 import styles from "@/styles/login.module.scss";
 import api from "@/services/api";
@@ -9,6 +10,12 @@ const Login: FC<{ BASE_URL: string }> = ({ BASE_URL }) => {
   const router = useRouter();
   const emailInputRef = useRef<HTMLInputElement>(null);
   const passwordInputRef = useRef<HTMLInputElement>(null);
+  const [show, setShow] = useState(false);
+  const [error, setError] = useState("  ");
+
+  const togglePassword = () => {
+    setShow(!show);
+  }
 
   const submitHandler = async (event: FormEvent) => {
     event.preventDefault();
@@ -34,6 +41,7 @@ const Login: FC<{ BASE_URL: string }> = ({ BASE_URL }) => {
     // TODO: handle errors
 
     if (!response.ok) {
+      setError(data.message);
       return;
     }
 
@@ -60,6 +68,7 @@ const Login: FC<{ BASE_URL: string }> = ({ BASE_URL }) => {
         Welcome to <br /> Health <span>Care</span>
       </h1>
       <form className={styles.form} onSubmit={submitHandler}>
+        {error.length > 0 && <p className={styles.error}>Email ou senha estão errados. <br /> Tente novamente</p>}
         <div className={styles.field}>
           <label htmlFor="email">E-mail</label>
           <div>
@@ -79,9 +88,11 @@ const Login: FC<{ BASE_URL: string }> = ({ BASE_URL }) => {
             <input
               placeholder="Insira sua senha"
               id="password"
-              type="password"
+              type={show ? "text" : "password"}
               ref={passwordInputRef}
             />
+            {show && <AiFillEyeInvisible size={25} onClick={togglePassword}/>}
+            {!show && <AiFillEye size={25} onClick={togglePassword}/>}
           </div>
         </div>
         <div className={styles.actions}>

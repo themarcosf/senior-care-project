@@ -11,7 +11,7 @@ const Login: FC<{ BASE_URL: string }> = ({ BASE_URL }) => {
   const emailInputRef = useRef<HTMLInputElement>(null);
   const passwordInputRef = useRef<HTMLInputElement>(null);
   const [show, setShow] = useState(false);
-  const [error, setError] = useState("  ");
+  const [error, setError] = useState("");
 
   const togglePassword = () => {
     setShow(!show);
@@ -28,7 +28,7 @@ const Login: FC<{ BASE_URL: string }> = ({ BASE_URL }) => {
       password: enteredPassword,
     };
 
-    const response = await fetch(`${BASE_URL}/auth/signin`, {
+    const response = await fetch(`http://127.0.0.1:3000/api/v1/auth/signin`, {
       method: "POST",
       headers: {
         "Content-Type": "application/json",
@@ -44,6 +44,8 @@ const Login: FC<{ BASE_URL: string }> = ({ BASE_URL }) => {
       setError(data.message);
       return;
     }
+
+    setError("");
 
     const profileData = await api
       .get("/auth/profile", {

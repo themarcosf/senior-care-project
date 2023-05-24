@@ -3,19 +3,20 @@ import { Injectable, UnauthorizedException } from "@nestjs/common";
 import { InjectRepository } from "@nestjs/typeorm";
 
 /** dependencies */
-import { Repository, DataSource } from "typeorm";
+import { Repository } from "typeorm";
 
 import { User } from "./entities/user.entity";
 import { CreateUserDto } from "./dto/create-user.dto";
 import { UpdateUserDto } from "./dto/update-user.dto";
+import { QueryRunnerFactory } from "../common/query-runner/query-runner.factory";
 ////////////////////////////////////////////////////////////////////////////////
 
 @Injectable()
 export class UsersService {
   constructor(
     @InjectRepository(User)
-    private repository: Repository<User>,
-    private dataSource: DataSource
+    private readonly repository: Repository<User>,
+    private readonly queryRunner: QueryRunnerFactory
   ) {}
 
   async create(createUserDto: CreateUserDto): Promise<User> {
@@ -25,35 +26,44 @@ export class UsersService {
     }
 
     // create a query runner
-    const queryRunner = this.dataSource.createQueryRunner();
-    await queryRunner.connect();
-    await queryRunner.startTransaction();
+    await this.queryRunner.connect();
+    await this.queryRunner.startTransaction();
 
     // try to save user
     try {
       const user = this.repository.create(createUserDto);
-      await queryRunner.manager.save(user);
-      await queryRunner.commitTransaction();
+      await this.queryRunner.commitTransaction(user);
       return user;
     } catch (err) {
       // rollback changes made in case of error
-      await queryRunner.rollbackTransaction();
+      await this.queryRunner.rollbackTransaction();
       throw err;
     } finally {
       // release queryRunner after transaction
-      await queryRunner.release();
+      await this.queryRunner.release();
     }
   }
 
   async findAll(): Promise<User[]> {
-    return await this.repository.find();
+    // create queryBuilder
+    const queryBuilder = this.repository.createQueryBuilder("user");
+
+    // execute queryBuilder and return results
+    return queryBuilder.getMany();
   }
 
   async findOne(criteria: {
     id?: number;
     email?: string;
   }): Promise<User | null> {
-    return this.repository.findOne({ where: criteria });
+    // create queryBuilder with criteria
+    const queryBuilder = this.repository.createQueryBuilder("user");
+    if (criteria.id) queryBuilder.where("user.id = :id", { id: criteria.id });
+    if (criteria.email)
+      queryBuilder.where("user.email = :email", { email: criteria.email });
+
+    // execute queryBuilder and return results
+    return queryBuilder.getOne();
   }
 
   update(id: number, updateUserDto: UpdateUserDto) {

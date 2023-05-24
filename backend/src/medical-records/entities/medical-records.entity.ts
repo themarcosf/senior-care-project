@@ -1,6 +1,6 @@
 import { Column, Entity, OneToMany } from "typeorm";
 
-import { BaseEntity } from "../../common/base.entity";
+import { BaseEntity } from "../../common/base-entity/base.entity";
 import { MedicalProgression } from "../../medical-progression/entities/medical-progression.entity";
 ////////////////////////////////////////////////////////////////////////////////
 

@@ -1,160 +1,108 @@
-/**
- * IMPORTANT CAVEAT ABOUT TESTING CONTROLLERS
- *
- * controllers should not have complex logic so tests should be really simple
- * all programming and business logic should be implemented elsewhere
- */
-
 /** nestjs */
-// import { JwtService } from "@nestjs/jwt";
-import { INestApplication } from "@nestjs/common";
 import { Test, TestingModule } from "@nestjs/testing";
 
-/** providers */
-import { AppModule } from "../app.module";
-import { LocalStrategy } from "./local.strategy";
+/** controllers */
 import { AuthController } from "./auth.controller";
+
+/** providers */
+import { AuthService } from "./auth.service";
 import { UsersService } from "../users/users.service";
 
 /** dependencies */
-import * as request from "supertest";
-// import { Constants } from "./enums/constants.enum";
+import { PassportRequest } from "./auth.controller";
+
 ////////////////////////////////////////////////////////////////////////////////
 
-/** providers instances */
-let app: INestApplication;
+// global test variables
 let controller: AuthController;
-let usersService: UsersService;
-let localStrategy: LocalStrategy;
 
-/** mock variables */
-const mockSigninDto = {
-  email: "john.doe@example.com",
-  password: "password",
-};
-
+// mock data
 const mockCreateUserDto = {
-  ...mockSigninDto,
   name: "John Doe",
-  photo: "image1.jpg",
-  role: "user",
+  email: "john.doe@example.com",
+  password: "123456",
+  licenseNum: "123456",
+  role: "role",
 };
 
-// const mockJwtService = new JwtService({
-//   secret: Constants.JWT_SECRET,
-//   signOptions: { expiresIn: Constants.JWT_EXPIRESIN },
-// });
-
+/** setup */
 beforeAll(async () => {
-  // localStrategy = <LocalStrategy>{
-  //   validate: (body: any) => {
-  //     const jwt = mockJwtService.sign({ id: 1, email: "" });
+  // mock implementation of login method
+  const mockAuthService: Partial<AuthService> = {
+    login: jest.fn().mockImplementation(() => {
+      return { access_token: "jwt-token" };
+    }),
+  };
 
-  //     return [{ ...mockCreateUserDto, id: 1 }, jwt];
-  //   },
-  // };
-
-  usersService = {
-    create: (body: any) => {
+  // mock implementation of create method
+  const mockUsersService: Partial<UsersService> = {
+    create: jest.fn().mockImplementation(() => {
       return { ...mockCreateUserDto, id: 1 };
-    },
-  } as UsersService;
+    }),
+  };
 
-  const module: TestingModule = await Test.createTestingModule({
-    imports: [AppModule],
+  // initialize test module
+  const moduleRef: TestingModule = await Test.createTestingModule({
     controllers: [AuthController],
     providers: [
-      { provide: LocalStrategy, useValue: localStrategy },
-      { provide: UsersService, useValue: usersService },
+      { provide: UsersService, useValue: mockUsersService },
+      { provide: AuthService, useValue: mockAuthService },
     ],
   }).compile();
 
-  app = module.createNestApplication();
-  await app.init();
-
-  controller = module.get<AuthController>(AuthController);
-});
-
-afterAll(async () => {
-  await app.close();
+  controller = moduleRef.get<AuthController>(AuthController);
 });
 
 /** test suite */
 describe("AuthController", () => {
-  let jwt: string | undefined;
-
   it("should be defined", () => {
     expect(controller).toBeDefined();
   });
 
-  describe("Signup method", () => {
-    it("should return user data according to OutboundUserDto", async () => {
-      const response = await request(app.getHttpServer())
-        .post("/api/v1/auth/signup")
-        .send(mockCreateUserDto);
-      jwt = response.header["set-cookie"][0].split(";")[0].split("=")[1];
-
-      expect(response.status).toBe(201);
-      expect(response.body).toEqual({
-        photo: mockCreateUserDto.photo,
-        firstName: mockCreateUserDto.name.split(" ")[0],
+  describe("signup method", () => {
+    it("should return a jwt token", async () => {
+      await expect(controller.signup(mockCreateUserDto)).resolves.toEqual({
+        access_token: "jwt-token",
       });
-    });
-
-    it("should return JSON web token as cookie", () => {
-      expect(jwt).toBeDefined();
-
-      jwt = undefined;
-    });
-
-    it("should return error if user already exists", () => {
-      console.log(
-        "TO BE IMPLEMENTED: should return error if user already exists"
-      );
     });
   });
 
-  describe("Signin method", () => {
-    it("should return user data according to OutboundUserDto", async () => {
-      const response = await request(app.getHttpServer())
-        .post("/api/v1/auth/signin")
-        .send(mockSigninDto);
-
-      expect(response.status).toBe(200);
-      expect(response.body).toEqual({
-        photo: mockCreateUserDto.photo,
-        firstName: mockCreateUserDto.name.split(" ")[0],
+  describe("signin method", () => {
+    it("should return a jwt token", async () => {
+      await expect(
+        controller.signin({
+          user: { ...mockCreateUserDto, id: 1 },
+        } as PassportRequest)
+      ).resolves.toEqual({
+        access_token: "jwt-token",
       });
-
-      jwt = response.header["set-cookie"][0].split(";")[0].split("=")[1];
     });
 
-    it("should return JSON web token as access_token", () => {});
-    it("should fail if token is expired", () => {});
-
-    it("should return error if user credentials are invalid", () => {
-      console.log(
-        "TO BE IMPLEMENTED: should return error if user credentials are invalid"
-      );
+    it("should throw an error if user is not found", async () => {
+      await expect(
+        controller.signin({} as PassportRequest)
+      ).rejects.toThrowError("User not found");
     });
   });
 
-  describe("Signout method", () => {
-    it("should return empty response", async () => {
-      const response = await request(app.getHttpServer())
-        .get("/api/v1/auth/signout")
-        .auth(`jwt=${jwt}`, {
-          type: "bearer",
-        });
-
-      expect(response.status).toBe(200);
-      expect(response.body).toEqual({});
-
-      jwt = response.headers["set-cookie"][0].split(";")[0].split("=")[1];
+  describe("profile method", () => {
+    it("should return a user profile", () => {
+      const user = { ...mockCreateUserDto, id: 1 };
+      expect(
+        controller.profile(
+          { id: 1 } as Record<string, any>,
+          { user } as PassportRequest
+        )
+      ).resolves.toEqual(user);
     });
 
-    it("should clear JSON web token cookie", async () => {
-      expect(jwt).toBe("");
+    it("should throw an error if user is not found", () => {
+      expect(
+        controller.profile(
+          { id: 1 } as Record<string, any>,
+          {} as PassportRequest
+        )
+      ).rejects.toThrowError("User not found");
     });
   });
 });

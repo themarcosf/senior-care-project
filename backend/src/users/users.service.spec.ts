@@ -16,8 +16,8 @@ let service: UsersService;
 
 // mock data
 const mockCreateUserDto = {
-  name: "Teste",
-  email: "teste@example.com",
+  name: "John Doe",
+  email: "john.doe@example.com",
   password: "123456",
   licenseNum: "123456",
   role: "role",
@@ -61,6 +61,7 @@ beforeAll(async () => {
     }),
   };
 
+  // mock implementation of QueryRunnerFactory
   const mockQueryRunnerFactory: QueryRunnerInterface = {
     connect: jest.fn(),
     startTransaction: jest.fn(),
@@ -96,8 +97,8 @@ describe("UsersService", () => {
   describe("create method", () => {
     it("should create a new user ", async () => {
       const newUserDto = {
-        name: "Teste1",
-        email: "teste1@example.com",
+        name: "Jane Doe",
+        email: "jane.doe@example.com",
         password: "123456",
         licenseNum: "123456",
         role: "role",

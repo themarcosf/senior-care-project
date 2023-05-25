@@ -15,7 +15,7 @@ const Login: FC<{ BASE_URL: string }> = ({ BASE_URL }) => {
 
   const togglePassword = () => {
     setShow(!show);
-  }
+  };
 
   const submitHandler = async (event: FormEvent) => {
     event.preventDefault();
@@ -70,7 +70,13 @@ const Login: FC<{ BASE_URL: string }> = ({ BASE_URL }) => {
         Welcome to <br /> Health <span>Care</span>
       </h1>
       <form className={styles.form} onSubmit={submitHandler}>
-        {error.length > 0 && <p className={styles.error}>Email ou senha estão errados. <br /> Tente novamente</p>}
+        <div className={styles.errorBx}>
+          {error.length > 0 && (
+            <p className={styles.error}>
+              Email ou senha estão errados. <br /> Tente novamente
+            </p>
+          )}
+        </div>
         <div className={styles.field}>
           <label htmlFor="email">E-mail</label>
           <div>
@@ -93,8 +99,8 @@ const Login: FC<{ BASE_URL: string }> = ({ BASE_URL }) => {
               type={show ? "text" : "password"}
               ref={passwordInputRef}
             />
-            {show && <AiFillEyeInvisible size={25} onClick={togglePassword}/>}
-            {!show && <AiFillEye size={25} onClick={togglePassword}/>}
+            {show && <AiFillEyeInvisible size={25} onClick={togglePassword} />}
+            {!show && <AiFillEye size={25} onClick={togglePassword} />}
           </div>
         </div>
         <div className={styles.actions}>

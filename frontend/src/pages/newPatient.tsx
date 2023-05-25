@@ -1,67 +1,234 @@
-import { FC, FormEvent, useEffect, useRef, useState } from "react";
+import { FormEvent, useState, useEffect } from "react";
+import InputMask from "react-input-mask";
 
 import Header from "@/components/Header/Header";
 
 import { useRouter } from "next/router";
 
 import styles from "@/styles/newPatientPage.module.scss";
-import Cookies from "js-cookie";
 import api from "@/services/api";
 import { GetServerSideProps } from "next";
+import useInput from "@/hooks/useInput";
 
 const NewPatientPage = () => {
   const route = useRouter();
+  const [formIsValid, setFormIsValid] = useState(false);
 
-  const nameInputRef = useRef<HTMLInputElement>(null);
-  const nationalIdInputRef = useRef<HTMLInputElement>(null);
-  const icdCodeInputRef = useRef<HTMLInputElement>(null);
-  const birthDateInputRef = useRef<HTMLInputElement>(null);
-  const legalGuardianInputRef = useRef<HTMLInputElement>(null);
-  const legalGuardianIdNumberInputRef = useRef<HTMLInputElement>(null);
-  const legalGuardianPhoneInputRef = useRef<HTMLInputElement>(null);
-  const legalGuardianEmailInputRef = useRef<HTMLInputElement>(null);
-  const insurancePlanInputRef = useRef<HTMLInputElement>(null);
-  const insurancePolicyNumberInputRef = useRef<HTMLInputElement>(null);
-  const observationInputRef = useRef<HTMLTextAreaElement>(null);
+  const {
+    value: enteredPatientName,
+    isValid: patientNameIsValid,
+    hasError: patientNameInputHasError,
+    inputChangeHandler: patientNameChangeHandler,
+    inputBlurHandler: patientNameBlurHandler,
+    reset: resetPatientName,
+    submitInputHandler: submitPatientNameHandler,
+  } = useInput((value) => value.trim() !== "");
+
+  const {
+    value: enteredPatientNationalId,
+    isValid: patientNationalIdIsValid,
+    hasError: patientNationalIdInputHasError,
+    inputChangeHandler: patientNationalIdChangeHandler,
+    inputBlurHandler: patientNationalIdBlurHandler,
+    reset: resetPatientNationalId,
+    submitInputHandler: submitPatientNationalIdHandler,
+  } = useInput((value) => value.trim() !== "");
+
+  const {
+    value: enteredIcdCode,
+    isValid: icdCodeIsValid,
+    hasError: icdCodeInputHasError,
+    inputChangeHandler: icdCodeChangeHandler,
+    inputBlurHandler: icdCodeBlurHandler,
+    reset: resetIcdCode,
+    submitInputHandler: submitIcdCodeHandler,
+  } = useInput((value) => value.trim() !== "");
+
+  const {
+    value: enteredBirthDate,
+    isValid: birthDateIsValid,
+    hasError: birthDateInputHasError,
+    inputChangeHandler: birthDateChangeHandler,
+    inputBlurHandler: birthDateBlurHandler,
+    reset: resetBirthDate,
+    submitInputHandler: submitBirthDateHandler,
+  } = useInput((value) => value.trim() !== "");
+
+  const {
+    value: enteredLegalGuardianName,
+    isValid: legalGuardianNameIsValid,
+    hasError: legalGuardianNameInputHasError,
+    inputChangeHandler: legalGuardianNameChangeHandler,
+    inputBlurHandler: legalGuardianNameBlurHandler,
+    reset: resetLegalGuardianName,
+    submitInputHandler: submitLegalGuardianNameHandler,
+  } = useInput((value) => value.trim() !== "");
+
+  const {
+    value: enteredLegalGuardianNationalId,
+    isValid: legalGuardianNationalIdIsValid,
+    hasError: legalGuardianNationalIdInputHasError,
+    inputChangeHandler: legalGuardianNationalIdChangeHandler,
+    inputBlurHandler: legalGuardianNationalIdBlurHandler,
+    reset: resetLegalGuardianNationalId,
+    submitInputHandler: submitLegalGuardianNationalIdHandler,
+  } = useInput((value) => value.trim() !== "");
+
+  const {
+    value: enteredLegalGuardianPhone,
+    isValid: legalGuardianPhoneIsValid,
+    hasError: legalGuardianPhoneInputHasError,
+    inputChangeHandler: legalGuardianPhoneChangeHandler,
+    inputBlurHandler: legalGuardianPhoneBlurHandler,
+    reset: resetLegalGuardianPhone,
+    submitInputHandler: submitLegalGuardianPhoneHandler,
+  } = useInput((value) => value.trim() !== "");
+
+  const {
+    value: enteredLegalGuardianEmail,
+    isValid: legalGuardianEmailIsValid,
+    hasError: legalGuardianEmailInputHasError,
+    inputChangeHandler: legalGuardianEmailChangeHandler,
+    inputBlurHandler: legalGuardianEmailBlurHandler,
+    reset: resetLegalGuardianEmail,
+    submitInputHandler: submitLegalGuardianEmailHandler,
+  } = useInput((value) => value.trim() !== "");
+
+  const {
+    value: enteredInsurancePlan,
+    isValid: insurancePlanIsValid,
+    hasError: insurancePlanInputHasError,
+    inputChangeHandler: insurancePlanChangeHandler,
+    inputBlurHandler: insurancePlanBlurHandler,
+    reset: resetInsurancePlan,
+    submitInputHandler: submitInsurancePlanHandler,
+  } = useInput((value) => value.trim() !== "");
+
+  const {
+    value: enteredInsurancePolicyNumber,
+    isValid: insurancePolicyNumberIsValid,
+    hasError: insurancePolicyNumberInputHasError,
+    inputChangeHandler: insurancePolicyNumberChangeHandler,
+    inputBlurHandler: insurancePolicyNumberBlurHandler,
+    reset: resetInsurancePolicyNumber,
+    submitInputHandler: submitInsurancePolicyNumberHandler,
+  } = useInput((value) => value.trim() !== "");
+
+  const {
+    value: enteredObservation,
+    isValid: observationIsValid,
+    hasError: observationInputHasError,
+    inputChangeHandler: observationChangeHandler,
+    inputBlurHandler: observationBlurHandler,
+    reset: resetObservation,
+    submitInputHandler: submitObservationHandler,
+  } = useInput((value) => value.trim() !== "");
+
+  const inputsSubmitHandler = () => {
+    submitPatientNameHandler();
+    submitPatientNationalIdHandler();
+    submitIcdCodeHandler();
+    submitBirthDateHandler();
+    submitLegalGuardianNameHandler();
+    submitLegalGuardianNationalIdHandler();
+    submitLegalGuardianPhoneHandler();
+    submitLegalGuardianEmailHandler();
+    submitInsurancePlanHandler();
+    submitInsurancePolicyNumberHandler();
+    submitObservationHandler();
+  };
+
+  const resetInputsHandler = () => {
+    resetPatientName();
+    resetPatientNationalId();
+    resetIcdCode();
+    resetBirthDate();
+    resetLegalGuardianName();
+    resetLegalGuardianNationalId();
+    resetLegalGuardianPhone();
+    resetLegalGuardianEmail();
+    resetInsurancePlan();
+    resetInsurancePolicyNumber();
+    resetObservation();
+  };
+
+  useEffect(() => {
+    if (
+      !formIsValid &&
+      patientNameIsValid &&
+      patientNationalIdIsValid &&
+      icdCodeIsValid &&
+      birthDateIsValid &&
+      legalGuardianNameIsValid &&
+      legalGuardianNationalIdIsValid &&
+      legalGuardianPhoneIsValid &&
+      legalGuardianEmailIsValid &&
+      insurancePlanIsValid &&
+      insurancePolicyNumberIsValid
+    ) {
+      setFormIsValid(true);
+    } else if (
+      formIsValid &&
+      (!patientNameIsValid ||
+        !patientNationalIdIsValid ||
+        !icdCodeIsValid ||
+        !birthDateIsValid ||
+        !legalGuardianNameIsValid ||
+        !legalGuardianNationalIdIsValid ||
+        !legalGuardianPhoneIsValid ||
+        !legalGuardianEmailIsValid ||
+        !insurancePlanIsValid ||
+        !insurancePolicyNumberIsValid)
+    ) {
+      setFormIsValid(false);
+    }
+  }, [
+    formIsValid,
+    patientNameIsValid,
+    patientNationalIdIsValid,
+    icdCodeIsValid,
+    birthDateIsValid,
+    legalGuardianNameIsValid,
+    legalGuardianNationalIdIsValid,
+    legalGuardianPhoneIsValid,
+    legalGuardianEmailIsValid,
+    insurancePlanIsValid,
+    insurancePolicyNumberIsValid,
+  ]);
 
   const saveHandler = async (event: FormEvent) => {
     event.preventDefault();
 
-    let enteredBirthDate;
-    if (birthDateInputRef.current?.value) {
-      enteredBirthDate = new Date(birthDateInputRef.current?.value);
+    inputsSubmitHandler();
+
+    if (!formIsValid) {
+      return;
     }
-    const enteredName = nameInputRef.current?.value;
-    const enteredNationalId = nationalIdInputRef.current?.value;
-    const enteredIcdCode = icdCodeInputRef.current?.value;
-    const enteredLegalGuardian = legalGuardianInputRef.current?.value;
-    const enteredLegalGuardianIdNumber =
-      legalGuardianIdNumberInputRef.current?.value;
-    const enteredLegalGuardianPhone = legalGuardianPhoneInputRef.current?.value;
-    const enteredLegalGuardianEmail = legalGuardianEmailInputRef.current?.value;
-    const enteredInsurancePlan = insurancePlanInputRef.current?.value;
-    const enteredInsurancePolicyNumber =
-      insurancePolicyNumberInputRef.current?.value;
-    const enteredObservation = observationInputRef.current?.value;
+
+    let formatedEnteredBirthDate;
+    if (enteredBirthDate) {
+      formatedEnteredBirthDate = new Date(enteredBirthDate);
+    }
 
     const patientData = {
-      patientFullName: enteredName,
-      birthDate: enteredBirthDate,
-      nationalId: enteredNationalId,
+      patientFullName: enteredPatientName,
+      birthDate: formatedEnteredBirthDate,
+      nationalId: enteredPatientNationalId,
       icdCode: enteredIcdCode,
-      email: enteredLegalGuardianEmail,
-      legalGuardian: enteredLegalGuardian,
-      legalGuardianIdNumber: enteredLegalGuardianIdNumber,
+      legalGuardian: enteredLegalGuardianName,
+      legalGuardianIdNumber: enteredLegalGuardianNationalId,
       legalGuardianPhone: enteredLegalGuardianPhone,
+      email: enteredLegalGuardianEmail,
       insurancePlan: enteredInsurancePlan,
       insurancePolicyNumber: enteredInsurancePolicyNumber,
       observation: enteredObservation,
     };
 
-
     await api.post(`/med-record`, patientData);
 
-    route.push("/patients"); //Após a finalização do post, direcionar para uma nova evolução
+    resetInputsHandler();
+
+    route.push("/patients"); //Após a   finalização do post, direcionar para uma nova evolução
   };
 
   return (
@@ -72,15 +239,7 @@ const NewPatientPage = () => {
           <li className={styles.active}>
             <button>
               <img src="/icons/info.svg" alt="info_icon" />
-              <p
-                onClick={() => {
-                  if (birthDateInputRef.current?.value) {
-                    const date = new Date(birthDateInputRef.current?.value);
-                  }
-                }}
-              >
-                Cadastro
-              </p>
+              <p>Cadastro</p>
             </button>
           </li>
         </ul>
@@ -88,8 +247,13 @@ const NewPatientPage = () => {
 
       <main className={styles.main}>
         <div className={styles.formsHeader}>
-          <h1> Cadastro do paciente </h1>
-          <button form="registerForm">Cadastrar</button>
+          <h1 onClick={() => console.log(formIsValid)}>Cadastro do paciente</h1>
+          <button
+            style={{ backgroundColor: formIsValid ? "#13a060" : "" }}
+            form="registerForm"
+          >
+            Cadastrar
+          </button>
         </div>
 
         <form className={styles.form} id="registerForm" onSubmit={saveHandler}>
@@ -102,28 +266,42 @@ const NewPatientPage = () => {
                   name="name"
                   id="name"
                   placeholder="Digite aqui..."
-                  ref={nameInputRef}
+                  value={enteredPatientName}
+                  onChange={patientNameChangeHandler}
+                  onBlur={patientNameBlurHandler}
                 />
+                {patientNameInputHasError && (
+                  <p className="error-text">Nome não deve estar vazio.</p>
+                )}
               </div>
               <div className={styles.field}>
-                <label htmlFor="patientDocument">RG</label>
-                <input
-                  type="text"
-                  name="patientDocument"
-                  id="patientDocument"
+                <label htmlFor="patientPatientNationalId">CPF</label>
+                <InputMask
+                  id="patientPatientNationalId"
+                  mask="999.999.999-99"
                   placeholder="Digite aqui..."
-                  ref={nationalIdInputRef}
+                  value={enteredPatientNationalId}
+                  onChange={patientNationalIdChangeHandler}
+                  onBlur={patientNationalIdBlurHandler}
                 />
+                {patientNationalIdInputHasError && (
+                  <p className="error-text">CPF não deve estar vazio.</p>
+                )}
               </div>
               <div className={styles.field}>
-                <label htmlFor="CID">CID</label>
+                <label htmlFor="ICD">CID</label>
                 <input
                   type="text"
-                  name="CID"
-                  id="CID"
+                  name="ICD"
+                  id="ICD"
                   placeholder="Digite aqui..."
-                  ref={icdCodeInputRef}
+                  value={enteredIcdCode}
+                  onChange={icdCodeChangeHandler}
+                  onBlur={icdCodeBlurHandler}
                 />
+                {icdCodeInputHasError && (
+                  <p className="error-text">CID não deve estar vazio.</p>
+                )}
               </div>
               <div className={styles.field}>
                 <label htmlFor="birthDate">Data de nascimento</label>
@@ -131,8 +309,15 @@ const NewPatientPage = () => {
                   type="date"
                   name="birthDate"
                   id="birthDate"
-                  ref={birthDateInputRef}
+                  value={enteredBirthDate}
+                  onChange={birthDateChangeHandler}
+                  onBlur={birthDateBlurHandler}
                 />
+                {birthDateInputHasError && (
+                  <p className="error-text">
+                    Data de nascimento não deve estar vazio.
+                  </p>
+                )}
               </div>
             </div>
 
@@ -140,42 +325,67 @@ const NewPatientPage = () => {
               <div className={styles.field}>
                 <label htmlFor="legalGuardian">Responsável Legal</label>
                 <input
-                  ref={legalGuardianInputRef}
                   type="text"
                   name="legalGuardian"
                   id="legalGuardian"
                   placeholder="Digite aqui..."
+                  value={enteredLegalGuardianName}
+                  onChange={legalGuardianNameChangeHandler}
+                  onBlur={legalGuardianNameBlurHandler}
                 />
+                {legalGuardianNameInputHasError && (
+                  <p className="error-text">
+                    Responsável não deve estar vazio.
+                  </p>
+                )}
               </div>
               <div className={styles.field}>
-                <label htmlFor="legalGuardianIdNumber">RG do Responsável</label>
-                <input
-                  ref={legalGuardianIdNumberInputRef}
-                  type="text"
-                  name="legalGuardianIdNumber"
-                  id="legalGuardianIdNumber"
+                <label htmlFor="legalGuardianNationalId">
+                  CPF do Responsável
+                </label>
+                <InputMask
+                  id="legalGuardianNationalId"
+                  mask="999.999.999-99"
                   placeholder="Digite aqui..."
+                  value={enteredLegalGuardianNationalId}
+                  onChange={legalGuardianNationalIdChangeHandler}
+                  onBlur={legalGuardianNationalIdBlurHandler}
                 />
+                {legalGuardianNationalIdInputHasError && (
+                  <p className="error-text">
+                    CPF do responsável legal não deve estar vazio.
+                  </p>
+                )}
               </div>
               <div className={styles.field}>
                 <label htmlFor="legalGuardianPhone">Tel para contato</label>
-                <input
-                  ref={legalGuardianPhoneInputRef}
+                <InputMask
                   type="tel"
-                  name="legalGuardianPhone"
                   id="legalGuardianPhone"
+                  mask="(99) 99999-9999"
                   placeholder="Digite aqui..."
+                  value={enteredLegalGuardianPhone}
+                  onChange={legalGuardianPhoneChangeHandler}
+                  onBlur={legalGuardianPhoneBlurHandler}
                 />
+                {legalGuardianPhoneInputHasError && (
+                  <p className="error-text">Telefone não deve estar vazio.</p>
+                )}
               </div>
               <div className={styles.field}>
                 <label htmlFor="legalGuardianEmail">Email para contato</label>
                 <input
-                  ref={legalGuardianEmailInputRef}
                   type="email"
                   name="legalGuardianEmail"
                   id="legalGuardianEmail"
                   placeholder="Digite aqui..."
+                  value={enteredLegalGuardianEmail}
+                  onChange={legalGuardianEmailChangeHandler}
+                  onBlur={legalGuardianEmailBlurHandler}
                 />
+                {legalGuardianEmailInputHasError && (
+                  <p className="error-text">Email não deve estar vazio.</p>
+                )}
               </div>
             </div>
 
@@ -183,32 +393,48 @@ const NewPatientPage = () => {
               <div className={styles.field}>
                 <label htmlFor="insurancePlan">Plano de saúde</label>
                 <input
-                  ref={insurancePlanInputRef}
                   type="text"
                   name="insurancePlan"
                   id="insurancePlan"
                   placeholder="Digite aqui..."
+                  value={enteredInsurancePlan}
+                  onChange={insurancePlanChangeHandler}
+                  onBlur={insurancePlanBlurHandler}
                 />
+                {insurancePlanInputHasError && (
+                  <p className="error-text">
+                    Plano de Saúde não deve estar vazio.
+                  </p>
+                )}
               </div>
               <div className={styles.field}>
                 <label htmlFor="insurancePolicyNumber">Nº do Plano</label>
                 <input
-                  ref={insurancePolicyNumberInputRef}
                   type="text"
                   name="insurancePolicyNumber"
                   id="insurancePolicyNumber"
                   placeholder="Digite aqui..."
+                  value={enteredInsurancePolicyNumber}
+                  onChange={insurancePolicyNumberChangeHandler}
+                  onBlur={insurancePolicyNumberBlurHandler}
                 />
+                {insurancePolicyNumberInputHasError && (
+                  <p className="error-text">
+                    Nº do Plano não deve estar vazio.
+                  </p>
+                )}
               </div>
             </div>
           </div>
           <div className={`${styles.field} ${styles.descriptionfield}`}>
             <label htmlFor="observation">Observações</label>
             <textarea
-              ref={observationInputRef}
               name="observation"
               id="observation"
               placeholder="Digite aqui..."
+              value={enteredObservation}
+              onChange={observationChangeHandler}
+              onBlur={observationBlurHandler}
             ></textarea>
           </div>
         </form>

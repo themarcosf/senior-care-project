@@ -8,7 +8,7 @@
   h1 {
     font-size: 4.8rem;
     font-weight: bold;
-    margin-bottom: 6rem;
+    margin-bottom: 1rem;
 
     span {
       color: var(--primary-100);
@@ -25,6 +25,19 @@
   img {
     width: 100%;
   }
+}
+
+.errorBx{
+  height: 5rem;
+  margin: 1rem 0;
+}
+
+
+.error{
+  text-align: center;
+  color: var(--red);
+  font-size: 1.4rem;
+  font-weight: 600;
 }
 
 .form {
@@ -96,13 +109,6 @@
     font-size: 1.6rem;
     padding: 1rem 5rem;
     border-radius: 1rem;
+    transition: 200ms;
   }
-}
-
-.error{
-  text-align: center;
-  color: var(--red);
-  font-size: 1.4rem;
-  font-weight: 600;
-  margin: 1rem 0;
 }

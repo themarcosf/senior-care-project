@@ -37,7 +37,7 @@ export class UsersService {
     } catch (err) {
       // rollback changes made in case of error
       await this.queryRunner.rollbackTransaction();
-      throw err;
+      throw new Error("An error ocurred while creating the user.");
     } finally {
       // release queryRunner after transaction
       await this.queryRunner.release();
@@ -45,11 +45,7 @@ export class UsersService {
   }
 
   async findAll(): Promise<User[]> {
-    // create queryBuilder
-    const queryBuilder = this.repository.createQueryBuilder("user");
-
-    // execute queryBuilder and return results
-    return queryBuilder.getMany();
+    return await this.repository.createQueryBuilder("user").getMany();
   }
 
   async findOne(criteria: {

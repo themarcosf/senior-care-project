@@ -7,6 +7,7 @@ import { Repository } from "typeorm";
 
 import { User } from "./entities/user.entity";
 import { UsersService } from "./users.service";
+import { CreateUserDto } from "./dto/create-user.dto";
 import { QueryRunnerFactory } from "../common/query-runner/query-runner.factory";
 import { QueryRunnerInterface } from "../common/query-runner/query-runner.interface";
 ////////////////////////////////////////////////////////////////////////////////
@@ -15,7 +16,7 @@ import { QueryRunnerInterface } from "../common/query-runner/query-runner.interf
 let service: UsersService;
 
 // mock data
-const mockCreateUserDto = {
+const mockCreateUserDto: CreateUserDto = {
   name: "John Doe",
   email: "john.doe@example.com",
   password: "123456",
@@ -24,12 +25,6 @@ const mockCreateUserDto = {
 };
 
 const mockUsers = [{ ...mockCreateUserDto, id: 1 }];
-
-// mock queryBuilder
-interface QueryBuilder {
-  where: jest.Mock;
-  getOne: jest.Mock;
-}
 
 /** setup */
 beforeAll(async () => {
@@ -48,7 +43,7 @@ beforeAll(async () => {
       return {
         where: jest.fn().mockReturnThis(),
         getMany: jest.fn(() => mockUsers),
-        getOne: jest.fn(function (this: QueryBuilder) {
+        getOne: jest.fn(function (this: { where: jest.Mock }) {
           if (this.where.mock.lastCall[1].id === mockUsers[0].id) {
             return mockUsers[0];
           }
@@ -96,7 +91,7 @@ describe("UsersService", () => {
 
   describe("create method", () => {
     it("should create a new user ", async () => {
-      const newUserDto = {
+      const newUserDto: CreateUserDto = {
         name: "Jane Doe",
         email: "jane.doe@example.com",
         password: "123456",
@@ -130,7 +125,7 @@ describe("UsersService", () => {
       const userById = await service.findOne({ id: 1 });
 
       expect(userById).toBeDefined();
-      expect(userById).toEqual({ ...mockCreateUserDto, id: 1 });
+      expect(userById).toEqual(mockUsers[0]);
     });
 
     it("should find a user by email", async () => {
@@ -139,7 +134,7 @@ describe("UsersService", () => {
       });
 
       expect(userByEmail).toBeDefined();
-      expect(userByEmail).toEqual({ ...mockCreateUserDto, id: 1 });
+      expect(userByEmail).toEqual(mockUsers[0]);
     });
 
     it("should return null if user is not found", async () => {

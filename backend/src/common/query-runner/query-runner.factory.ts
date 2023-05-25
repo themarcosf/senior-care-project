@@ -6,6 +6,7 @@ import { DataSource, QueryRunner } from "typeorm";
 
 import { User } from "../../users/entities/user.entity";
 import { QueryRunnerInterface } from "./query-runner.interface";
+import { ProgressionType } from "../../progression-type/entities/progression-type.entity";
 ////////////////////////////////////////////////////////////////////////////////
 
 @Injectable()
@@ -27,7 +28,7 @@ export class QueryRunnerFactory implements QueryRunnerInterface {
     return await this.queryRunner.startTransaction();
   }
 
-  async commitTransaction(obj: User): Promise<void> {
+  async commitTransaction(obj: User | ProgressionType): Promise<void> {
     if (!this.queryRunner) throw new Error("QueryRunner not initialized");
 
     await this.queryRunner.manager.save(obj);

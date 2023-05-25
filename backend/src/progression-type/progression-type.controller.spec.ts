@@ -8,27 +8,61 @@ import { ProgressionTypeController } from "./progression-type.controller";
 import { ProgressionTypeService } from "./progression-type.service";
 
 /** dependencies */
+import { User } from "../users/entities/user.entity";
+import { PassportRequest } from "../auth/auth.controller";
 import { ProgressionType } from "./entities/progression-type.entity";
 import { CreateProgressionTypeDto } from "./dto/create-progression-type.dto";
 import { MedicalProgression } from "../medical-progression/entities/medical-progression.entity";
-import { PassportRequest } from "../auth/auth.controller";
 ////////////////////////////////////////////////////////////////////////////////
 
+// global test variables
 let controller: ProgressionTypeController;
 
+// mock data
+const mockProgressionType: Partial<ProgressionType> = {
+  id: 1,
+  description: "mock description",
+  toggleStatus: false,
+  createdByUserId: 1,
+  isActive: true,
+  progressions: Promise.resolve(<MedicalProgression[]>[]),
+};
+
+const mockProgressionTypes: Partial<ProgressionType>[] = [mockProgressionType];
+
+/* setup */
 beforeAll(async () => {
-  // create custom provider ProgressionTypeService
+  // mock implementation of create method
   const mockProgressionTypeService: Partial<ProgressionTypeService> = {
-    create: (createProgressionTypeDto: CreateProgressionTypeDto) =>
-      Promise.resolve({
-        description: createProgressionTypeDto.description,
-        toggleStatus: createProgressionTypeDto.toggleStatus,
-        createdByUserId: createProgressionTypeDto.createdByUserId,
+    create: jest.fn().mockImplementation(function (this: any) {
+      mockProgressionTypes.push({
+        id: mockProgressionTypes.length + 1,
+        description: this.create.mock.lastCall[0].description,
+        toggleStatus: this.create.mock.lastCall[0].toggleStatus,
+        createdByUserId: this.create.mock.lastCall[0].createdByUserId,
         isActive: true,
-        progressions: Promise.resolve([] as MedicalProgression[]),
-      } as ProgressionType),
+        progressions: Promise.resolve(<MedicalProgression[]>[]),
+      });
+
+      return Promise.resolve(
+        mockProgressionTypes[mockProgressionTypes.length - 1]
+      );
+    }),
+    // mock implementation of findAll method
+    findAll: jest.fn().mockResolvedValue(mockProgressionTypes),
+    // mock implementation of findOne method
+    findOne: jest.fn().mockImplementation((id: number) => {
+      const foundProgressionType = mockProgressionTypes.find(
+        (progressionType) => progressionType.id === id
+      );
+
+      return foundProgressionType
+        ? Promise.resolve(foundProgressionType)
+        : Promise.resolve(null);
+    }),
   };
 
+  // initialize test module
   const moduleRef = await Test.createTestingModule({
     controllers: [ProgressionTypeController],
     providers: [
@@ -44,33 +78,50 @@ beforeAll(async () => {
   );
 });
 
+/** test suite */
 describe("ProgressionTypeController", () => {
   it("should be defined", () => {
     expect(controller).toBeDefined();
   });
 
-  describe("create", () => {
-    // mock implementation of @Req() req: PassportRequest
-    const mockReq = { user: { id: 1 } };
+  describe("create method", () => {
+    const mockReq: Partial<PassportRequest> = { user: <User>{ id: 1 } };
 
-    // mock implementation of createProgressionTypeDto
-    const mockCreateProgressionTypeDto = {
+    const mockCreateProgressionTypeDto: Partial<CreateProgressionTypeDto> = {
       description: "mock description",
       toggleStatus: false,
-      createdByUserId: mockReq.user.id,
     };
 
     it("should return a ProgressionType", async () => {
       const result = await controller.create(
-        mockReq as PassportRequest,
-        mockCreateProgressionTypeDto
+        <PassportRequest>mockReq,
+        <CreateProgressionTypeDto>mockCreateProgressionTypeDto
       );
       expect(result).toBeDefined();
-      expect(result).toHaveProperty("description");
-      expect(result).toHaveProperty("toggleStatus");
-      expect(result).toHaveProperty("createdByUserId");
-      expect(result).toHaveProperty("isActive");
-      expect(result).toHaveProperty("progressions");
+      expect(result).toBe(
+        mockProgressionTypes[mockProgressionTypes.length - 1]
+      );
+    });
+  });
+
+  describe("findAll method", () => {
+    it("should return an array of ProgressionTypes", async () => {
+      const result = await controller.findAll();
+      expect(result).toBeDefined();
+      expect(result).toHaveLength(mockProgressionTypes.length);
+    });
+  });
+
+  describe("findOne method", () => {
+    it("should return a ProgressionType", async () => {
+      const result = await controller.findOne(1);
+      expect(result).toBeDefined();
+      expect(result).toBe(mockProgressionTypes[0]);
+    });
+
+    it("should return null if ProgressionType is not found", async () => {
+      const result = await controller.findOne(999);
+      expect(result).toBeNull();
     });
   });
 });

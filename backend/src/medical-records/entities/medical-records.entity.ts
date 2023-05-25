@@ -17,6 +17,9 @@ export class MedicalRecord extends BaseEntity {
   @Column()
   birthDate: Date;
 
+  @Column()
+  email: string;
+
   @Column({ unique: true })
   nationalId: string;
 

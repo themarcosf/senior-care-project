@@ -3,9 +3,14 @@
 :root {
   --neutral-0: #ffffff;
   --neutral-50: #ececec;
+  --neutral-200: #62717980;
+  --neutral-300: #6F6F6F;
   --neutral-400: #627179;
   --primary-100: #72CAC3;
 
+  --green: #ACD6C3;
+  --red: #EC2525;
+  
   font-size: 62.5%;
 }
 
@@ -35,15 +40,6 @@
 
 body {
   background: var(--neutral-50);
-}
-
-h1,
-h2,
-h3,
-h4,
-h5,
-h6 {
-  font-weight: 600;
 }
 
 button {

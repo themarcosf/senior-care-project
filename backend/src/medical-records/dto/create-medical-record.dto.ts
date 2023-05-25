@@ -6,6 +6,7 @@ import {
   IsPhoneNumber,
   MaxLength,
   IsEmpty,
+  IsEmail,
 } from "class-validator";
 import { isValid } from "date-fns";
 //////////////////////////////////////////////////////////////////////////////////////
@@ -17,6 +18,10 @@ export class CreateMedicalRecordDto {
 
   @Validate((value: Date) => isValid(value))
   birthDate: Date;
+
+  @IsEmail()
+  @IsNotEmpty()
+  email: string;
 
   @IsString()
   @IsNotEmpty()

@@ -5,6 +5,7 @@ import { getRepositoryToken } from "@nestjs/typeorm";
 /** dependencies */
 import { Repository } from "typeorm";
 
+import { User } from "../users/entities/user.entity";
 import { ProgressionTypeService } from "./progression-type.service";
 import { ProgressionType } from "./entities/progression-type.entity";
 import { CreateProgressionTypeDto } from "./dto/create-progression-type.dto";
@@ -19,22 +20,25 @@ let service: ProgressionTypeService;
 const mockCreateProgTypeDto: CreateProgressionTypeDto = {
   description: "description",
   toggleStatus: true,
-  createdByUserId: 1,
 };
 
-const mockProgTypes = [{ ...mockCreateProgTypeDto, id: 1 }];
+const mockUser: User = {
+  id: 1,
+} as User;
+
+const mockProgTypes = [
+  { ...mockCreateProgTypeDto, id: 1, createdBy: mockUser },
+];
 
 /** setup */
 beforeAll(async () => {
   const mockRepository: Partial<Repository<ProgressionType>> = {
     // mock implementation of create method
     create: jest.fn().mockImplementation(function (this: any) {
-      mockProgTypes.push({
+      return {
         ...this.create.mock.lastCall[0],
         id: mockProgTypes.length + 1,
-      });
-
-      return mockProgTypes[mockProgTypes.length - 1];
+      };
     }),
     // mock implementation of createQueryBuilder method
     createQueryBuilder: jest.fn().mockImplementation(() => {
@@ -55,7 +59,9 @@ beforeAll(async () => {
   const mockQueryRunnerFactory: QueryRunnerInterface = {
     connect: jest.fn(),
     startTransaction: jest.fn(),
-    commitTransaction: jest.fn(),
+    commitTransaction: jest.fn().mockImplementation(function (this: any) {
+      mockProgTypes.push(this.commitTransaction.mock.lastCall[0]);
+    }),
     rollbackTransaction: jest.fn(),
     release: jest.fn(),
   };
@@ -89,34 +95,38 @@ describe("ProgressionTypeService", () => {
       const newProgTypeDto: CreateProgressionTypeDto = {
         description: "other description",
         toggleStatus: false,
-        createdByUserId: 1,
       };
 
-      const progType = await service.create(newProgTypeDto);
+      const progType = await service.create(newProgTypeDto, mockUser);
+
       expect(progType).toBeDefined();
-      expect(progType).toEqual({ ...newProgTypeDto, id: 2 });
+      expect(progType).toEqual({
+        ...newProgTypeDto,
+        id: mockProgTypes.length,
+        createdBy: Promise.resolve(mockUser),
+      });
     });
   });
+});
 
-  describe("findAll method", () => {
-    it("should return an array of progression types", async () => {
-      const progTypes = await service.findAll();
-      expect(progTypes).toBeDefined();
-      expect(progTypes).toEqual(mockProgTypes);
-      expect(progTypes).toHaveLength(mockProgTypes.length);
-    });
+describe("findAll method", () => {
+  it("should return an array of progression types", async () => {
+    const progTypes = await service.findAll();
+    expect(progTypes).toBeDefined();
+    expect(progTypes).toEqual(mockProgTypes);
+    expect(progTypes).toHaveLength(mockProgTypes.length);
   });
+});
 
-  describe("findOne method", () => {
-    it("should find a progression type by id", async () => {
-      const progType = await service.findOne(1);
-      expect(progType).toBeDefined();
-      expect(progType).toEqual(mockProgTypes[0]);
-    });
-
-    it("should return null if no progression type is found", async () => {
-      const progType = await service.findOne(999);
-      expect(progType).toBeNull();
-    });
+describe("findOne method", () => {
+  it("should find a progression type by id", async () => {
+    const progType = await service.findOne(1);
+    expect(progType).toBeDefined();
+    expect(progType).toEqual(mockProgTypes[0]);
   });
+});
+
+it("should return null if no progression type is found", async () => {
+  const progType = await service.findOne(999);
+  expect(progType).toBeNull();
 });

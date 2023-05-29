@@ -20,10 +20,10 @@ export class ProgressionTypeController {
     @Req() req: PassportRequest,
     @Body() createProgressionTypeDto: CreateProgressionTypeDto
   ): Promise<ProgressionType> {
-    return this.progressionTypeService.create({
-      ...createProgressionTypeDto,
-      createdByUserId: req.user!.id,
-    });
+    return this.progressionTypeService.create(
+      createProgressionTypeDto,
+      req.user!
+    );
   }
 
   @Get()

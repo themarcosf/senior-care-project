@@ -1,10 +1,4 @@
-import {
-  IsEmpty,
-  IsString,
-  IsBoolean,
-  IsNotEmpty,
-  IsOptional,
-} from "class-validator";
+import { IsString, IsBoolean, IsNotEmpty, IsOptional } from "class-validator";
 //////////////////////////////////////////////////////////////////////////////////////
 
 export class CreateProgressionTypeDto {
@@ -15,7 +9,4 @@ export class CreateProgressionTypeDto {
   @IsOptional()
   @IsBoolean()
   toggleStatus: boolean;
-
-  @IsEmpty()
-  createdByUserId: number;
 }

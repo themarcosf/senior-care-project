@@ -15,14 +15,15 @@ export class MedicalProgression extends BaseEntity {
   @Column()
   diagnosis: string;
 
-  // TODO : add ManyToMany relations with Physicians
-  @Column()
-  professional: string;
-
   @Column("simple-array", { nullable: true })
   medicalTests: string[];
 
   /** relations */
+
+  // TODO : add ManyToMany relations with Physicians
+  @Column()
+  professional: string;
+
   @ManyToOne(() => MedicalRecord, (medicalRecord) => medicalRecord.progressions)
   medicalRecord: Promise<MedicalRecord>;
 

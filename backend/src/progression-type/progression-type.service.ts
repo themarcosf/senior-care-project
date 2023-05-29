@@ -5,6 +5,7 @@ import { InjectRepository } from "@nestjs/typeorm";
 /** dependencies */
 import { Repository } from "typeorm";
 
+import { User } from "../users/entities/user.entity";
 import { ProgressionType } from "./entities/progression-type.entity";
 import { CreateProgressionTypeDto } from "./dto/create-progression-type.dto";
 import { QueryRunnerFactory } from "../common/query-runner/query-runner.factory";
@@ -19,15 +20,17 @@ export class ProgressionTypeService {
   ) {}
 
   async create(
-    createProgressionTypeDto: CreateProgressionTypeDto
+    createProgressionTypeDto: CreateProgressionTypeDto,
+    user: User
   ): Promise<ProgressionType> {
     // create query runner
     await this.queryRunner.connect();
     await this.queryRunner.startTransaction();
 
     // try to save progression type
+    const progType = this.repository.create(createProgressionTypeDto);
     try {
-      const progType = this.repository.create(createProgressionTypeDto);
+      progType.createdBy = Promise.resolve(user);
       await this.queryRunner.commitTransaction(progType);
       return progType;
     } catch (err) {

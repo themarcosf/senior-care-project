@@ -23,37 +23,38 @@ export class MedicalRecord extends BaseEntity {
   @Column({ unique: true })
   nationalId: string;
 
-  @Column()
+  @Column({ nullable: true })
   icdCode: string;
 
-  @Column({ nullable: true, length: 255 })
-  icdDescription: string;
-
-  @Column({ nullable: true })
+  @Column()
   legalGuardian: string;
 
-  @Column({ nullable: true })
+  @Column()
   legalGuardianIdNumber: string;
 
-  @Column({ nullable: true })
+  @Column()
   legalGuardianPhone: string;
 
-  @Column({ nullable: true })
+  @Column()
+  legalGuardianEmail: string;
+
+  @Column()
   insurancePlan: string;
 
-  @Column({ nullable: true })
+  @Column()
   insurancePolicyNumber: string;
 
   @Column({ nullable: true, length: 255 })
   observation: string;
 
-  @Column()
-  createdByUserId: number;
-
   @Column({ default: true })
-  isActive: boolean;
+  isClinicalActive: boolean;
 
   /** relations */
+
+  @Column()
+  createdByUserId: number; // implement foreign key
+
   @OneToMany(
     () => MedicalProgression,
     (progression) => progression.medicalRecord

@@ -175,7 +175,7 @@ export class MedicalRecordsService {
     const record = await this.findOne(id);
 
     // check if record exists and is active
-    if (!record || !record.isActive)
+    if (!record || !record.isClinicalActive)
       throw new UnauthorizedException(
         "Medical record not found or is inactive"
       );
@@ -184,7 +184,7 @@ export class MedicalRecordsService {
     await this.repository
       .createQueryBuilder()
       .update(MedicalRecord)
-      .set({ isActive: false })
+      .set({ isClinicalActive: false })
       .where("id = :id", { id })
       .execute();
 

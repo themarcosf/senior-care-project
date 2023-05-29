@@ -22,9 +22,9 @@ let controller: ProgressionTypeController;
 const mockProgressionType: Partial<ProgressionType> = {
   id: 1,
   description: "mock description",
-  toggleStatus: false,
-  createdByUserId: 1,
+  toggleClinicalStatus: false,
   isActive: true,
+  createdBy: Promise.resolve(<User>{ id: 1 }),
   progressions: Promise.resolve(<MedicalProgression[]>[]),
 };
 
@@ -38,8 +38,8 @@ beforeAll(async () => {
       mockProgressionTypes.push({
         id: mockProgressionTypes.length + 1,
         description: this.create.mock.lastCall[0].description,
-        toggleStatus: this.create.mock.lastCall[0].toggleStatus,
-        createdByUserId: this.create.mock.lastCall[0].createdByUserId,
+        toggleClinicalStatus: this.create.mock.lastCall[0].toggleClinicalStatus,
+        createdBy: this.create.mock.lastCall[1],
         isActive: true,
         progressions: Promise.resolve(<MedicalProgression[]>[]),
       });

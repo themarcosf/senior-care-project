@@ -1,5 +1,6 @@
-import { Column, Entity, OneToMany } from "typeorm";
+import { Column, Entity, OneToMany, ManyToOne } from "typeorm";
 
+import { User } from "../../users/entities/user.entity";
 import { BaseEntity } from "../../common/base-entity/base.entity";
 import { MedicalProgression } from "../../medical-progression/entities/medical-progression.entity";
 ////////////////////////////////////////////////////////////////////////////////
@@ -15,15 +16,15 @@ export class ProgressionType extends BaseEntity {
   description: string;
 
   @Column({ default: false })
-  toggleStatus: boolean;
-
-  @Column()
-  createdByUserId: number;
+  toggleClinicalStatus: boolean;
 
   @Column({ default: true })
   isActive: boolean;
 
   /** relations */
+  @ManyToOne(() => User, (user) => user.progressionTypes)
+  createdBy: Promise<User>;
+
   @OneToMany(
     () => MedicalProgression,
     (medicalProgression) => medicalProgression.progressionType

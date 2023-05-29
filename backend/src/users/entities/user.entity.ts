@@ -1,5 +1,6 @@
-import { Column, Entity, Index } from "typeorm";
+import { Column, Entity, Index, OneToMany } from "typeorm";
 import { BaseEntity } from "../../common/base-entity/base.entity";
+import { ProgressionType } from "../../progression-type/entities/progression-type.entity";
 ////////////////////////////////////////////////////////////////////////////////
 
 // TODO: add validation
@@ -27,4 +28,11 @@ export class User extends BaseEntity {
 
   @Column({ default: true })
   isActive: boolean;
+
+  /** relations */
+  @OneToMany(
+    () => ProgressionType,
+    (progressionType) => progressionType.createdBy
+  )
+  progressionTypes: Promise<ProgressionType[]>;
 }

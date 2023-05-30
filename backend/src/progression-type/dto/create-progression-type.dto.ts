@@ -8,5 +8,5 @@ export class CreateProgressionTypeDto {
 
   @IsOptional()
   @IsBoolean()
-  toggleStatus: boolean;
+  toggleClinicalStatus: boolean;
 }

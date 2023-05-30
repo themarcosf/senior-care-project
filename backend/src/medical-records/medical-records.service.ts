@@ -4,13 +4,15 @@ import { InjectRepository } from "@nestjs/typeorm";
 
 /** dependencies */
 import { mkdir } from "fs";
-import { Repository, DataSource } from "typeorm";
+import { Repository } from "typeorm";
 
 import { Api } from "./common/common.enum";
+import { User } from "../users/entities/user.entity";
 import { MedicalRecord } from "./entities/medical-records.entity";
 import { PartialMedicalRecord } from "./medical-records.controller";
 import { CreateMedicalRecordDto } from "./dto/create-medical-record.dto";
 import { UpdateMedicalRecordDto } from "./dto/update-medical-record.dto";
+import { QueryRunnerFactory } from "../common/query-runner/query-runner.factory";
 ////////////////////////////////////////////////////////////////////////////////
 
 @Injectable()
@@ -18,11 +20,12 @@ export class MedicalRecordsService {
   constructor(
     @InjectRepository(MedicalRecord)
     private repository: Repository<MedicalRecord>,
-    private dataSource: DataSource
+    private readonly queryRunner: QueryRunnerFactory
   ) {}
 
   async create(
-    createMedicalRecordDto: CreateMedicalRecordDto
+    createMedicalRecordDto: CreateMedicalRecordDto,
+    user: User
   ): Promise<MedicalRecord> {
     // check if national id already exists
     if (
@@ -34,15 +37,14 @@ export class MedicalRecordsService {
     }
 
     // create a query runner
-    const queryRunner = this.dataSource.createQueryRunner();
-    await queryRunner.connect();
-    await queryRunner.startTransaction();
+    this.queryRunner.connect();
+    await this.queryRunner.startTransaction();
 
     // try to save medical record
+    const medRecord = this.repository.create(createMedicalRecordDto);
     try {
-      const medRecord = this.repository.create(createMedicalRecordDto);
-      await queryRunner.manager.save(medRecord);
-      await queryRunner.commitTransaction();
+      medRecord.createdBy = Promise.resolve(user);
+      await this.queryRunner.commitTransaction(medRecord);
 
       // create folder for medical tests
       const destination = `${Api.PATH}${medRecord.id}`;
@@ -54,12 +56,12 @@ export class MedicalRecordsService {
       return medRecord;
     } catch (err) {
       // rollback changes made in case of error
-      await queryRunner.rollbackTransaction();
+      await this.queryRunner.rollbackTransaction();
       console.log(err);
       throw new Error("An error ocurred while creating the medical record.");
     } finally {
       // release queryRunner after transaction
-      await queryRunner.release();
+      await this.queryRunner.release();
     }
   }
 
@@ -69,7 +71,7 @@ export class MedicalRecordsService {
       .createQueryBuilder("medRecord")
       .leftJoinAndSelect("medRecord.progressions", "progressions")
       .where("progressions.id IS NOT NULL")
-      .andWhere("medRecord.isActive = true")
+      .andWhere("medRecord.isClinicalActive = true")
       .orderBy("progressions.createdAt", order)
       .select([
         "medRecord.id",
@@ -83,7 +85,7 @@ export class MedicalRecordsService {
       .createQueryBuilder("medRecord")
       .leftJoinAndSelect("medRecord.progressions", "progressions")
       .where("progressions.id IS NULL")
-      .andWhere("medRecord.isActive = true")
+      .andWhere("medRecord.isClinicalActive = true")
       .orderBy("medRecord.createdAt", order)
       .select(["medRecord.id", "medRecord.patientFullName"])
       .getRawMany();
@@ -141,14 +143,8 @@ export class MedicalRecordsService {
     });
   }
 
-  async findOne(
-    criteria: number | string,
-    order?: "ASC" | "DESC"
-  ): Promise<MedicalRecord | null> {
-    // check if criteria is valid
-    if (!criteria) return null;
-
-    // query medical record with progressions
+  async findOne(criteria: number | string): Promise<MedicalRecord | null> {
+    // create query of medical records with progressions
     const queryBuilder = this.repository
       .createQueryBuilder("medRecord")
       .leftJoinAndSelect("medRecord.progressions", "progression");
@@ -160,11 +156,6 @@ export class MedicalRecordsService {
       queryBuilder.where("medRecord.patientFullName = :patientFullName", {
         patientFullName: criteria,
       });
-    }
-
-    // check if order is valid
-    if (order) {
-      queryBuilder.orderBy("progression.createdAt", order);
     }
 
     // return medical record

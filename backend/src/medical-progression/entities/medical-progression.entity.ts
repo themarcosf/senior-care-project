@@ -1,5 +1,6 @@
 import { Entity, Column, ManyToOne } from "typeorm";
 
+import { User } from "../../users/entities/user.entity";
 import { BaseEntity } from "../../common/base-entity/base.entity";
 import { MedicalRecord } from "../../medical-records/entities/medical-records.entity";
 import { ProgressionType } from "../../progression-type/entities/progression-type.entity";
@@ -19,10 +20,8 @@ export class MedicalProgression extends BaseEntity {
   medicalTests: string[];
 
   /** relations */
-
-  // TODO : add ManyToMany relations with Physicians
-  @Column()
-  professional: string;
+  @ManyToOne(() => User, (user) => user.medicalProgressions)
+  createdBy: Promise<User>;
 
   @ManyToOne(() => MedicalRecord, (medicalRecord) => medicalRecord.progressions)
   medicalRecord: Promise<MedicalRecord>;

@@ -24,8 +24,10 @@ export class MedicalRecordsController {
     @Req() req: PassportRequest,
     @Body() createMedicalRecordDto: CreateMedicalRecordDto
   ): Promise<MedicalRecord> {
-    createMedicalRecordDto.createdByUserId = req.user!.id;
-    return await this.medicalRecordsService.create(createMedicalRecordDto);
+    return await this.medicalRecordsService.create(
+      createMedicalRecordDto,
+      req.user!
+    );
   }
 
   @Get()
@@ -39,8 +41,8 @@ export class MedicalRecordsController {
     @Query(QueryField.FULL_NAME) patientFullName: string
   ): Promise<MedicalRecord | null> {
     return patientId
-      ? this.medicalRecordsService.findOne(patientId, "DESC")
-      : this.medicalRecordsService.findOne(patientFullName, "DESC");
+      ? this.medicalRecordsService.findOne(patientId)
+      : this.medicalRecordsService.findOne(patientFullName);
   }
 
   @Get(QueryField.TOGGLE_STATUS)

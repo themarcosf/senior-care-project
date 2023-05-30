@@ -1,13 +1,14 @@
 /** nestjs */
 import {
-  Controller,
   Get,
+  Req,
   Post,
   Body,
   Patch,
   Param,
-  Delete,
   Query,
+  Delete,
+  Controller,
   UploadedFile,
   UseInterceptors,
 } from "@nestjs/common";
@@ -17,6 +18,7 @@ import { FileInterceptor } from "@nestjs/platform-express";
 import { MedicalProgressionService } from "./medical-progression.service";
 
 /** dependencies */
+import { PassportRequest } from "../auth/auth.controller";
 import { Api, QueryField, ParamField } from "./common/common.enum";
 import { MedicalProgression } from "./entities/medical-progression.entity";
 import { CreateMedicalProgressionDto } from "./dto/create-medical-progression.dto";
@@ -33,6 +35,7 @@ export class MedicalProgressionController {
   @UseInterceptors(FileInterceptor("medicalTests"))
   @Post()
   create(
+    @Req() req: PassportRequest,
     @Query(QueryField.MEDICAL_RECORD) medicalRecordId: number,
     @Query(QueryField.PROGRESSION_TYPE) progressionType: number,
     @Body() createMedicalProgressionDto: CreateMedicalProgressionDto,
@@ -43,6 +46,7 @@ export class MedicalProgressionController {
     return this.medicalProgressionService.create(
       createMedicalProgressionDto,
       medicalRecordId,
+      req.user!,
       progressionType
     );
   }

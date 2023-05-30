@@ -89,7 +89,7 @@ describe("ProgressionTypeController", () => {
 
     const mockCreateProgressionTypeDto: Partial<CreateProgressionTypeDto> = {
       description: "mock description",
-      toggleStatus: false,
+      toggleClinicalStatus: false,
     };
 
     it("should return a ProgressionType", async () => {

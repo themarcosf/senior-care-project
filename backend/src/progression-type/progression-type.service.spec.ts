@@ -19,7 +19,7 @@ let service: ProgressionTypeService;
 // mock data
 const mockCreateProgTypeDto: CreateProgressionTypeDto = {
   description: "description",
-  toggleStatus: true,
+  toggleClinicalStatus: true,
 };
 
 const mockUser: User = {
@@ -94,7 +94,7 @@ describe("ProgressionTypeService", () => {
     it("should create a progression type", async () => {
       const newProgTypeDto: CreateProgressionTypeDto = {
         description: "other description",
-        toggleStatus: false,
+        toggleClinicalStatus: false,
       };
 
       const progType = await service.create(newProgTypeDto, mockUser);

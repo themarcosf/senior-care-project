@@ -4,6 +4,7 @@ import { InjectRepository } from "@nestjs/typeorm";
 
 /** dependencies */
 import { DataSource, Repository } from "typeorm";
+import { User } from "../users/entities/user.entity";
 import { MedicalProgression } from "./entities/medical-progression.entity";
 import { CreateMedicalProgressionDto } from "./dto/create-medical-progression.dto";
 import { UpdateMedicalProgressionDto } from "./dto/update-medical-progression.dto";
@@ -24,6 +25,7 @@ export class MedicalProgressionService {
   async create(
     createMedicalProgressionDto: CreateMedicalProgressionDto,
     medicalRecord: number,
+    createdBy: User,
     progressionType: number
   ): Promise<MedicalProgression> {
     // check if medical record exists and is active
@@ -46,6 +48,7 @@ export class MedicalProgressionService {
     try {
       medProg.medicalRecord = Promise.resolve(medRecord);
       medProg.progressionType = Promise.resolve(progType);
+      medProg.createdBy = Promise.resolve(createdBy);
       await queryRunner.manager.save(medProg);
       await queryRunner.commitTransaction();
     } catch (err) {

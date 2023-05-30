@@ -1,5 +1,6 @@
-import { Column, Entity, OneToMany } from "typeorm";
+import { Column, Entity, ManyToOne, OneToMany } from "typeorm";
 
+import { User } from "../../users/entities/user.entity";
 import { BaseEntity } from "../../common/base-entity/base.entity";
 import { MedicalProgression } from "../../medical-progression/entities/medical-progression.entity";
 ////////////////////////////////////////////////////////////////////////////////
@@ -51,9 +52,8 @@ export class MedicalRecord extends BaseEntity {
   isClinicalActive: boolean;
 
   /** relations */
-
-  @Column()
-  createdByUserId: number; // implement foreign key
+  @ManyToOne(() => User, (user) => user.medicalRecords)
+  createdBy: Promise<User>;
 
   @OneToMany(
     () => MedicalProgression,

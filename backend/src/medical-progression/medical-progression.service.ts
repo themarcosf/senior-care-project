@@ -30,7 +30,7 @@ export class MedicalProgressionService {
   ): Promise<MedicalProgression> {
     // check if medical record exists and is active
     const medRecord = await this.medicalRecordService.findOne(medicalRecord);
-    if (!medRecord || !medRecord.isClinicalActive)
+    if (!medRecord || !medRecord.clinicalStatus)
       throw new UnauthorizedException("Medical record not found or not active");
 
     // check progression type
@@ -62,7 +62,7 @@ export class MedicalProgressionService {
 
     // toggle medical record active status if progressionType.toggleStatus is true
     if (progType.toggleClinicalStatus) {
-      await this.medicalRecordService.toggleStatus(medRecord.id);
+      await this.medicalRecordService.toggleClinicalStatus(medRecord.id);
     }
 
     // return created medical progression

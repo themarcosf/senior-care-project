@@ -41,7 +41,7 @@ const mockMedRecords = [
     ...mockCreateMedRecordDto,
     id: 1,
     createdBy: Promise.resolve(mockUser),
-    isClinicalActive: true,
+    clinicalStatus: true,
   },
 ];
 
@@ -55,7 +55,7 @@ beforeAll(async () => {
         return {
           ...this.create.mock.lastCall[0],
           id: mockMedRecords.length + 1,
-          isClinicalActive: true,
+          clinicalStatus: true,
         };
       }),
     // mock implementation of createQueryBuilder method
@@ -111,8 +111,8 @@ beforeAll(async () => {
             );
 
             if (record)
-              mockMedRecords[record.id - 1].isClinicalActive =
-                this.set.mock.lastCall[0].isClinicalActive;
+              mockMedRecords[record.id - 1].clinicalStatus =
+                this.set.mock.lastCall[0].clinicalStatus;
           }),
       };
     }),
@@ -187,7 +187,7 @@ describe("MedicalRecordsService", () => {
         ...newMedRecordDto,
         id: mockMedRecords.length,
         createdBy: Promise.resolve(mockUser),
-        isClinicalActive: true,
+        clinicalStatus: true,
       });
     });
 
@@ -237,9 +237,9 @@ describe("findOne method", () => {
   });
 });
 
-describe("toggleStatus method", () => {
-  it("should toggle the status of a medical record", async () => {
-    const medRecord = await service.toggleStatus(1);
+describe("toggleClinicalStatus method", () => {
+  it("should toggle the clinical status of a medical record", async () => {
+    const medRecord = await service.toggleClinicalStatus(1);
 
     expect(medRecord).toBeDefined();
     expect(medRecord).toEqual(mockMedRecords[0]);

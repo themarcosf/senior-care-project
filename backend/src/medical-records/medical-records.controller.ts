@@ -37,16 +37,16 @@ export class MedicalRecordsController {
 
   @Get(Api.PATIENT)
   findOne(
-    @Query(QueryField.ID) patientId: number,
-    @Query(QueryField.FULL_NAME) patientFullName: string
+    @Query(QueryField.ID) patientId: number | undefined,
+    @Query(QueryField.FULL_NAME) patientFullName: string | undefined
   ): Promise<MedicalRecord | null> {
     return patientId
       ? this.medicalRecordsService.findOne(patientId)
-      : this.medicalRecordsService.findOne(patientFullName);
+      : this.medicalRecordsService.findOne(patientFullName!);
   }
 
   @Get(QueryField.TOGGLE_STATUS)
-  toggleStatus(@Query(QueryField.ID) id: number) {
-    return this.medicalRecordsService.toggleStatus(id);
+  toggleClinicalStatus(@Query(QueryField.ID) id: number) {
+    return this.medicalRecordsService.toggleClinicalStatus(id);
   }
 }

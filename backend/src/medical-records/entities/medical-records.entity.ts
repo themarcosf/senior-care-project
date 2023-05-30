@@ -49,7 +49,7 @@ export class MedicalRecord extends BaseEntity {
   observation: string;
 
   @Column({ default: true })
-  isClinicalActive: boolean;
+  clinicalStatus: boolean;
 
   /** relations */
   @ManyToOne(() => User, (user) => user.medicalRecords)

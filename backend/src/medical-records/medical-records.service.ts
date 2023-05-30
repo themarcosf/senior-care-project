@@ -162,11 +162,11 @@ export class MedicalRecordsService {
     return await queryBuilder.getOne();
   }
 
-  async toggleStatus(id: number): Promise<MedicalRecord | null> {
+  async toggleClinicalStatus(id: number): Promise<MedicalRecord | null> {
     const record = await this.findOne(id);
 
     // check if record exists and is active
-    if (!record || !record.isClinicalActive)
+    if (!record || !record.clinicalStatus)
       throw new UnauthorizedException(
         "Medical record not found or is inactive"
       );
@@ -175,7 +175,7 @@ export class MedicalRecordsService {
     await this.repository
       .createQueryBuilder()
       .update(MedicalRecord)
-      .set({ isClinicalActive: false })
+      .set({ clinicalStatus: false })
       .where("id = :id", { id })
       .execute();
 

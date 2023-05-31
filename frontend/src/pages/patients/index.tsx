@@ -36,7 +36,7 @@ const HomePage: FC<{ homeData: homeCard[] }> = ({ homeData }) => {
       <Header
         title="Pacientes"
         buttonName="Adicionar Paciente"
-        link={role === "physician" && contentSize >= 5 ? "/newPatient" : ""}
+        link={role === "physician" && contentSize >= 4 ? "/newPatient" : ""}
       />
       <Search
         search={search}
@@ -54,7 +54,7 @@ const HomePage: FC<{ homeData: homeCard[] }> = ({ homeData }) => {
               lastProgression={card.lastProgression}
             />
           ))}
-        {contentSize < 5 && (
+        {contentSize < 4 && (
           <Placeholder
             contentSize={filteredData.length}
             text="Nenhum paciente encontrado"

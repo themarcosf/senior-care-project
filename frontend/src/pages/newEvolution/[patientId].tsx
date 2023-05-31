@@ -7,16 +7,18 @@ import { ParsedUrlQuery } from "querystring";
 import Header from "@/components/Header/Header";
 
 import { profile } from "../../models/profile";
-import fileApi  from "@/services/fileApi";
+import fileApi from "@/services/fileApi";
 
 import styles from "@/styles/newEvolutionPage.module.scss";
+import useInput from "@/hooks/useInput";
+import useFileInput from "@/hooks/useFileInput";
 
 type patientData = {
   medRecordId: number;
   patientFullName: string;
 };
 
-type progressionType = {
+export type progressionType = {
   createdAt: string;
   createdByUserId: number;
   description: string;
@@ -37,9 +39,30 @@ const NewEvolutionPage: FC<{
   const progressionTypeInputRef = useRef<HTMLSelectElement>(null);
   const fileInputRef = useRef<HTMLInputElement>(null);
 
-  const [selectedFile, setSelectedFile] = useState<File | null>(null);
   const [role, setRole] = useState<null>(null);
   const [name, setName] = useState("");
+  const [formIsValid, setFormIsValid] = useState(false);
+
+  const {
+    value: enteredDiagnosis,
+    isValid: diagnosisIsValid,
+    hasError: diagnosisInputHasError,
+    inputChangeHandler: diagnosisChangeHandler,
+    inputBlurHandler: diagnosisBlurHandler,
+    reset: resetDiagnosis,
+    submitInputHandler: submitDiagnosisHandler,
+  } = useInput((value) => value.trim() !== "");
+
+  const {
+    selectedFile,
+    isValid: fileIsValid,
+    hasError: fileInputHasError,
+    handleFileChange,
+    inputBlurHandler: fileBlurHandler,
+    reset: resetFile,
+    submitInputHandler: submitFileHandler,
+  } = useFileInput((value) => value !== null);
+
 
   const route = useRouter();
 
@@ -54,14 +77,24 @@ const NewEvolutionPage: FC<{
     }
   }, []);
 
-  const handleFileChange = (event: ChangeEvent<HTMLInputElement>) => {
-    if (event.target.files && event.target.files.length > 0) {
-      setSelectedFile(event.target.files[0]);
+  useEffect(() => {
+    if (!formIsValid && diagnosisIsValid && fileIsValid) {
+      setFormIsValid(true);
+    } else if (formIsValid && (!diagnosisIsValid || !fileIsValid)) {
+      setFormIsValid(false);
     }
-  };
+  }, [formIsValid, diagnosisIsValid, fileIsValid]);
+
 
   const handleFormSubmit = async (event: FormEvent<HTMLFormElement>) => {
     event.preventDefault();
+
+    submitDiagnosisHandler();
+    submitFileHandler();
+
+    if (!formIsValid) {
+      return;
+    }
 
     const enteredDiagnosis = diagnosisInputRef.current?.value;
     const enteredProgressionType = progressionTypeInputRef.current?.value;
@@ -84,6 +117,9 @@ const NewEvolutionPage: FC<{
         .catch((error) => {
           console.error("Error uploading file:", error);
         });
+
+      resetDiagnosis();
+      resetFile();
 
       route.push("/patients");
     }
@@ -120,7 +156,7 @@ const NewEvolutionPage: FC<{
         `}
       >
         <div className={styles.formsHeader}>
-          <h1>
+          <h1 onClick={() => console.log(selectedFile)}>
             {navPosition === 1 && "Evolução"}
             {navPosition === 2 && "Farmácia"}
           </h1>
@@ -162,7 +198,13 @@ const NewEvolutionPage: FC<{
                   name="diagnosis"
                   id="diagnosis"
                   placeholder="Insira os detalhes da evolução aqui..."
+                  value={enteredDiagnosis}
+                  onChange={diagnosisChangeHandler}
+                  onBlur={diagnosisBlurHandler}
                 ></textarea>
+                {diagnosisInputHasError && (
+                  <p className="error-text">Nome não deve estar vazio.</p>
+                )}
               </div>
               <div className={styles.inputFileContainer}>
                 <input
@@ -183,8 +225,15 @@ const NewEvolutionPage: FC<{
                     <span>Arquivo selecionado:</span> {selectedFile.name}
                   </p>
                 )}
+                {diagnosisInputHasError && (
+                  <p className="error-text">File não deve estar vazio.</p>
+                )}
               </div>
-              <button className={styles.submitBtn} type="submit">
+              <button
+                style={{ backgroundColor: formIsValid ? "#13a060" : "" }}
+                className={styles.submitBtn}
+                type="submit"
+              >
                 Salvar
               </button>
             </form>

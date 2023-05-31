@@ -11,10 +11,12 @@ import { profile } from "../../models/profile";
 import styles from "@/styles/editEvolutionPage.module.scss";
 import axios from "axios";
 import api from "@/services/api";
+import { progressionType } from "../newEvolution/[patientId]";
 
 const NewEvolutionPage: FC<{
   progressionId: number;
-}> = ({ progressionId }) => {
+  progressionTypes: progressionType[];
+}> = ({ progressionId, progressionTypes }) => {
   const [navPosition, setNavPosition] = useState(1);
 
   const diagnosisInputRef = useRef<HTMLTextAreaElement>(null);
@@ -107,12 +109,23 @@ const NewEvolutionPage: FC<{
                   id="progressionType"
                   ref={progressionTypeInputRef}
                 >
-                  <option value="type1">Tipo 1</option>
-                  <option value="type2">Tipo 2</option>
-                  <option value="type3">Tipo 3</option>
-                  {role === "physician" && (
-                    <option value="finishing">Encerrar prontuário</option>
-                  )}
+                  {progressionTypes.map((progressionType) => {
+                    if (
+                      role !== "physician" &&
+                      progressionType.description === "Alta"
+                    ) {
+                      return;
+                    }
+
+                    return (
+                      <option
+                        key={progressionType.id}
+                        value={progressionType.id}
+                      >
+                        {progressionType.description}
+                      </option>
+                    );
+                  })}
                 </select>
               </div>
               <div className={`${styles.field} ${styles.descriptionfield}`}>
@@ -188,9 +201,21 @@ export const getServerSideProps: GetServerSideProps = async (context) => {
 
   const { progressionId } = context.params as Params;
 
+  const typesResponse = await fetch(
+    `${process.env.NEXT_PUBLIC_BASE_URL}/progression-type`,
+    {
+      headers: {
+        Authorization: "Bearer " + token,
+      },
+    }
+  );
+
+  const progressionTypes = await typesResponse.json();
+
   return {
     props: {
       progressionId,
+      progressionTypes,
     },
   };
 };

@@ -58,7 +58,8 @@ const Login: FC<{ BASE_URL: string }> = ({ BASE_URL }) => {
     localStorage.setItem("profileData", JSON.stringify(profileData));
 
     Cookies.set("token", data.access_token);
-    router.push("/patients");
+
+    window.location.href = "/patients";
   };
 
   return (

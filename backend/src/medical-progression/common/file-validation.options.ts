@@ -3,6 +3,7 @@ import { diskStorage } from "multer";
 import { UnauthorizedException } from "@nestjs/common";
 ////////////////////////////////////////////////////////////////////////////////
 
+// creates a destination folder for the file
 function createMedicalTestsDestination(
   req: Request,
   file: Express.Multer.File,
@@ -11,6 +12,7 @@ function createMedicalTestsDestination(
   cb(null, `./uploads/medTests/${req.query.medicalRecord}`);
 }
 
+// creates a filename using the current date and the original name of the file
 function medicalTestsFilename(
   req: Request,
   file: Express.Multer.File,
@@ -19,6 +21,7 @@ function medicalTestsFilename(
   cb(null, `${Date.now()}-${file.originalname}`);
 }
 
+// validates the file extension
 function medicalTestsFileFilter(
   req: Request,
   file: Express.Multer.File,

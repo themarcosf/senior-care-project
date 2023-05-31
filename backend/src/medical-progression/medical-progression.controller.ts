@@ -7,7 +7,6 @@ import {
   Patch,
   Param,
   Query,
-  Delete,
   Controller,
   UploadedFile,
   UseInterceptors,
@@ -72,10 +71,5 @@ export class MedicalProgressionController {
       id,
       updateMedicalProgressionDto
     );
-  }
-
-  @Delete(Api.ID)
-  remove(@Param(ParamField.ID) id: number): Promise<void> {
-    return this.medicalProgressionService.remove(id);
   }
 }

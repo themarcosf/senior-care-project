@@ -2,6 +2,9 @@
 import { Injectable, UnauthorizedException } from "@nestjs/common";
 import { InjectRepository } from "@nestjs/typeorm";
 
+/** controllers */
+import { PartialMedicalRecord } from "./medical-records.controller";
+
 /** dependencies */
 import { mkdir } from "fs";
 import { Repository } from "typeorm";
@@ -9,7 +12,6 @@ import { Repository } from "typeorm";
 import { Api } from "./common/common.enum";
 import { User } from "../users/entities/user.entity";
 import { MedicalRecord } from "./entities/medical-records.entity";
-import { PartialMedicalRecord } from "./medical-records.controller";
 import { CreateMedicalRecordDto } from "./dto/create-medical-record.dto";
 import { UpdateMedicalRecordDto } from "./dto/update-medical-record.dto";
 import { QueryRunnerFactory } from "../common/query-runner/query-runner.factory";

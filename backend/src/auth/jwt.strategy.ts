@@ -9,6 +9,12 @@ import { User } from "./../users/entities/user.entity";
 import { UsersService } from "./../users/users.service";
 ////////////////////////////////////////////////////////////////////////////////
 
+/**
+ * JwtStrategy
+ *
+ * @see https://docs.nestjs.com/recipes/passport#implementing-passport-jwt
+ */
+
 interface Payload {
   sub: string;
   email: string;

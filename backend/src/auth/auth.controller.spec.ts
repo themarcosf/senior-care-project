@@ -27,15 +27,15 @@ const mockCreateUserDto = {
 
 /** setup */
 beforeAll(async () => {
-  // mock implementation of login method
   const mockAuthService: Partial<AuthService> = {
+    // mock implementation of login method
     login: jest.fn().mockImplementation(() => {
       return { access_token: "jwt-token" };
     }),
   };
 
-  // mock implementation of create method
   const mockUsersService: Partial<UsersService> = {
+    // mock implementation of create method
     create: jest.fn().mockImplementation(() => {
       return { ...mockCreateUserDto, id: 1 };
     }),

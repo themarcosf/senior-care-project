@@ -2,9 +2,11 @@
 import { Get, Req, Body, Post, Controller, Param } from "@nestjs/common";
 
 /** providers */
+import { ProgressionTypeService } from "./progression-type.service";
+
+/** dependencies */
 import { Api, ParamField } from "./common/common.enum";
 import { PassportRequest } from "../auth/auth.controller";
-import { ProgressionTypeService } from "./progression-type.service";
 import { ProgressionType } from "./entities/progression-type.entity";
 import { CreateProgressionTypeDto } from "./dto/create-progression-type.dto";
 ////////////////////////////////////////////////////////////////////////////////

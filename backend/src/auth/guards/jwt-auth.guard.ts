@@ -11,6 +11,13 @@ import { Reflector } from "@nestjs/core";
 import { Auth } from "../common/common.enum";
 ////////////////////////////////////////////////////////////////////////////////
 
+/**
+ * JwtAuthGuard
+ *
+ * @see https://docs.nestjs.com/recipes/passport#extending-guards
+ * @see https://docs.nestjs.com/recipes/passport#enable-authentication-globally
+ */
+
 @Injectable()
 export class JwtAuthGuard extends AuthGuard(Auth.JWT_AUTHGUARD) {
   constructor(private reflector: Reflector) {

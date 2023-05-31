@@ -21,15 +21,15 @@ const mockUsers = [{ ...mockSignInDto, id: 1 }];
 
 /** setup */
 beforeAll(async () => {
-  // mock implementation of sign method
   const mockJwtService: Partial<JwtService> = {
+    // mock implementation of sign method
     sign: jest.fn().mockImplementation(() => {
       return "jwt-token";
     }),
   };
 
-  // mock implementation of findOne method
   const mockUsersService: Partial<UsersService> = {
+    // mock implementation of findOne method
     findOne: jest.fn().mockImplementation((args) => {
       return mockUsers.find((user) => user.email === args.email);
     }),

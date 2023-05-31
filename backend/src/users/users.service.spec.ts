@@ -2,11 +2,13 @@
 import { Test, TestingModule } from "@nestjs/testing";
 import { getRepositoryToken } from "@nestjs/typeorm";
 
+/** providers */
+import { UsersService } from "./users.service";
+
 /** dependencies */
 import { Repository } from "typeorm";
 
 import { User } from "./entities/user.entity";
-import { UsersService } from "./users.service";
 import { CreateUserDto } from "./dto/create-user.dto";
 import { QueryRunnerFactory } from "../common/query-runner/query-runner.factory";
 import { QueryRunnerInterface } from "../common/query-runner/query-runner.interface";

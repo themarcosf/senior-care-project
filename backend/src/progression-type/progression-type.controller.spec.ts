@@ -32,8 +32,8 @@ const mockProgressionTypes: Partial<ProgressionType>[] = [mockProgressionType];
 
 /* setup */
 beforeAll(async () => {
-  // mock implementation of create method
   const mockProgressionTypeService: Partial<ProgressionTypeService> = {
+    // mock implementation of create method
     create: jest.fn().mockImplementation(function (this: any) {
       mockProgressionTypes.push({
         id: mockProgressionTypes.length + 1,

@@ -6,9 +6,21 @@ import { DataSource, QueryRunner } from "typeorm";
 
 import { User } from "../../users/entities/user.entity";
 import { QueryRunnerInterface } from "./query-runner.interface";
-import { ProgressionType } from "../../progression-type/entities/progression-type.entity";
 import { MedicalRecord } from "../../medical-records/entities/medical-records.entity";
+import { ProgressionType } from "../../progression-type/entities/progression-type.entity";
+import { MedicalProgression } from "../../medical-progression/entities/medical-progression.entity";
 ////////////////////////////////////////////////////////////////////////////////
+
+/**
+ * QueryRunnerFactory
+ *
+ * @description QueryRunnerFactory is implemented as a helper class to enable
+ * testing without mocking the entire DataSource object (which exposes several methods).
+ * @implements {QueryRunnerInterface} with a limited set of methods required to
+ * maintain transactions, making testing more straightforward.
+ *
+ * @see https://docs.nestjs.com/techniques/database#typeorm-transactions
+ */
 
 @Injectable()
 export class QueryRunnerFactory implements QueryRunnerInterface {
@@ -30,7 +42,7 @@ export class QueryRunnerFactory implements QueryRunnerInterface {
   }
 
   async commitTransaction(
-    obj: User | ProgressionType | MedicalRecord
+    obj: User | ProgressionType | MedicalRecord | MedicalProgression
   ): Promise<void> {
     if (!this.queryRunner) throw new Error("QueryRunner not initialized");
 

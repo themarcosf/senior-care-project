@@ -1,15 +1,19 @@
 /** nestjs */
-import { Injectable, UnauthorizedException } from "@nestjs/common";
 import { InjectRepository } from "@nestjs/typeorm";
+import { Injectable, UnauthorizedException } from "@nestjs/common";
 
-/** dependencies */
-import { DataSource, Repository } from "typeorm";
-import { User } from "../users/entities/user.entity";
-import { MedicalProgression } from "./entities/medical-progression.entity";
-import { CreateMedicalProgressionDto } from "./dto/create-medical-progression.dto";
-import { UpdateMedicalProgressionDto } from "./dto/update-medical-progression.dto";
+/** providers */
 import { MedicalRecordsService } from "../medical-records/medical-records.service";
 import { ProgressionTypeService } from "../progression-type/progression-type.service";
+
+/** dependencies */
+import { Repository } from "typeorm";
+
+import { User } from "../users/entities/user.entity";
+import { MedicalProgression } from "./entities/medical-progression.entity";
+import { QueryRunnerFactory } from "../common/query-runner/query-runner.factory";
+import { CreateMedicalProgressionDto } from "./dto/create-medical-progression.dto";
+import { UpdateMedicalProgressionDto } from "./dto/update-medical-progression.dto";
 ////////////////////////////////////////////////////////////////////////////////
 
 @Injectable()
@@ -17,7 +21,7 @@ export class MedicalProgressionService {
   constructor(
     @InjectRepository(MedicalProgression)
     private repository: Repository<MedicalProgression>,
-    private readonly dataSource: DataSource,
+    private readonly queryRunner: QueryRunnerFactory,
     private readonly medicalRecordService: MedicalRecordsService,
     private readonly progressionTypeService: ProgressionTypeService
   ) {}
@@ -39,9 +43,8 @@ export class MedicalProgressionService {
       throw new UnauthorizedException("Progression type not found");
 
     // create a query runner
-    const queryRunner = this.dataSource.createQueryRunner();
-    await queryRunner.connect();
-    await queryRunner.startTransaction();
+    this.queryRunner.connect();
+    await this.queryRunner.startTransaction();
 
     // try to save medical progression with relations
     const medProg = this.repository.create(createMedicalProgressionDto);
@@ -49,15 +52,14 @@ export class MedicalProgressionService {
       medProg.medicalRecord = Promise.resolve(medRecord);
       medProg.progressionType = Promise.resolve(progType);
       medProg.createdBy = Promise.resolve(createdBy);
-      await queryRunner.manager.save(medProg);
-      await queryRunner.commitTransaction();
+      await this.queryRunner.commitTransaction(medProg);
     } catch (err) {
       // rollback changes made in case of error
-      await queryRunner.rollbackTransaction();
+      await this.queryRunner.rollbackTransaction();
       throw err;
     } finally {
       // release queryRunner after transaction
-      await queryRunner.release();
+      await this.queryRunner.release();
     }
 
     // toggle medical record active status if progressionType.toggleStatus is true
@@ -128,9 +130,5 @@ export class MedicalProgressionService {
 
     // return updated medical progression
     return await this.findOne(id);
-  }
-
-  async remove(id: number): Promise<void> {
-    await this.repository.delete(id);
   }
 }

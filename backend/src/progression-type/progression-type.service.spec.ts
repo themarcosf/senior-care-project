@@ -2,11 +2,13 @@
 import { Test, TestingModule } from "@nestjs/testing";
 import { getRepositoryToken } from "@nestjs/typeorm";
 
+/** providers */
+import { ProgressionTypeService } from "./progression-type.service";
+
 /** dependencies */
 import { Repository } from "typeorm";
 
 import { User } from "../users/entities/user.entity";
-import { ProgressionTypeService } from "./progression-type.service";
 import { ProgressionType } from "./entities/progression-type.entity";
 import { CreateProgressionTypeDto } from "./dto/create-progression-type.dto";
 import { QueryRunnerFactory } from "../common/query-runner/query-runner.factory";

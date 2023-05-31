@@ -6,7 +6,6 @@ import { MedicalRecord } from "../../medical-records/entities/medical-records.en
 import { ProgressionType } from "../../progression-type/entities/progression-type.entity";
 ////////////////////////////////////////////////////////////////////////////////
 
-// TODO: add validation
 @Entity()
 export class MedicalProgression extends BaseEntity {
   constructor() {

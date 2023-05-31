@@ -11,6 +11,11 @@ import {
 } from "typeorm";
 ////////////////////////////////////////////////////////////////////////////////
 
+/**
+ * Base entity class that includes common fields and hooks
+ *
+ * @see https://typeorm.io/entity-inheritance
+ */
 export abstract class BaseEntity extends TypeOrmBaseEntity {
   constructor(private entityName: string) {
     super();

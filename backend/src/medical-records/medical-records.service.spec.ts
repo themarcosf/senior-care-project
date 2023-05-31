@@ -2,11 +2,13 @@
 import { Test, TestingModule } from "@nestjs/testing";
 import { getRepositoryToken } from "@nestjs/typeorm";
 
+/** providers */
+import { MedicalRecordsService } from "./medical-records.service";
+
 /** dependencies */
 import { Repository } from "typeorm";
 
 import { User } from "../users/entities/user.entity";
-import { MedicalRecordsService } from "./medical-records.service";
 import { MedicalRecord } from "./entities/medical-records.entity";
 import { CreateMedicalRecordDto } from "./dto/create-medical-record.dto";
 import { QueryRunnerFactory } from "../common/query-runner/query-runner.factory";

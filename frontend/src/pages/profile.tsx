@@ -17,8 +17,8 @@ const Profile: FC<{
   const route = useRouter();
 
   const signoutHandler = () => {
-    // Cookies.remove("token");
-    // route.push("/");
+    Cookies.remove("token");
+    route.push("/");
   };
 
   return (

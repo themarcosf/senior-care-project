@@ -54,6 +54,15 @@ const Profile: FC<{
           <p>Evoluções</p>
         </div>
       </div>
+      <div className={styles.qrCodeContainer}>
+        <h2>QR Code</h2>
+        <div>
+          <img
+            src="https://t3.gstatic.com/licensed-image?q=tbn:ANd9GcSh-wrQu254qFaRcoYktJ5QmUhmuUedlbeMaQeaozAVD4lh4ICsGdBNubZ8UlMvWjKC"
+            alt="QR Code"
+          />
+        </div>
+      </div>
     </div>
   );
 };

@@ -43,6 +43,7 @@ const PatientPage: FC<{
 
           <h2>Arquivos da evolução</h2>
           {medicalTests && medicalTests.map((test) => <p key={test}>{test}</p>)}
+          {!medicalTests && <p>Nenhum arquivo anexado</p>}
         </div>
       </CardsList>
     </>

@@ -74,18 +74,17 @@ const NewEvolutionPage: FC<{
   }, []);
 
   useEffect(() => {
-    if (!formIsValid && diagnosisIsValid && fileIsValid) {
+    if (!formIsValid && diagnosisIsValid) {
       setFormIsValid(true);
-    } else if (formIsValid && (!diagnosisIsValid || !fileIsValid)) {
+    } else if (formIsValid && !diagnosisIsValid) {
       setFormIsValid(false);
     }
-  }, [formIsValid, diagnosisIsValid, fileIsValid]);
-
+  }, [formIsValid, diagnosisIsValid]);
 
   const handleFormSubmit = async (event: FormEvent<HTMLFormElement>) => {
     event.preventDefault();
 
-    setIsLoading(true)
+    setIsLoading(true);
 
     if (!formIsValid) {
       return;
@@ -97,21 +96,21 @@ const NewEvolutionPage: FC<{
     const formData = new FormData();
 
     if (selectedFile) {
-      formData.append("diagnosis", enteredDiagnosis as string);
       formData.append("medicalTests", selectedFile);
-      formData.append("professional", name as string);
-
-      await fileApi
-        .post(
-          `/med-progression?medicalRecord=${medRecordId}&progressionType=${enteredProgressionType}`,
-          formData
-        )
-
-      resetDiagnosis();
-      resetFile();
-
-      route.push("/patients");
     }
+
+    formData.append("diagnosis", enteredDiagnosis as string);
+    formData.append("professional", name as string);
+
+    await fileApi.post(
+      `/med-progression?medicalRecord=${medRecordId}&progressionType=${enteredProgressionType}`,
+      formData
+    );
+
+    resetDiagnosis();
+    resetFile();
+
+    route.push("/patients");
   };
 
   return (
@@ -231,9 +230,9 @@ const NewEvolutionPage: FC<{
                     <span>Arquivo selecionado:</span> {selectedFile.name}
                   </p>
                 )}
-                {diagnosisInputHasError && (
+                {/* {diagnosisInputHasError && (
                   <p className="error-text">File não deve estar vazio.</p>
-                )}
+                )} */}
               </div>
               <button
                 style={{ backgroundColor: formIsValid ? "#13a060" : "" }}

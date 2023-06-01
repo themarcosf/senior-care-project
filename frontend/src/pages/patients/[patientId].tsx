@@ -48,7 +48,6 @@ const PatientPage: FC<{ patientData: patientCard }> = ({ patientData }) => {
             <PatientCard
               key={progression.id}
               professional={progression.professional}
-              physicianArea={progression.physiciansArea}
               progressionId={progression.id}
               patientFullName={patientFullName}
               progressionDate={progression.createdAt}

@@ -7,14 +7,12 @@ import styles from "./PatientCard.module.scss";
 const PatientCard: FC<{
   progressionId: number;
   professional: string;
-  physicianArea: string;
   patientFullName: string;
   progressionDate: string;
 }> = (props) => {
   const {
     progressionId,
     professional,
-    physicianArea,
     patientFullName,
     progressionDate,
   } = props;
@@ -23,6 +21,8 @@ const PatientCard: FC<{
 
   let dateNow = Math.floor(new Date().getTime() / 1000);
   let progressionDateUnix = Math.floor(new Date(progressionDate).getTime() / 1000);
+
+  const readableDate = new Date(progressionDate).toLocaleDateString("pt-BR");
 
   useEffect(() => {
     if (dateNow - progressionDateUnix < 86400) {
@@ -35,7 +35,7 @@ const PatientCard: FC<{
       <div className={styles.cardHeader}>
         <div>
           <h1>{professional}</h1>
-          <p>{physicianArea === undefined ? "Sem area" : `${physicianArea}`}</p>
+          <p>{readableDate}</p>
         </div>
         {canEdit && (
           <Link href={`/editEvolution/${progressionId.toString()}`}>

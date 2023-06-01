@@ -1,7 +1,6 @@
 import { FC, useEffect, useState } from "react";
-import { AiFillEdit } from "react-icons/ai";
-
 import Link from "next/link";
+import { AiFillEdit } from "react-icons/ai";
 
 import styles from "./PatientCard.module.scss";
 

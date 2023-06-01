@@ -3,11 +3,11 @@ import { useRouter } from "next/router";
 import Cookies from "js-cookie";
 import { AiFillEyeInvisible, AiFillEye } from "react-icons/ai";
 
-import styles from "@/styles/login.module.scss";
 import api from "@/services/api";
 
+import styles from "@/styles/login.module.scss";
+
 const Login: FC<{ BASE_URL: string }> = ({ BASE_URL }) => {
-  const router = useRouter();
   const emailInputRef = useRef<HTMLInputElement>(null);
   const passwordInputRef = useRef<HTMLInputElement>(null);
   const [show, setShow] = useState(false);
@@ -38,8 +38,6 @@ const Login: FC<{ BASE_URL: string }> = ({ BASE_URL }) => {
 
     const data = await response.json();
 
-    // TODO: handle errors
-
     if (!response.ok) {
       setError(data.message);
       return;
@@ -64,7 +62,7 @@ const Login: FC<{ BASE_URL: string }> = ({ BASE_URL }) => {
 
   return (
     <main className={styles.content}>
-      <div className={styles.imgBx} onClick={() => console.log(process.env)}>
+      <div className={styles.imgBx}>
         <img src="/logo.svg" alt="logo" />
       </div>
       <h1>

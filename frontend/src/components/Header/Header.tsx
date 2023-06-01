@@ -1,7 +1,8 @@
 import { FC } from "react";
 
-import styles from "./Header.module.scss";
 import Button from "../Link/Link";
+
+import styles from "./Header.module.scss";
 
 const Header: FC<{ title: string; buttonName: string; link: string }> = (
   props

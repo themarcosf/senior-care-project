@@ -2,13 +2,11 @@ import { GetServerSideProps } from "next";
 import { useRouter } from "next/router";
 import { FormEvent, useState, useEffect } from "react";
 import InputMask from "react-input-mask";
-
-import api from "@/services/api";
-import useInput from "@/hooks/useInput";
+import { TailSpin } from "react-loader-spinner";
 
 import Header from "@/components/Header/Header";
-
-import { TailSpin } from "react-loader-spinner";
+import useInput from "@/hooks/useInput";
+import api from "@/services/api";
 
 import styles from "@/styles/newPatientPage.module.scss";
 
@@ -24,7 +22,6 @@ const NewPatientPage = () => {
     inputChangeHandler: patientNameChangeHandler,
     inputBlurHandler: patientNameBlurHandler,
     reset: resetPatientName,
-    submitInputHandler: submitPatientNameHandler,
   } = useInput((value) => value.trim() !== "");
 
   const {
@@ -34,7 +31,6 @@ const NewPatientPage = () => {
     inputChangeHandler: patientNationalIdChangeHandler,
     inputBlurHandler: patientNationalIdBlurHandler,
     reset: resetPatientNationalId,
-    submitInputHandler: submitPatientNationalIdHandler,
   } = useInput((value) => value.trim() !== "");
 
   const {
@@ -44,7 +40,6 @@ const NewPatientPage = () => {
     inputChangeHandler: icdCodeChangeHandler,
     inputBlurHandler: icdCodeBlurHandler,
     reset: resetIcdCode,
-    submitInputHandler: submitIcdCodeHandler,
   } = useInput((value) => value.trim() !== "");
 
   const {
@@ -54,7 +49,6 @@ const NewPatientPage = () => {
     inputChangeHandler: birthDateChangeHandler,
     inputBlurHandler: birthDateBlurHandler,
     reset: resetBirthDate,
-    submitInputHandler: submitBirthDateHandler,
   } = useInput((value) => value.trim() !== "");
 
   const {
@@ -64,7 +58,6 @@ const NewPatientPage = () => {
     inputChangeHandler: legalGuardianNameChangeHandler,
     inputBlurHandler: legalGuardianNameBlurHandler,
     reset: resetLegalGuardianName,
-    submitInputHandler: submitLegalGuardianNameHandler,
   } = useInput((value) => value.trim() !== "");
 
   const {
@@ -74,7 +67,6 @@ const NewPatientPage = () => {
     inputChangeHandler: legalGuardianNationalIdChangeHandler,
     inputBlurHandler: legalGuardianNationalIdBlurHandler,
     reset: resetLegalGuardianNationalId,
-    submitInputHandler: submitLegalGuardianNationalIdHandler,
   } = useInput((value) => value.trim() !== "");
 
   const {
@@ -84,7 +76,6 @@ const NewPatientPage = () => {
     inputChangeHandler: legalGuardianPhoneChangeHandler,
     inputBlurHandler: legalGuardianPhoneBlurHandler,
     reset: resetLegalGuardianPhone,
-    submitInputHandler: submitLegalGuardianPhoneHandler,
   } = useInput((value) => value.trim() !== "");
 
   const {
@@ -94,7 +85,6 @@ const NewPatientPage = () => {
     inputChangeHandler: legalGuardianEmailChangeHandler,
     inputBlurHandler: legalGuardianEmailBlurHandler,
     reset: resetLegalGuardianEmail,
-    submitInputHandler: submitLegalGuardianEmailHandler,
   } = useInput((value) => value.trim() !== "");
 
   const {
@@ -104,7 +94,6 @@ const NewPatientPage = () => {
     inputChangeHandler: insurancePlanChangeHandler,
     inputBlurHandler: insurancePlanBlurHandler,
     reset: resetInsurancePlan,
-    submitInputHandler: submitInsurancePlanHandler,
   } = useInput((value) => value.trim() !== "");
 
   const {
@@ -114,7 +103,6 @@ const NewPatientPage = () => {
     inputChangeHandler: insurancePolicyNumberChangeHandler,
     inputBlurHandler: insurancePolicyNumberBlurHandler,
     reset: resetInsurancePolicyNumber,
-    submitInputHandler: submitInsurancePolicyNumberHandler,
   } = useInput((value) => value.trim() !== "");
 
   const {
@@ -124,22 +112,7 @@ const NewPatientPage = () => {
     inputChangeHandler: observationChangeHandler,
     inputBlurHandler: observationBlurHandler,
     reset: resetObservation,
-    submitInputHandler: submitObservationHandler,
   } = useInput((value) => value.trim() !== "");
-
-  const inputsSubmitHandler = () => {
-    submitPatientNameHandler();
-    submitPatientNationalIdHandler();
-    submitIcdCodeHandler();
-    submitBirthDateHandler();
-    submitLegalGuardianNameHandler();
-    submitLegalGuardianNationalIdHandler();
-    submitLegalGuardianPhoneHandler();
-    submitLegalGuardianEmailHandler();
-    submitInsurancePlanHandler();
-    submitInsurancePolicyNumberHandler();
-    submitObservationHandler();
-  };
 
   const resetInputsHandler = () => {
     resetPatientName();
@@ -204,9 +177,6 @@ const NewPatientPage = () => {
 
     setIsLoading(true);
 
-    console.log("saveHandler");
-    // inputsSubmitHandler();
-
     if (!formIsValid) {
       return;
     }
@@ -232,7 +202,7 @@ const NewPatientPage = () => {
 
     await api.post(`/med-record`, patientData);
 
-    route.push("/patients"); //Após a   finalização do post, direcionar para uma nova evolução
+    route.push("/patients"); 
 
     resetInputsHandler();
   };
@@ -277,6 +247,7 @@ const NewPatientPage = () => {
             />
           </div>
         )}
+
         {!isLoading && (
           <form
             className={styles.form}
@@ -473,7 +444,7 @@ const NewPatientPage = () => {
 export default NewPatientPage;
 
 export const getServerSideProps: GetServerSideProps = async (context) => {
-  const { req, res } = context;
+  const { req } = context;
 
   const token = req.cookies["token"];
 

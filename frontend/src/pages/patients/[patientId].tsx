@@ -1,20 +1,17 @@
-import { FC, use, useEffect, useState } from "react";
-import Link from "next/link";
+import { FC, useEffect, useState } from "react";
 import { GetServerSideProps } from "next";
 import { ParsedUrlQuery } from "querystring";
 
 import PatientCard from "@/components/PatientCard/PatientCard";
 import CardsList from "@/components/CardsList/CardsList";
 import Header from "@/components/Header/Header";
-
-import { patientCard } from "../../models/patientCard";
-
-import styles from "@/styles/patientPage.module.scss";
 import Search from "@/components/Search/Search";
 import Placeholder from "@/components/Placeholder/Placeholder";
 
+import { patientCard } from "../../models/patientCard";
+
 const PatientPage: FC<{ patientData: patientCard }> = ({ patientData }) => {
-  const { id, patientFullName, __progressions__ } = patientData;
+  const { patientFullName, __progressions__ } = patientData;
 
   const [search, setSearch] = useState("");
   const [contentSize, setContentSize] = useState(0);
@@ -26,6 +23,7 @@ const PatientPage: FC<{ patientData: patientCard }> = ({ patientData }) => {
         )
       : __progressions__;
 
+      
   useEffect(() => {
     setContentSize(filteredData.length);
   }, [search]);
@@ -36,7 +34,7 @@ const PatientPage: FC<{ patientData: patientCard }> = ({ patientData }) => {
       <Header
         title={patientFullName}
         buttonName="Nova Evolução"
-        link={contentSize > 5 ? `/newEvolution/${patientFullName}` : ""}
+        link={contentSize > 4 ? `/newEvolution/${patientFullName}` : ""}
       />
       <Search
         search={search}
@@ -56,7 +54,7 @@ const PatientPage: FC<{ patientData: patientCard }> = ({ patientData }) => {
               progressionDate={progression.createdAt}
             />
           ))}
-        {contentSize < 5 && (
+        {contentSize < 4 && (
           <Placeholder
             contentSize={contentSize}
             text={`Não há evoluções cadastradas
@@ -75,7 +73,7 @@ interface Params extends ParsedUrlQuery {
 }
 
 export const getServerSideProps: GetServerSideProps = async (context) => {
-  const { req, res } = context;
+  const { req } = context;
 
   const token = req.cookies["token"];
 

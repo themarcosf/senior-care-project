@@ -1,13 +1,8 @@
 import { FC } from "react";
-import Link from "next/link";
 import { GetServerSideProps } from "next";
-import { ParsedUrlQuery } from "querystring";
 
-import PatientCard from "@/components/PatientCard/PatientCard";
 import CardsList from "@/components/CardsList/CardsList";
 import Header from "@/components/Header/Header";
-
-import { patientCard } from "@/models/patientCard";
 
 import styles from "@/styles/progressionDetail.module.scss";
 
@@ -54,12 +49,9 @@ const PatientPage: FC<{
   );
 };
 
-interface Params extends ParsedUrlQuery {
-  patientId: string;
-}
 
 export const getServerSideProps: GetServerSideProps = async (context) => {
-  const { req, res } = context;
+  const { req } = context;
   const token = req.cookies["token"];
 
   if (!token) {

@@ -1,10 +1,10 @@
 import { FC } from "react";
-
-import notFound from "../../../public/not-found.json";
+import Link from "next/link";
 import { useLottie } from "lottie-react";
 
+import notFound from "../../../public/not-found.json";
+
 import styles from "./Placeholder.module.scss";
-import Link from "next/link";
 
 const Placeholder: FC<{ contentSize: number; text: string; link: string, btnText: string }> = ({
   text,

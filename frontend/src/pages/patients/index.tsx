@@ -5,10 +5,9 @@ import Header from "@/components/Header/Header";
 import Search from "@/components/Search/Search";
 import CardsList from "@/components/CardsList/CardsList";
 import HomeCard from "@/components/HomeCard/HomeCard";
+import Placeholder from "@/components/Placeholder/Placeholder";
 
 import { homeCard } from "../../models/homeCard";
-
-import Placeholder from "@/components/Placeholder/Placeholder";
 
 const HomePage: FC<{ homeData: homeCard[] }> = ({ homeData }) => {
   const [search, setSearch] = useState("");

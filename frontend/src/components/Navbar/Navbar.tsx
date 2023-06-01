@@ -1,11 +1,11 @@
 import { FC, useEffect, useState } from "react";
+import Link from "next/link";
+import { useRouter } from "next/router";
 import { BsHeadset } from "react-icons/bs";
 import { AiOutlineHome } from "react-icons/ai";
 import { BsFillPersonFill } from "react-icons/bs";
 
 import styles from "./Navbar.module.scss";
-import Link from "next/link";
-import { useRouter } from "next/router";
 
 const Navbar: FC = () => {
   const router = useRouter();

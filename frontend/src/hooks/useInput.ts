@@ -3,10 +3,9 @@ import { useState, FormEvent } from "react";
 const useInput = (validateValue: (value: string) => boolean) => {
   const [enteredValue, setEnteredValue] = useState("");
   const [isTouched, setIsTouched] = useState(false);
-  const [isSubmited, setIsSubmited] = useState(false);
 
   const isValid = validateValue(enteredValue);
-  const hasError = !isValid && (isTouched || isSubmited) ;
+  const hasError = !isValid && (isTouched) ;
 
   const inputChangeHandler = (event: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement >) => {
     setEnteredValue(event.target.value);
@@ -15,10 +14,6 @@ const useInput = (validateValue: (value: string) => boolean) => {
   const inputBlurHandler = (event: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement >) => {
     setIsTouched(true);
   };
-
-  const submitInputHandler = () => {
-    setIsSubmited(true);
-  }
 
   const reset = () => {
     setEnteredValue("");
@@ -32,7 +27,6 @@ const useInput = (validateValue: (value: string) => boolean) => {
     inputChangeHandler,
     inputBlurHandler,
     reset,
-    submitInputHandler
   };
 };
 

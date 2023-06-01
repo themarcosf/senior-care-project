@@ -1,18 +1,15 @@
-import { ChangeEvent, FC, FormEvent, useEffect, useRef, useState } from "react";
+import { FC, FormEvent, useEffect, useRef, useState } from "react";
 import { GetServerSideProps } from "next";
 import { useRouter } from "next/router";
-import Cookies from "js-cookie";
 import { ParsedUrlQuery } from "querystring";
 import { TailSpin } from "react-loader-spinner";
 
 import Header from "@/components/Header/Header";
-
-import { profile } from "../../models/profile";
+import useInput from "@/hooks/useInput";
+import useFileInput from "@/hooks/useFileInput";
 import fileApi from "@/services/fileApi";
 
 import styles from "@/styles/newEvolutionPage.module.scss";
-import useInput from "@/hooks/useInput";
-import useFileInput from "@/hooks/useFileInput";
 
 type patientData = {
   medRecordId: number;
@@ -35,15 +32,18 @@ const NewEvolutionPage: FC<{
   progressionTypes: progressionType[];
 }> = ({ patientData, progressionTypes }) => {
   const [navPosition, setNavPosition] = useState(1);
+  const [role, setRole] = useState<null>(null);
+  const [name, setName] = useState("");
+  const [formIsValid, setFormIsValid] = useState(false);
+  const [isLoading, setIsLoading] = useState(false);
 
   const diagnosisInputRef = useRef<HTMLTextAreaElement>(null);
   const progressionTypeInputRef = useRef<HTMLSelectElement>(null);
   const fileInputRef = useRef<HTMLInputElement>(null);
-  const [isLoading, setIsLoading] = useState(false);
 
-  const [role, setRole] = useState<null>(null);
-  const [name, setName] = useState("");
-  const [formIsValid, setFormIsValid] = useState(false);
+  const route = useRouter();
+
+  const { patientFullName, medRecordId } = patientData;
 
   const {
     value: enteredDiagnosis,
@@ -52,7 +52,6 @@ const NewEvolutionPage: FC<{
     inputChangeHandler: diagnosisChangeHandler,
     inputBlurHandler: diagnosisBlurHandler,
     reset: resetDiagnosis,
-    submitInputHandler: submitDiagnosisHandler,
   } = useInput((value) => value.trim() !== "");
 
   const {
@@ -64,11 +63,6 @@ const NewEvolutionPage: FC<{
     reset: resetFile,
     submitInputHandler: submitFileHandler,
   } = useFileInput((value) => value !== null);
-
-
-  const route = useRouter();
-
-  const { patientFullName, medRecordId } = patientData;
 
   useEffect(() => {
     const profileData = localStorage.getItem("profileData");
@@ -112,12 +106,6 @@ const NewEvolutionPage: FC<{
           `/med-progression?medicalRecord=${medRecordId}&progressionType=${enteredProgressionType}`,
           formData
         )
-        .then((data) => {
-          console.log("Progression created successfully:", data);
-        })
-        .catch((error) => {
-          console.error("Error uploading file:", error);
-        });
 
       resetDiagnosis();
       resetFile();
@@ -133,6 +121,7 @@ const NewEvolutionPage: FC<{
         buttonName="Histórico"
         link={`/patients/${patientFullName}`}
       />
+
       <nav className={styles.nav}>
         <ul>
           <li className={navPosition === 1 ? styles.active : styles.inactive}>
@@ -149,6 +138,7 @@ const NewEvolutionPage: FC<{
           </li>
         </ul>
       </nav>
+
       <main
         className={`
         ${styles.main}
@@ -219,7 +209,7 @@ const NewEvolutionPage: FC<{
                   onBlur={diagnosisBlurHandler}
                 ></textarea>
                 {diagnosisInputHasError && (
-                  <p className="error-text">Nome não deve estar vazio.</p>
+                  <p className="error-text">Diagnose não deve estar vazio.</p>
                 )}
               </div>
               <div className={styles.inputFileContainer}>
@@ -279,7 +269,7 @@ interface Params extends ParsedUrlQuery {
 }
 
 export const getServerSideProps: GetServerSideProps = async (context) => {
-  const { req, res } = context;
+  const { req } = context;
 
   const token = req.cookies["token"];
 

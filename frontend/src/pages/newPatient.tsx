@@ -15,7 +15,7 @@ import styles from "@/styles/newPatientPage.module.scss";
 const NewPatientPage = () => {
   const route = useRouter();
   const [formIsValid, setFormIsValid] = useState(false);
-  const [isLoading, setIsLoading] = useState(true);
+  const [isLoading, setIsLoading] = useState(false);
 
   const {
     value: enteredPatientName,
@@ -231,8 +231,6 @@ const NewPatientPage = () => {
     };
 
     await api.post(`/med-record`, patientData);
-
-    setIsLoading(false);
 
     route.push("/patients"); //Após a   finalização do post, direcionar para uma nova evolução
 

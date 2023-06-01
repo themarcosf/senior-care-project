@@ -3,6 +3,7 @@ import { GetServerSideProps } from "next";
 import { useRouter } from "next/router";
 import Cookies from "js-cookie";
 import { ParsedUrlQuery } from "querystring";
+import { TailSpin } from "react-loader-spinner";
 
 import Header from "@/components/Header/Header";
 
@@ -38,6 +39,7 @@ const NewEvolutionPage: FC<{
   const diagnosisInputRef = useRef<HTMLTextAreaElement>(null);
   const progressionTypeInputRef = useRef<HTMLSelectElement>(null);
   const fileInputRef = useRef<HTMLInputElement>(null);
+  const [isLoading, setIsLoading] = useState(false);
 
   const [role, setRole] = useState<null>(null);
   const [name, setName] = useState("");
@@ -89,8 +91,7 @@ const NewEvolutionPage: FC<{
   const handleFormSubmit = async (event: FormEvent<HTMLFormElement>) => {
     event.preventDefault();
 
-    submitDiagnosisHandler();
-    submitFileHandler();
+    setIsLoading(true)
 
     if (!formIsValid) {
       return;
@@ -156,13 +157,28 @@ const NewEvolutionPage: FC<{
         `}
       >
         <div className={styles.formsHeader}>
-          <h1 onClick={() => console.log(selectedFile)}>
+          <h1>
             {navPosition === 1 && "Evolução"}
             {navPosition === 2 && "Farmácia"}
           </h1>
         </div>
 
-        {navPosition === 1 && (
+        {isLoading && (
+          <div className={styles.spinnerContainer}>
+            <TailSpin
+              height="80"
+              width="80"
+              color="var(--neutral-400)"
+              ariaLabel="tail-spin-loading"
+              radius="1"
+              wrapperStyle={{}}
+              wrapperClass=""
+              visible={true}
+            />
+          </div>
+        )}
+
+        {!isLoading && navPosition === 1 && (
           <>
             <form className={styles.form} onSubmit={handleFormSubmit}>
               <div className={styles.field}>
@@ -233,6 +249,7 @@ const NewEvolutionPage: FC<{
                 style={{ backgroundColor: formIsValid ? "#13a060" : "" }}
                 className={styles.submitBtn}
                 type="submit"
+                disabled={!formIsValid}
               >
                 Salvar
               </button>

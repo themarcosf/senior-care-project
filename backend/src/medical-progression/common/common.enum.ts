@@ -1,6 +1,6 @@
 export enum Api {
   ID = ":id",
-  ADDR = "api/v1/med-progression",
+  ADDR = "med-progression",
 }
 
 export enum QueryField {

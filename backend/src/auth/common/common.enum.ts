@@ -5,7 +5,7 @@ export enum Auth {
 }
 
 export enum Api {
-  ADDR = "api/v1/auth",
+  ADDR = "auth",
   SIGNUP = "signup",
   SIGNIN = "signin",
   SIGNOUT = "signout",

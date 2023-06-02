@@ -1,7 +1,7 @@
 /** nestjs */
 import { NestFactory } from "@nestjs/core";
 import { ConfigService } from "@nestjs/config";
-import { ValidationPipe } from "@nestjs/common";
+import { INestApplication, ValidationPipe } from "@nestjs/common";
 
 /** modules */
 import { AppModule } from "./app.module";
@@ -16,8 +16,13 @@ import * as cookieParser from "cookie-parser";
 /** bootstrap project */
 (async function () {
   /** instantiate new project */
-  const app = await NestFactory.create(AppModule, { cors: true });
-  ``;
+  const app: INestApplication = await NestFactory.create(AppModule, {
+    cors: true,
+  });
+
+  /** set global prefix */
+  app.setGlobalPrefix("api/v1");
+
   /** generic middleware */
   app.use(helmet());
   app.use(compression());

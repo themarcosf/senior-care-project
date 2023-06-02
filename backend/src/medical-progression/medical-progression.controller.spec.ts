@@ -57,7 +57,7 @@ beforeAll(async () => {
 });
 
 /** test suite */
-describe("MedicalRecordsController", () => {
+describe("MedicalProgressionController", () => {
   it("should be defined", () => {
     expect(controller).toBeDefined();
   });

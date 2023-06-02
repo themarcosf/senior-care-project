@@ -154,7 +154,7 @@ beforeAll(async () => {
 });
 
 /** test suite */
-describe("ProgressionTypeService", () => {
+describe("MedicalProgressionService", () => {
   it("should be defined", () => {
     expect(service).toBeDefined();
   });

@@ -9,7 +9,9 @@ import {
   UseGuards,
   Controller,
   HttpStatus,
+  UseInterceptors,
   UnauthorizedException,
+  ClassSerializerInterceptor,
 } from "@nestjs/common";
 import { AuthGuard } from "@nestjs/passport";
 
@@ -61,21 +63,25 @@ export class AuthController {
   @Get(Api.SIGNOUT)
   signout(@Req() req: PassportRequest): string {
     /**
-     * TODO :
-     * - add jwt to blacklist
-     * - persist user session
+     * TODO : add jwt to blacklist
      */
     return "TODO";
   }
 
+  @UseInterceptors(ClassSerializerInterceptor)
   @Get(Api.PROFILE)
   async profile(
     @Session() session: Record<string, any>,
     @Req() req: PassportRequest
   ): Promise<User> {
-    session.visits = session.visits ? session.visits + 1 : 1;
-    // console.log("Session id: ", session.id);
-    // console.log(session);
+    /**
+     * TODO :
+     * - implement and persist user session
+     * session.visits = session.visits ? session.visits + 1 : 1;
+     * console.log("Session id: ", session.id);
+     * console.log(session);
+     */
+
     if (!req.user) throw new UnauthorizedException("User not found");
     return req.user;
   }

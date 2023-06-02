@@ -11,8 +11,9 @@ import { MedicalProgressionService } from "./medical-progression.service";
 import { MedicalRecordsModule } from "../medical-records/medical-records.module";
 
 /** dependencies */
-import { MedicalProgression } from "./entities/medical-progression.entity";
 import fileValidationOptions from "./common/file-validation.options";
+import { MedicalProgression } from "./entities/medical-progression.entity";
+import { QueryRunnerFactory } from "../common/query-runner/query-runner.factory";
 import { ProgressionTypeModule } from "../progression-type/progression-type.module";
 ////////////////////////////////////////////////////////////////////////////////
 
@@ -24,6 +25,6 @@ import { ProgressionTypeModule } from "../progression-type/progression-type.modu
     MulterModule.register(fileValidationOptions),
   ],
   controllers: [MedicalProgressionController],
-  providers: [MedicalProgressionService],
+  providers: [MedicalProgressionService, QueryRunnerFactory],
 })
 export class MedicalProgressionModule {}

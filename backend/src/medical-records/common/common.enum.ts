@@ -1,5 +1,5 @@
 export enum Api {
-  ADDR = "api/v1/med-record",
+  ADDR = "med-record",
   PATH = "./uploads/medTests/",
   PATIENT = "patient",
 }

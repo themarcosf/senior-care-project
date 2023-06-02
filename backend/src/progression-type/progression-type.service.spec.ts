@@ -109,26 +109,26 @@ describe("ProgressionTypeService", () => {
       });
     });
   });
-});
 
-describe("findAll method", () => {
-  it("should return an array of progression types", async () => {
-    const progTypes = await service.findAll();
-    expect(progTypes).toBeDefined();
-    expect(progTypes).toEqual(mockProgTypes);
-    expect(progTypes).toHaveLength(mockProgTypes.length);
+  describe("findAll method", () => {
+    it("should return an array of progression types", async () => {
+      const progTypes = await service.findAll();
+      expect(progTypes).toBeDefined();
+      expect(progTypes).toEqual(mockProgTypes);
+      expect(progTypes).toHaveLength(mockProgTypes.length);
+    });
   });
-});
 
-describe("findOne method", () => {
-  it("should find a progression type by id", async () => {
-    const progType = await service.findOne(1);
-    expect(progType).toBeDefined();
-    expect(progType).toEqual(mockProgTypes[0]);
+  describe("findOne method", () => {
+    it("should find a progression type by id", async () => {
+      const progType = await service.findOne(1);
+      expect(progType).toBeDefined();
+      expect(progType).toEqual(mockProgTypes[0]);
+    });
+
+    it("should return null if no progression type is found", async () => {
+      const progType = await service.findOne(999);
+      expect(progType).toBeNull();
+    });
   });
-});
-
-it("should return null if no progression type is found", async () => {
-  const progType = await service.findOne(999);
-  expect(progType).toBeNull();
 });

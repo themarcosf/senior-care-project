@@ -199,51 +199,51 @@ describe("MedicalRecordsService", () => {
       ).rejects.toThrowError("National ID already exists");
     });
   });
-});
 
-describe("findAll method", () => {
-  it("should return an array of medical records", async () => {
-    const medRecords = await service.findAll("DESC");
+  describe("findAll method", () => {
+    it("should return an array of medical records", async () => {
+      const medRecords = await service.findAll("DESC");
 
-    expect(medRecords).toBeDefined();
-    expect(medRecords).toEqual([
-      { id: 2, patientFullName: "John Smith", lastProgression: undefined },
-      {
-        id: 1,
-        patientFullName: "John Doe",
-        lastProgression: "2021-08-31T17:00:00.000Z",
-      },
-    ]);
-  });
-});
-
-describe("findOne method", () => {
-  it("should find a medical record by id", async () => {
-    const medRecord = await service.findOne(1);
-
-    expect(medRecord).toBeDefined();
-    expect(medRecord).toEqual(mockMedRecords[0]);
+      expect(medRecords).toBeDefined();
+      expect(medRecords).toEqual([
+        { id: 2, patientFullName: "John Smith", lastProgression: undefined },
+        {
+          id: 1,
+          patientFullName: "John Doe",
+          lastProgression: "2021-08-31T17:00:00.000Z",
+        },
+      ]);
+    });
   });
 
-  it("should find a medical record by patient full name", async () => {
-    const medRecord = await service.findOne("John Doe");
+  describe("findOne method", () => {
+    it("should find a medical record by id", async () => {
+      const medRecord = await service.findOne(1);
 
-    expect(medRecord).toBeDefined();
-    expect(medRecord).toEqual(mockMedRecords[0]);
+      expect(medRecord).toBeDefined();
+      expect(medRecord).toEqual(mockMedRecords[0]);
+    });
+
+    it("should find a medical record by patient full name", async () => {
+      const medRecord = await service.findOne("John Doe");
+
+      expect(medRecord).toBeDefined();
+      expect(medRecord).toEqual(mockMedRecords[0]);
+    });
+
+    it("should return null if no medical record is found", async () => {
+      const medRecord = await service.findOne(999);
+
+      expect(medRecord).not.toBeDefined();
+    });
   });
 
-  it("should return null if no medical record is found", async () => {
-    const medRecord = await service.findOne(999);
+  describe("toggleClinicalStatus method", () => {
+    it("should toggle the clinical status of a medical record", async () => {
+      const medRecord = await service.toggleClinicalStatus(1);
 
-    expect(medRecord).not.toBeDefined();
-  });
-});
-
-describe("toggleClinicalStatus method", () => {
-  it("should toggle the clinical status of a medical record", async () => {
-    const medRecord = await service.toggleClinicalStatus(1);
-
-    expect(medRecord).toBeDefined();
-    expect(medRecord).toEqual(mockMedRecords[0]);
+      expect(medRecord).toBeDefined();
+      expect(medRecord).toEqual(mockMedRecords[0]);
+    });
   });
 });

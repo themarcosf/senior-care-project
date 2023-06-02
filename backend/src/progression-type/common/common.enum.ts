@@ -1,5 +1,5 @@
 export enum Api {
-  ADDR = "api/v1/progression-type",
+  ADDR = "progression-type",
   ID = ":id",
 }
 

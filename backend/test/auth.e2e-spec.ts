@@ -1,8 +1,9 @@
 /** nestjs */
+import { Reflector } from "@nestjs/core";
 import { ConfigModule } from "@nestjs/config";
 import { TypeOrmModule } from "@nestjs/typeorm";
-import { INestApplication } from "@nestjs/common";
 import { Test, TestingModule } from "@nestjs/testing";
+import { INestApplication, ClassSerializerInterceptor } from "@nestjs/common";
 
 /** modules */
 import { AuthModule } from "../src/auth/auth.module";
@@ -57,6 +58,10 @@ beforeAll(async () => {
   }).compile();
 
   app = moduleRef.createNestApplication();
+
+  // set global serialization
+  app.useGlobalInterceptors(new ClassSerializerInterceptor(app.get(Reflector)));
+
   await app.init();
 });
 
@@ -72,7 +77,7 @@ describe("AuthController (e2e)", () => {
       });
   });
 
-  it("/POST auth/signin : should sign in user", () => {
+  it("/POST auth/signin : should sign in existing user", () => {
     return request(app.getHttpServer())
       .post(`/${Api.ADDR}/${Api.SIGNIN}`)
       .send(mockSigninDto)
@@ -83,13 +88,17 @@ describe("AuthController (e2e)", () => {
       });
   });
 
-  it("/GET auth/profile : should get user profile", () => {
+  it("/GET auth/profile : should retrieve user profile", () => {
     return request(app.getHttpServer())
       .get(`/${Api.ADDR}/${Api.PROFILE}`)
       .set("Authorization", `Bearer ${jwt.access_token}`)
       .expect(200)
       .expect((res) => {
-        expect(res.body).toHaveProperty("id");
+        expect(res.body).toHaveProperty("name");
+        expect(res.body).toHaveProperty("role");
+        expect(res.body).toHaveProperty("email");
+        expect(res.body).toHaveProperty("entityName");
+        expect(res.body).toHaveProperty("licenseNum");
       });
   });
 
@@ -99,7 +108,14 @@ describe("AuthController (e2e)", () => {
       .set("Authorization", `Bearer ${jwt.access_token}`)
       .expect(200)
       .expect((res) => {
+        expect(res.body).not.toHaveProperty("id");
+        expect(res.body).not.toHaveProperty("version");
         expect(res.body).not.toHaveProperty("password");
+        expect(res.body).not.toHaveProperty("isActive");
+        expect(res.body).not.toHaveProperty("createdAt");
+        expect(res.body).not.toHaveProperty("updatedAt");
+        expect(res.body).not.toHaveProperty("deletedAt");
+        expect(res.body).not.toHaveProperty("deletedAt");
       });
   });
 });

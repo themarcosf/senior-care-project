@@ -1,7 +1,11 @@
 /** nestjs */
-import { NestFactory } from "@nestjs/core";
+import {
+  ValidationPipe,
+  INestApplication,
+  ClassSerializerInterceptor,
+} from "@nestjs/common";
 import { ConfigService } from "@nestjs/config";
-import { INestApplication, ValidationPipe } from "@nestjs/common";
+import { NestFactory, Reflector } from "@nestjs/core";
 
 /** modules */
 import { AppModule } from "./app.module";
@@ -50,6 +54,9 @@ import * as cookieParser from "cookie-parser";
         app.get(ConfigService).get("NODE_ENV") === "prod" ? true : false,
     })
   );
+
+  /** global serialization interceptor */
+  app.useGlobalInterceptors(new ClassSerializerInterceptor(app.get(Reflector)));
 
   /** start server listener */
   await app.listen(3000);

@@ -9,9 +9,7 @@ import {
   UseGuards,
   Controller,
   HttpStatus,
-  UseInterceptors,
   UnauthorizedException,
-  ClassSerializerInterceptor,
 } from "@nestjs/common";
 import { AuthGuard } from "@nestjs/passport";
 
@@ -68,7 +66,6 @@ export class AuthController {
     return "TODO";
   }
 
-  @UseInterceptors(ClassSerializerInterceptor)
   @Get(Api.PROFILE)
   async profile(
     @Session() session: Record<string, any>,

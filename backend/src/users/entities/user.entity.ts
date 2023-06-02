@@ -25,6 +25,7 @@ export class User extends BaseEntity {
   @Column()
   role: string;
 
+  @Exclude()
   @Column({ default: true })
   isActive: boolean;
 

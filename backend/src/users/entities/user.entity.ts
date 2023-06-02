@@ -1,5 +1,6 @@
 import { Exclude } from "class-transformer";
 import { Column, Entity, Index, OneToMany } from "typeorm";
+
 import { BaseEntity } from "../../common/base-entity/base.entity";
 import { MedicalRecord } from "../../medical-records/entities/medical-records.entity";
 import { ProgressionType } from "../../progression-type/entities/progression-type.entity";

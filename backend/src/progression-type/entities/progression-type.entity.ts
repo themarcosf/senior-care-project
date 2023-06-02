@@ -1,3 +1,4 @@
+import { Exclude } from "class-transformer";
 import { Column, Entity, OneToMany, ManyToOne } from "typeorm";
 
 import { User } from "../../users/entities/user.entity";
@@ -7,17 +8,13 @@ import { MedicalProgression } from "../../medical-progression/entities/medical-p
 
 @Entity()
 export class ProgressionType extends BaseEntity {
-  constructor() {
-    super("progression type");
-  }
-
-  /** columns */
   @Column()
   description: string;
 
   @Column({ default: false })
   toggleClinicalStatus: boolean;
 
+  @Exclude()
   @Column({ default: true })
   isActive: boolean;
 
@@ -30,4 +27,9 @@ export class ProgressionType extends BaseEntity {
     (medicalProgression) => medicalProgression.progressionType
   )
   progressions: Promise<MedicalProgression[]>;
+
+  /** constructor */
+  constructor() {
+    super("progression type");
+  }
 }

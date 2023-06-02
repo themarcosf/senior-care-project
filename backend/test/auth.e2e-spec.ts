@@ -66,7 +66,7 @@ beforeAll(async () => {
 });
 
 /** test suite */
-describe("AuthController (e2e)", () => {
+describe("Authentication (e2e)", () => {
   it("/POST auth/signup : should sign up new user", () => {
     return request(app.getHttpServer())
       .post(`/${Api.ADDR}/${Api.SIGNUP}`)
